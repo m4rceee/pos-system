@@ -16,16 +16,20 @@ import {
     LeaderboardRounded,
     ShowChartRounded,
     DonutLargeRounded,
+    BlockRounded,
 } from '@mui/icons-material';
 
 import { 
     IconButton,
+    Divider,
+    Chip,
 } from '@mui/material';
 
 export default function SideBar() {
 
     const [collapsed, setCollapsed] = useState(false);
     const [hovered, setHovered] = useState(false);
+    const iconSize = collapsed ? 50 : 100;
 
     return(
         
@@ -40,9 +44,29 @@ export default function SideBar() {
                     collapsed={collapsed} 
                     transitionDuration={750} 
                     backgroundColor="#D1D5DB" 
-                    style={{ boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)'}}>
+                    style={{ 
+                        boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)',
+                        }}>
                     
-                    <div style={{ display: 'flex', flexDirection: 'column'}}>
+                    <div className='text-center text-gray-700' style={{ marginBottom: '5%', padding: '20px' }}  transitionDuration={750}>
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                            <BlockRounded style={{ fontSize: iconSize, marginBottom: '5px' }} />
+                            <p>No Logo Yet</p>
+
+                            {collapsed && (
+                                <Divider variant='middle' sx={{ marginTop: '2rem', width: '100%', backgroundColor: 'black' }} />
+                            )}
+
+                            {!collapsed && (
+                            <Divider variant='middle' sx={{ marginTop: '2rem', width: '100%'}}>
+                                <Chip label="MENU" />
+                            </Divider>
+                            )}
+
+                        </div>
+                    </div>
+                    
+                    <div style={{ display: 'flex', flexDirection: 'column'}}  transitionDuration={750}>
                         <Menu>
                             {collapsed ? (
                                 <>
@@ -87,6 +111,7 @@ export default function SideBar() {
                                                 color: '#374151' 
                                                 }} 
                                             />}
+                                            
                                         >
                                         <MenuItem className='p-1' sx={{ display: 'flex', alignItems: 'center', fontSize: '5rem' }}>
                                             <ShowChartRounded sx={{ marginRight: '10px', marginBottom: '3px', color: '#374151' }} />
@@ -102,7 +127,7 @@ export default function SideBar() {
                             )}
                         </Menu>
                     </div>
-                    <main className='text-center mt-5' style={{ padding: 10 }}>
+                    <main className='text-center mt-5' style={{ padding: 10 }} transitionDuration={750}>
                         <div>
                             <IconButton
                                 onClick={() => setCollapsed(!collapsed)}
@@ -124,4 +149,3 @@ export default function SideBar() {
         </>
     );
 }
-
