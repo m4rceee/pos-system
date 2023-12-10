@@ -1,12 +1,14 @@
 import Login from './LoginPage';
-import SideBar from './Dashboard/sidebar';
+import DashboardHome from './dashboard';
+import Header from './common/header';
 
 export default function App() {
 
   return(
     <>
         {/*<Login />*/}
-        <SideBar />
+        {<DashboardHome />}
+        {/*<Header />*/}
     </>
  
   );

@@ -10,6 +10,7 @@ import {
 
 import { 
     ArrowBackIosRounded,
+    ArrowForwardIosRounded,
     DashboardRounded,
     CategoryRounded,
     InventoryRounded,
@@ -17,6 +18,7 @@ import {
     ShowChartRounded,
     DonutLargeRounded,
     BlockRounded,
+    PointOfSaleRounded,
 } from '@mui/icons-material';
 
 import { 
@@ -48,7 +50,7 @@ export default function SideBar() {
                         boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)',
                         }}>
                     
-                    <div className='text-center text-gray-700' style={{ marginBottom: '5%', padding: '20px' }}  transitionDuration={750}>
+                    <div className='text-center text-gray-700' style={{ padding: '20px' }}  transitionDuration={750}>
                         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                             <BlockRounded style={{ fontSize: iconSize, marginBottom: '5px' }} />
                             <p>No Logo Yet</p>
@@ -75,6 +77,9 @@ export default function SideBar() {
                                         <DashboardRounded sx={{ fontSize: '2rem', color: '#374151' }}/>
                                     </MenuItem>
                                     <MenuItem className='text-center'>
+                                        <PointOfSaleRounded sx={{ fontSize: '2rem', color: '#374151' }}/>
+                                    </MenuItem>
+                                    <MenuItem className='text-center'>
                                         <CategoryRounded sx={{ fontSize: '2rem', color: '#374151' }}/>
                                     </MenuItem>
                                     <MenuItem className='text-center'>
@@ -91,6 +96,10 @@ export default function SideBar() {
                                         sx={{display: 'flex', alignItems: 'center', fontSize: '5rem',}}>
                                         <DashboardRounded sx={{ marginRight: '10px', marginBottom: '3px', color: '#374151' }} />
                                         Dashboard
+                                    </MenuItem>
+                                    <MenuItem className='p-1' sx={{ display: 'flex', alignItems: 'center', fontSize: '5rem' }}>
+                                        <PointOfSaleRounded sx={{ marginRight: '10px', marginBottom: '3px', color: '#374151' }} />
+                                        POS
                                     </MenuItem>
                                     <MenuItem className='p-1' sx={{ display: 'flex', alignItems: 'center', fontSize: '5rem' }}>
                                         <CategoryRounded sx={{ marginRight: '10px', marginBottom: '3px', color: '#374151' }} />
@@ -127,7 +136,7 @@ export default function SideBar() {
                             )}
                         </Menu>
                     </div>
-                    <main className='text-center mt-5' style={{ padding: 10 }} transitionDuration={750}>
+                    <main className='text-center' style={{ padding: 10 }} transitionDuration={750}>
                         <div>
                             <IconButton
                                 onClick={() => setCollapsed(!collapsed)}
@@ -140,7 +149,7 @@ export default function SideBar() {
                                     boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)',
                                 }}
                                 >
-                                <ArrowBackIosRounded />
+                                {collapsed ? <ArrowForwardIosRounded /> : <ArrowBackIosRounded />}
                             </IconButton>
                         </div>
                     </main>
