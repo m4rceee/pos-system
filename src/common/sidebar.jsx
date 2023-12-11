@@ -20,6 +20,7 @@ import {
     BlockRounded,
     PointOfSaleRounded,
     ShoppingCartRounded,
+    FolderRounded,
 } from '@mui/icons-material';
 
 import { 
@@ -40,8 +41,9 @@ export default function SideBar() {
             <div 
                 style={{ 
                     display: 'flex', 
-                    height: '100%', 
                     minHeight: '100vh',
+                    flex: '0 0 auto', 
+                    overflowY: 'auto'
                     }}>
                 <Sidebar 
                     collapsed={collapsed}
@@ -82,7 +84,7 @@ export default function SideBar() {
                                         <PointOfSaleRounded sx={{ fontSize: '2rem', color: '#374151' }}/>
                                     </MenuItem>
                                     <MenuItem className='text-center'>
-                                        <CategoryRounded sx={{ fontSize: '2rem', color: '#374151' }}/>
+                                        <FolderRounded sx={{ fontSize: '2rem', color: '#374151' }}/>
                                     </MenuItem>
                                     <MenuItem className='text-center'>
                                         <ShoppingCartRounded sx={{ fontSize: '2rem', color: '#374151' }}/>
@@ -107,7 +109,7 @@ export default function SideBar() {
                                         POS
                                     </MenuItem>
                                     <MenuItem className='p-1' sx={{ display: 'flex', alignItems: 'center', fontSize: '5rem' }}>
-                                        <CategoryRounded sx={{ marginRight: '10px', marginBottom: '3px', color: '#374151' }} />
+                                        <FolderRounded sx={{ marginRight: '10px', marginBottom: '3px', color: '#374151' }} />
                                         Category
                                     </MenuItem>
                                     <MenuItem className='p-1' sx={{ display: 'flex', alignItems: 'center', fontSize: '5rem' }}>

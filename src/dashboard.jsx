@@ -3,6 +3,10 @@ import "./styles.css"
 import 'typeface-poppins';
 import SideBar from './common/sidebar';
 import Header from './common/header';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+
+import { BarChart } from '@mui/x-charts/BarChart';
+import { PieChart } from '@mui/x-charts/PieChart';
 
 import { 
     Grid, 
@@ -18,12 +22,38 @@ import {
 import { 
     ShoppingBagRounded ,
     AttachMoneyRounded,
-    SellRounded,
     AutoGraphRounded,
     ProductionQuantityLimitsRounded,
     WarningAmberRounded,
 } from '@mui/icons-material';
 
+const customTheme = createTheme({
+    typography: {
+      fontFamily: ['Poppins', 'sans-serif'].join(','),
+    },
+    palette: {
+        text: {
+          primary: '#F5F5DC',
+        },
+    },
+  });
+
+const uData = [5, 8, 10, 5, 16];
+const pData = [3, 25, 2, 1, 10];
+const vData = [6, 5, 0, 6, 8];
+const xLabels = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+];
+
+const data = [
+    { id: 0, value: 44, label: 'Item 1' },
+    { id: 1, value: 41, label: 'Item 2' },
+    { id: 2, value: 25, label: 'Item 3' },
+  ];
 
 export default function DashboardHome() {
 
@@ -48,6 +78,7 @@ export default function DashboardHome() {
   };
 
     return(
+    
         <>
             <div style={{ display: 'flex' }}>
                 <SideBar />
@@ -133,7 +164,7 @@ export default function DashboardHome() {
                             </Grid>
                         </Grid>
 
-                        <Grid className='pt-3' container spacing={2}>
+                        <Grid className='pt-3 ' container spacing={2}>
                             <Grid item xs={6}>
                                 <Card style={{ background: '#FFD699', boxShadow: '0 8px 16px rgba(0, 0, 0, 0.2)' }}>
                                     <CardContent style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
@@ -159,6 +190,47 @@ export default function DashboardHome() {
                                 </Card>
                             </Grid>
                         </Grid>
+
+                        <Grid className='pt-10' container spacing={2}>
+                            <Grid item xs={7}>
+                                <ThemeProvider theme={customTheme}> 
+                                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+                                        <Typography sx={{ color: '#F5F5DC', fontSize: '1.5rem' }}>Sales Chart</Typography>
+                                            <BarChart
+                                                width={600}
+                                                height={400}
+                                                series={[
+                                                    { data: pData, label: 'Item 1', id: 'pvId', stack: 'total' },
+                                                    { data: uData, label: 'Item 2', id: 'uvId', stack: 'total' },
+                                                    { data: vData, label: 'Item 3', id: 'vvId', stack: 'total' },
+                                                ]}
+                                                xAxis={[{ data: xLabels, scaleType: 'band' }]}
+                                                
+                                            />
+                                    </div>
+                                </ThemeProvider>
+                            </Grid>
+                            
+                            <Grid item xs={5}>
+                                <ThemeProvider theme={customTheme}>
+                                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+                                        <Typography sx={{ color: '#F5F5DC', fontSize: '1.5rem' }}>Top Products</Typography>
+                                        <PieChart
+                                            series={[
+                                                {
+                                                data,
+                                                highlightScope: { faded: 'global', highlighted: 'item' },
+                                                faded: { innerRadius: 30, additionalRadius: -30, color: 'gray' },
+                                                
+                                                },
+                                            ]}
+                                            height={250}
+                                        />
+                                    </div>
+                                </ThemeProvider>
+                            </Grid>
+                        </Grid>
+
                     </Grid>
                 </Container>
                 
