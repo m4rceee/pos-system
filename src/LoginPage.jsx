@@ -30,7 +30,7 @@ const containerStyle = {
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  backgroundColor: '#F5F5DC',
+  backgroundColor: '#1F2937',
   borderRadius: '20px',
   padding: '35px',
   width: '35%',
@@ -94,7 +94,7 @@ export default function Login() {
             <CardContent sx={{ width: '100%' }}>
     
               {/*LOGO*/}
-              <div className='text-center text-gray-700' style={{ marginBottom: '10%' }}>
+              <div className='text-center' style={{ marginBottom: '10%', color: 'lightgray' }}>
                 <BlockRounded style={{ fontSize: 100 }}/>
                 <p>No Logo Yet</p>
               </div>
@@ -104,53 +104,44 @@ export default function Login() {
                 <FormControl fullWidth>
         
                         {/*USERNAME*/}
-                        <p className="mb-3 text-gray-700 text-xl">Username</p>
+                        <p className="mb-3 text-xl" style={{color:'#F5F5F5'}}>Username *</p>
                         <TextField
                         name="username" 
-                        id="username" 
-                        label={
-                            <Typography variant="body" sx={{fontFamily: 'Poppins, sans-serif'}}>
-                            Required
-                            </Typography>
-                        } 
+                        id="username"
                         variant="outlined"
-                        required 
                         InputProps={{
                             endAdornment: (
                             <InputAdornment position="end">
-                                <AccountCircle />
+                                <AccountCircle sx={{color: '#F5F5F5'}}/>
                             </InputAdornment>
                             ),
                         }}
                         sx={{
                             mb: 3, width: '100%',
                             '& .MuiOutlinedInput-root': {
+                            '& fieldset': {
+                                borderColor: '#FFFFFF',
+                            },
                             '&.Mui-focused fieldset': {
-                                borderColor: '#374151',
+                                borderColor: '#F5F5F5',
                             },
                             },
                             '& .MuiInputLabel-root': {
                             color: '',
                             '&.Mui-focused': {
-                                color: '#374151',
+                                color: '#F5F5F5',
                             },
                             },
                         }}
                         />
 
                         {/*PASSWORD*/}
-                        <p className="mb-3 text-gray-700 text-xl">Password</p>
+                        <p className="mb-3 text-xl" style={{color:'#F5F5F5'}}>Password *</p>
                         <TextField
                         name="password" 
                         id="password" 
                         type={showPassword ? 'text' : 'password'}
-                        label={
-                            <Typography variant="body" sx={{fontFamily: 'Poppins, sans-serif'}}>
-                            Required
-                            </Typography>
-                        }  
                         variant="outlined"
-                        required 
                         InputProps={{
                             endAdornment: (
                             <InputAdornment position="end">
@@ -160,7 +151,7 @@ export default function Login() {
                                 onMouseDown={handleMouseDownPassword}
                                 edge="end"
                                 >
-                                {showPassword ? <VisibilityOff /> : <Visibility />}
+                                {showPassword ? <VisibilityOff sx={{color: '#F5F5F5'}}/> : <Visibility sx={{color: '#F5F5F5'}}/>}
                                 </IconButton>
                             </InputAdornment>
                             ),
@@ -168,14 +159,17 @@ export default function Login() {
                             sx={{
                             width: '100%',
                             '& .MuiOutlinedInput-root': {
+                              '& fieldset': {
+                                borderColor: '#FFFFFF',
+                              },
                                 '&.Mui-focused fieldset': {
-                                borderColor: '#374151',
+                                borderColor: '#F5F5F5',
                                 },
                             },
                             '& .MuiInputLabel-root': {
                                 color: '',
                                 '&.Mui-focused': {
-                                color: '#374151',
+                                color: '#F5F5F5',
                                 },
                             },
                         }}/>
@@ -191,14 +185,14 @@ export default function Login() {
                   marginBottom: 1, 
                   padding: 2, 
                   fontFamily: 'Poppins, sans-serif',
-                  backgroundColor: '#374151',
-                  '&:hover': { backgroundColor: '#222933' }
+                  backgroundColor: '#849E87',
+                  '&:hover': { backgroundColor: '#5C725A' }
                   }}>
-                    Log In
+                    <Typography sx={{fontFamily: 'Poppins, sans-serif', fontWeight: '500'}}>Log In</Typography>
                 </Button>
                 
                 {/*REALTIME DISPLAY OF DATE & TIME*/}
-                <div className='mt-3 text-center text-gray-700'>
+                <div className='mt-3 text-center' style={{color:'#F5F5F5'}}>
                   <div>
                     <strong>Date:</strong> {formatDate(currentDateTime)}
                   </div>

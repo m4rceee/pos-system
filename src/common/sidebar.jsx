@@ -27,6 +27,7 @@ import {
     IconButton,
     Divider,
     Chip,
+    Typography,
 } from '@mui/material';
 
 export default function SideBar() {
@@ -49,23 +50,23 @@ export default function SideBar() {
                     collapsed={collapsed}
                     width='200px' 
                     transitionDuration={750} 
-                    backgroundColor="#FFFFFF" 
+                    backgroundColor="#1F2937" 
                     style={{ 
                         boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)',
                         }}>
                     
-                    <div className='text-center text-gray-700' style={{ padding: '20px' }}  transitionDuration={750}>
+                    <div className='text-center' style={{ padding: '20px', color: '#A0A0A0', opacity: 0.5 }}  transitionDuration={750}>
                         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                             <BlockRounded style={{ fontSize: iconSize, marginBottom: '5px' }} />
                             <p>No Logo Yet</p>
 
                             {collapsed && (
-                                <Divider variant='middle' sx={{ marginTop: '2rem', width: '100%', backgroundColor: 'black' }} />
+                                <Divider variant='fullWidth' sx={{ marginTop: '2rem', width: '100%', backgroundColor: '#849E87', height: '3px' }} />
                             )}
 
                             {!collapsed && (
-                            <Divider variant='middle' sx={{ marginTop: '2rem', width: '100%'}}>
-                                <Chip label="MENU" />
+                            <Divider variant='fullWidth' sx={{ marginTop: '2rem', width: '100%' }}>
+                                <Chip label="M" style={{ color: 'white', backgroundColor: '#849E87' }} />
                             </Divider>
                             )}
 
@@ -78,67 +79,67 @@ export default function SideBar() {
                                 <>
                                     <MenuItem 
                                         className='text-center'>
-                                        <DashboardRounded sx={{ fontSize: '2rem', color: '#374151' }}/>
+                                        <DashboardRounded sx={{ fontSize: '2rem', color: '#849E87' }}/>
                                     </MenuItem>
                                     <MenuItem className='text-center'>
-                                        <PointOfSaleRounded sx={{ fontSize: '2rem', color: '#374151' }}/>
+                                        <PointOfSaleRounded sx={{ fontSize: '2rem', color: '#849E87' }}/>
                                     </MenuItem>
                                     <MenuItem className='text-center'>
-                                        <FolderRounded sx={{ fontSize: '2rem', color: '#374151' }}/>
+                                        <FolderRounded sx={{ fontSize: '2rem', color: '#849E87' }}/>
                                     </MenuItem>
                                     <MenuItem className='text-center'>
-                                        <ShoppingCartRounded sx={{ fontSize: '2rem', color: '#374151' }}/>
+                                        <ShoppingCartRounded sx={{ fontSize: '2rem', color: '#849E87' }}/>
                                     </MenuItem>
                                     <MenuItem className='text-center'>
-                                        <InventoryRounded sx={{ fontSize: '2rem', color: '#374151' }}/>
+                                        <InventoryRounded sx={{ fontSize: '2rem', color: '#849E87' }}/>
                                     </MenuItem>
                                     <MenuItem className='text-center'>
-                                        <LeaderboardRounded sx={{ fontSize: '2rem', color: '#374151' }}/>
+                                        <LeaderboardRounded sx={{ fontSize: '2rem', color: '#849E87' }}/>
                                     </MenuItem>
                                 </>
                             ) : (
                                 <>
                                     <MenuItem
                                         className='p-1'
-                                        sx={{display: 'flex', alignItems: 'center', fontSize: '5rem',}}>
-                                        <DashboardRounded sx={{ marginRight: '10px', marginBottom: '3px', color: '#374151' }} />
-                                        Dashboard
+                                        sx={{display: 'flex', alignItems: 'center', fontSize: '5rem', color: '#849E87',}}>
+                                        <DashboardRounded sx={{ marginRight: '10px', marginBottom: '3px', color: '#849E87' }} />
+                                        <span style={{ color: '#F5F5F5' }}>Dashboard</span>
                                     </MenuItem>
                                     <MenuItem className='p-1' sx={{ display: 'flex', alignItems: 'center', fontSize: '5rem' }}>
-                                        <PointOfSaleRounded sx={{ marginRight: '10px', marginBottom: '3px', color: '#374151' }} />
-                                        POS
+                                        <PointOfSaleRounded sx={{ marginRight: '10px', marginBottom: '3px', color: '#849E87' }} />
+                                        <span style={{ color: '#F5F5F5' }}>POS</span>
                                     </MenuItem>
                                     <MenuItem className='p-1' sx={{ display: 'flex', alignItems: 'center', fontSize: '5rem' }}>
-                                        <FolderRounded sx={{ marginRight: '10px', marginBottom: '3px', color: '#374151' }} />
-                                        Category
+                                        <FolderRounded sx={{ marginRight: '10px', marginBottom: '3px', color: '#849E87' }} />
+                                        <span style={{ color: '#F5F5F5' }}>Category</span>
                                     </MenuItem>
                                     <MenuItem className='p-1' sx={{ display: 'flex', alignItems: 'center', fontSize: '5rem' }}>
-                                        <ShoppingCartRounded sx={{ marginRight: '10px', marginBottom: '3px', color: '#374151' }} />
-                                        Products
+                                        <ShoppingCartRounded sx={{ marginRight: '10px', marginBottom: '3px', color: '#849E87' }} />
+                                        <span style={{ color: '#F5F5F5' }}>Products</span>
                                     </MenuItem>
                                     <MenuItem className='p-1' sx={{ display: 'flex', alignItems: 'center', fontSize: '5rem' }}>
-                                        <InventoryRounded sx={{ marginRight: '10px', marginBottom: '3px', color: '#374151' }} />
-                                        Inventory
+                                        <InventoryRounded sx={{ marginRight: '10px', marginBottom: '3px', color: '#849E87' }} />
+                                        <span style={{ color: '#F5F5F5' }}>Inventory</span>
                                     </MenuItem>
                                     <SubMenu
                                         className='p-1' 
-                                        label="Reports" 
+                                        label={<span style={{ color: '#F5F5F5' }}>Records</span>} 
                                         icon={<LeaderboardRounded 
                                             sx={{ 
                                                 marginRight: '7px', 
                                                 marginBottom: '3px', 
-                                                color: '#374151' 
+                                                color: '#849E87' 
                                                 }} 
                                             />}
                                             
                                         >
                                         <MenuItem className='p-1' sx={{ display: 'flex', alignItems: 'center', fontSize: '5rem' }}>
-                                            <ShowChartRounded sx={{ marginRight: '10px', marginBottom: '3px', color: '#374151' }} />
-                                            Sales
+                                            <ShowChartRounded sx={{ marginRight: '10px', marginBottom: '3px', color: '#849E87' }} />
+                                            <span style={{ color: '#849E87' }}>Sales</span>
                                         </MenuItem>
                                         <MenuItem className='p-1' sx={{ display: 'flex', alignItems: 'center', fontSize: '5rem' }}>
-                                            <DonutLargeRounded sx={{ marginRight: '10px', marginBottom: '3px', color: '#374151' }} />
-                                            Analytics
+                                            <DonutLargeRounded sx={{ marginRight: '10px', marginBottom: '3px', color: '#849E87' }} />
+                                            <span style={{ color: '#849E87' }}>Analytics</span>
                                         </MenuItem>
                                     </SubMenu>
                                 </>
@@ -153,9 +154,9 @@ export default function SideBar() {
                                 onMouseEnter={() => setHovered(true)}
                                 onMouseLeave={() => setHovered(false)}
                                 style={{
-                                    backgroundColor: hovered ? '#222933' : '#374151',
+                                    backgroundColor: hovered ? '#5C725A' : '#849E87',
                                     borderRadius: '50%',
-                                    color: 'white',
+                                    color: '#F5F5F5',
                                     boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)',
                                 }}
                                 >
