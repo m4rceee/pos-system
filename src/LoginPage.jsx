@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import "./styles.css"
 import 'typeface-poppins';
 import {
@@ -29,7 +30,7 @@ const containerStyle = {
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  backgroundColor: 'white',
+  backgroundColor: '#F5F5DC',
   borderRadius: '20px',
   padding: '35px',
   width: '35%',
@@ -37,6 +38,8 @@ const containerStyle = {
 };
 
 export default function Login() {
+
+  const navigate = useNavigate();
 
   //const [formData, setFormData] = useState({});
 
@@ -74,12 +77,14 @@ export default function Login() {
     e.preventDefault();
     const formElements = e.target.elements;
     
-  const data = {
-    username: formElements.username.value,
-    password: formElements.password.value,
-  };
+    const data = {
+      username: formElements.username.value,
+      password: formElements.password.value,
+    };
     
     console.log('Form data submitted:', data);
+    navigate('/dashboard');
+  
   }
 
   return(

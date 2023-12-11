@@ -49,7 +49,7 @@ export default function SideBar() {
                     collapsed={collapsed}
                     width='200px' 
                     transitionDuration={750} 
-                    backgroundColor="#F5F5DC" 
+                    backgroundColor="#FFFFFF" 
                     style={{ 
                         boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)',
                         }}>

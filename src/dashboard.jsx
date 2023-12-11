@@ -33,7 +33,7 @@ const customTheme = createTheme({
     },
     palette: {
         text: {
-          primary: '#F5F5DC',
+          primary: '#FFFFFF',
         },
     },
   });
@@ -66,7 +66,7 @@ export default function DashboardHome() {
 
     return () => clearInterval(intervalId);
   }, []); 
-    
+
   const formatDate = (date) => {
   const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
     return date.toLocaleDateString(undefined, options);
@@ -89,10 +89,10 @@ export default function DashboardHome() {
                             <Header />
                         </Grid>
                         <Grid xs={12}>
-                            <Typography variant='h3' sx={{ fontFamily: 'Poppins, sans-serif', fontWeight: '600', color: '#F5F5DC' }}>
+                            <Typography variant='h3' sx={{ fontFamily: 'Poppins, sans-serif', fontWeight: '600', color: '#FFFFFF' }}>
                                 Welcome to Dashboard
                             </Typography>
-                            <Typography variant='body2' sx={{ fontFamily: 'Poppins, sans-serif', color: '#F5F5DC' }}>
+                            <Typography variant='body2' sx={{ fontFamily: 'Poppins, sans-serif', color: '#FFFFFF' }}>
                                 <p className='pr-3'>{formatDate(currentDateTime)}</p>
                                 <p>{formatTime(currentDateTime)}</p>
                             </Typography>
@@ -100,63 +100,36 @@ export default function DashboardHome() {
 
                         <Grid className='pt-8' container spacing={2}>
                             <Grid item xs={4}>
-                                <Card style={{ background: 'linear-gradient(to bottom left, #F5F5DC, #D8D8BF)', boxShadow: '0 8px 16px rgba(0, 0, 0, 0.2)' }}>
+                                <Card style={{ background: '#FFFFFF', boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)' }}>
                                     <CardContent style={{ display: 'flex', flexDirection: 'column',justifyContent: 'center', alignItems: 'center' }}>
                                         <div style={{ textAlign: 'center' }}>
-                                        <IconButton
-                                            style={{
-                                            backgroundColor: '#1F2937',
-                                            borderRadius: '50%',
-                                            color: 'white',
-                                            boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)',
-                                            }}
-                                        >
-                                            <ShoppingBagRounded sx={{ fontSize: '2.5rem' }} />
-                                        </IconButton>
+                                            <ShoppingBagRounded sx={{ fontSize: '2.5rem', color: '#2ecc71' }} />
                                         </div>
-                                        <div style={{ textAlign: 'center', marginTop: '5px' }}>
-                                        <p>Items</p>
+                                        <div style={{ textAlign: 'center', marginTop: '5px', color: '#2ecc71' }}>
+                                            <p>Items</p>
                                         </div>
                                     </CardContent>
                                 </Card>
                             </Grid>
                             <Grid item xs={4}>
-                                <Card style={{ background: 'linear-gradient(to bottom left, #F5F5DC, #D8D8BF)', boxShadow: '0 8px 16px rgba(0, 0, 0, 0.2)' }}>
+                                <Card style={{ background: '#FFFFFF', boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)' }}>
                                     <CardContent style={{ display: 'flex', flexDirection: 'column',justifyContent: 'center', alignItems: 'center' }}>
                                             <div style={{ textAlign: 'center' }}>
-                                                <IconButton
-                                                    style={{
-                                                    backgroundColor: '#1F2937',
-                                                    borderRadius: '50%',
-                                                    color: 'white',
-                                                    boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)',
-                                                    }}
-                                                >
-                                                    <AttachMoneyRounded sx={{ fontSize: '2.5rem' }} />
-                                                </IconButton>
+                                                <AttachMoneyRounded sx={{ fontSize: '2.5rem', color: '#2ecc71' }} />
                                             </div>
-                                            <div style={{ textAlign: 'center', marginTop: '5px' }}>
+                                            <div style={{ textAlign: 'center', marginTop: '5px', color: '#2ecc71' }}>
                                                 <p>Today's Sales</p>
                                             </div>
                                     </CardContent>
                                 </Card>
                             </Grid>
                             <Grid item xs={4}>
-                                <Card style={{ background: 'linear-gradient(to bottom left, #F5F5DC, #D8D8BF)', boxShadow: '0 8px 16px rgba(0, 0, 0, 0.2)' }}>
+                                <Card style={{ background: '#FFFFFF', boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)' }}>
                                     <CardContent style={{ display: 'flex', flexDirection: 'column',justifyContent: 'center', alignItems: 'center' }}>
                                             <div style={{ textAlign: 'center' }}>
-                                                <IconButton
-                                                    style={{
-                                                    backgroundColor: '#1F2937',
-                                                    borderRadius: '50%',
-                                                    color: 'white',
-                                                    boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)',
-                                                    }}
-                                                >
-                                                    <AutoGraphRounded sx={{ fontSize: '2.5rem' }} />
-                                                </IconButton>
+                                                <AutoGraphRounded sx={{ fontSize: '2.5rem', color: '#2ecc71' }} />
                                             </div>
-                                            <div style={{ textAlign: 'center', marginTop: '5px' }}>
+                                            <div style={{ textAlign: 'center', marginTop: '5px', color: '#2ecc71' }}>
                                                 <p>Total Sales</p>
                                             </div>
                                     </CardContent>
@@ -166,24 +139,24 @@ export default function DashboardHome() {
 
                         <Grid className='pt-3 ' container spacing={2}>
                             <Grid item xs={6}>
-                                <Card style={{ background: '#FFD699', boxShadow: '0 8px 16px rgba(0, 0, 0, 0.2)' }}>
+                                <Card style={{ background: '#FFFFFF', boxShadow: '0 8px 16px rgba(0, 0, 0, 0.2)' }}>
                                     <CardContent style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
                                         <div style={{ textAlign: 'center', paddingRight: '10px' }}>
-                                            <ProductionQuantityLimitsRounded sx={{ fontSize: '2.5rem' }} />
+                                            <ProductionQuantityLimitsRounded sx={{ fontSize: '2.5rem', color: '#FFA833' }} />
                                         </div>
-                                        <div style={{ textAlign: 'center', marginTop: '5px' }}>
+                                        <div style={{ textAlign: 'center', marginTop: '5px', color: '#FFA833' }}>
                                         <p>Low Stock Items</p>
                                         </div>
                                     </CardContent>
                                 </Card>
                             </Grid>
                             <Grid item xs={6}>
-                                <Card style={{ background: '#FFCCCC', boxShadow: '0 8px 16px rgba(0, 0, 0, 0.2)' }}>
+                                <Card style={{ background: '#FFFFFF', boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)' }}>
                                     <CardContent style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
                                             <div style={{ textAlign: 'center', paddingRight: '10px' }}>
-                                                    <WarningAmberRounded sx={{ fontSize: '2.5rem' }} />
+                                                    <WarningAmberRounded sx={{ fontSize: '2.5rem', color: '#FF8888' }} />
                                             </div>
-                                            <div style={{ textAlign: 'center', marginTop: '5px' }}>
+                                            <div style={{ textAlign: 'center', marginTop: '5px', color: '#FF8888' }}>
                                                 <p>Expiring/Expired Items</p>
                                             </div>
                                     </CardContent>
@@ -195,14 +168,14 @@ export default function DashboardHome() {
                             <Grid item xs={7}>
                                 <ThemeProvider theme={customTheme}> 
                                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
-                                        <Typography sx={{ color: '#F5F5DC', fontSize: '1.5rem' }}>Sales Chart</Typography>
+                                        <Typography sx={{ color: '#FFFFFF', fontSize: '1.5rem', fontWeight: '700' }}>Sales Chart</Typography>
                                             <BarChart
                                                 width={600}
                                                 height={400}
                                                 series={[
-                                                    { data: pData, label: 'Item 1', id: 'pvId', stack: 'total' },
-                                                    { data: uData, label: 'Item 2', id: 'uvId', stack: 'total' },
-                                                    { data: vData, label: 'Item 3', id: 'vvId', stack: 'total' },
+                                                    { data: pData, label: 'Item 1', id: 'pvId', stack: 'total'},
+                                                    { data: uData, label: 'Item 2', id: 'uvId', stack: 'total'},
+                                                    { data: vData, label: 'Item 3', id: 'vvId', stack: 'total'},
                                                 ]}
                                                 xAxis={[{ data: xLabels, scaleType: 'band' }]}
                                                 
@@ -214,14 +187,13 @@ export default function DashboardHome() {
                             <Grid item xs={5}>
                                 <ThemeProvider theme={customTheme}>
                                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
-                                        <Typography sx={{ color: '#F5F5DC', fontSize: '1.5rem' }}>Top Products</Typography>
+                                        <Typography sx={{ color: '#FFFFFF', fontSize: '1.5rem', fontWeight: '700' }}>Top Products</Typography>
                                         <PieChart
                                             series={[
                                                 {
                                                 data,
                                                 highlightScope: { faded: 'global', highlighted: 'item' },
-                                                faded: { innerRadius: 30, additionalRadius: -30, color: 'gray' },
-                                                
+                                                faded: { innerRadius: 30, additionalRadius: -30 },
                                                 },
                                             ]}
                                             height={250}
