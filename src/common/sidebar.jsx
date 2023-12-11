@@ -19,6 +19,7 @@ import {
     DonutLargeRounded,
     BlockRounded,
     PointOfSaleRounded,
+    ShoppingCartRounded,
 } from '@mui/icons-material';
 
 import { 
@@ -43,9 +44,10 @@ export default function SideBar() {
                     minHeight: '100vh',
                     }}>
                 <Sidebar 
-                    collapsed={collapsed} 
+                    collapsed={collapsed}
+                    width='200px' 
                     transitionDuration={750} 
-                    backgroundColor="#D1D5DB" 
+                    backgroundColor="#F5F5DC" 
                     style={{ 
                         boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)',
                         }}>
@@ -83,6 +85,9 @@ export default function SideBar() {
                                         <CategoryRounded sx={{ fontSize: '2rem', color: '#374151' }}/>
                                     </MenuItem>
                                     <MenuItem className='text-center'>
+                                        <ShoppingCartRounded sx={{ fontSize: '2rem', color: '#374151' }}/>
+                                    </MenuItem>
+                                    <MenuItem className='text-center'>
                                         <InventoryRounded sx={{ fontSize: '2rem', color: '#374151' }}/>
                                     </MenuItem>
                                     <MenuItem className='text-center'>
@@ -106,11 +111,14 @@ export default function SideBar() {
                                         Category
                                     </MenuItem>
                                     <MenuItem className='p-1' sx={{ display: 'flex', alignItems: 'center', fontSize: '5rem' }}>
+                                        <ShoppingCartRounded sx={{ marginRight: '10px', marginBottom: '3px', color: '#374151' }} />
+                                        Products
+                                    </MenuItem>
+                                    <MenuItem className='p-1' sx={{ display: 'flex', alignItems: 'center', fontSize: '5rem' }}>
                                         <InventoryRounded sx={{ marginRight: '10px', marginBottom: '3px', color: '#374151' }} />
                                         Inventory
                                     </MenuItem>
-                                    <SubMenu 
-                                        defaultOpen 
+                                    <SubMenu
                                         className='p-1' 
                                         label="Reports" 
                                         icon={<LeaderboardRounded 

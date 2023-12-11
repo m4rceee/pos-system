@@ -22,27 +22,27 @@ export default function Header() {
                     InputProps={{
                         startAdornment: (
                         <InputAdornment position="start">
-                            <SearchRounded sx={{color: '#D1D5DB'}}/>
+                            <SearchRounded sx={{color: '#F5F5DC'}}/>
                         </InputAdornment>
                         ),
                     }}
                     sx={{
                         '& .MuiOutlinedInput-root': {
                             '& fieldset': {
-                                borderColor: '#D1D5DB',
+                                borderColor: '#F5F5DC',
                                 borderWidth: '2px'
                             },
                             '&.Mui-focused fieldset': {
-                                borderColor: '#D1D5DB',
+                                borderColor: '#F5F5DC',
                             },
                         },
                         '& input': {
-                            color: '#D1D5DB',
+                            color: '#F5F5DC',
                         },
                     }}
                     />
-                    <AccountCircleRounded style={{ cursor: 'pointer', color: '#D1D5DB', fontSize: '2rem' }} />
-                    <MenuRounded style={{ cursor: 'pointer', color: '#D1D5DB', fontSize: '2rem' }} />
+                    <AccountCircleRounded style={{ cursor: 'pointer', color: '#F5F5DC', fontSize: '2rem' }} />
+                    <MenuRounded style={{ cursor: 'pointer', color: '#F5F5DC', fontSize: '2rem' }} />
                 </Stack>
         </>
         
