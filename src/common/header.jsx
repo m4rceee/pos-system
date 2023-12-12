@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
+import '../styles.css';
 
 import { 
     AccountCircleRounded,
-    MenuRounded,
     SearchRounded,
     LogoutRounded,
 } from "@mui/icons-material";
@@ -13,12 +13,7 @@ import {
     InputAdornment,
     Stack,
     Button,
-    Popper,
-    MenuItem,
-    MenuList,
-    Paper,
-    ClickAwayListener,
-    Grow,
+    IconButton,
 } from "@mui/material";
 
 const colors = {
@@ -43,35 +38,47 @@ export default function Header() {
     return(
 
         <>
-                <Stack direction="row" spacing={2} alignItems="center">
+                <Stack direction="row" spacing={2}>
                     <TextField
                     variant="outlined"
                     fullWidth
+                    placeholder='Search here...'
                     InputProps={{
                         startAdornment: (
                         <InputAdornment position="start">
-                            <SearchRounded sx={{color: colors.secondary}}/>
+                            <SearchRounded sx={{fontSize: '2rem', color: colors.secondary}}/>
                         </InputAdornment>
                         ),
                     }}
                     sx={{
+                        
                         '& .MuiOutlinedInput-root': {
+                            backgroundColor: '#27273b',
+                            boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)',
                             '& fieldset': {
-                                border: `2px solid ${colors.secondary}`,
+                                border: 'none',
                             },
                             '&.Mui-focused fieldset': {
-                                border: `4px solid ${colors.secondary}`,
+                                border: 'none',
                             },
                         },
                         '& input': {
+                            fontFamily: 'Poppins, sans-serif',
+                            fontWeight: '300',
                             color: colors.secondary,
                         },
+                        '& input::placeholder': {
+                            fontFamily: 'Poppins, sans-serif',
+                            fontWeight: '300',
+                        }
                     }}
                     />
-                    <AccountCircleRounded style={{ cursor: 'pointer', color: colors.secondary, fontSize: '2rem' }} />
-                    <Button>
+                    <IconButton>
+                        <AccountCircleRounded style={{ cursor: 'pointer', color: colors.secondary, fontSize: '2rem' }} />
+                    </IconButton>
+                    <IconButton>
                         <LogoutRounded onClick={handleLogout} style={{ color: colors.secondary, fontSize: '2rem' }} />
-                    </Button>
+                    </IconButton>
                 </Stack>
         </>
         

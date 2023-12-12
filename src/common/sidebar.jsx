@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 import "../styles.css"
 import 'typeface-poppins';
+
 import { 
     Sidebar, 
     Menu, 
@@ -49,6 +50,17 @@ export default function SideBar() {
 
     const [collapsed, setCollapsed] = useState(false);
     const [hovered, setHovered] = useState(false);
+    const [hoveredItem, setHoveredItem] = useState(null);
+
+    const handleItemHover = (itemId) => {
+        setHoveredItem(itemId);
+    };
+
+    const getMenuItemStyle = (itemId) => ({
+        backgroundColor: hoveredItem === itemId ? '#e9e1c4' : 'transparent',
+        transition: '0.2s ease',
+      });
+
     const iconSize = collapsed ? 50 : 100;
 
     const handleCategoryHome = () => {
@@ -122,30 +134,52 @@ export default function SideBar() {
                             ) : (
                                 <>
                                     <MenuItem
+                                        onMouseEnter={() => handleItemHover('item1')}
+                                        onMouseLeave={() => handleItemHover(null)}
+                                        style={getMenuItemStyle('item1')}
                                         onClick={handleDashboardHome} 
                                         className='p-1'
-                                        sx={{display: 'flex', alignItems: 'center', fontSize: '5rem', color: colors.primary }}
-                                        icon={<DashboardRounded sx={{ marginBottom: '3px', color: colors.primary }} />}>
+                                        icon={<DashboardRounded sx={{ marginBottom: '3px',color: colors.primary,}}/>}>
                                         Dashboard
                                     </MenuItem>
-                                    <MenuItem className='p-1' sx={{ display: 'flex', alignItems: 'center', fontSize: '5rem' }}
+                                    <MenuItem 
+                                        className='p-1' 
+                                        onMouseEnter={() => handleItemHover('item2')}
+                                        onMouseLeave={() => handleItemHover(null)}
+                                        style={getMenuItemStyle('item2')}
                                         icon={<PointOfSaleRounded sx={{ marginBottom: '3px', color: colors.primary }} />}>
                                         POS
                                     </MenuItem>
-                                    <MenuItem onClick={handleCategoryHome} className='p-1' sx={{ display: 'flex', alignItems: 'center', fontSize: '5rem' }}
+                                    <MenuItem 
+                                        onClick={handleCategoryHome} 
+                                        className='p-1'
+                                        onMouseEnter={() => handleItemHover('item3')}
+                                        onMouseLeave={() => handleItemHover(null)}
+                                        style={getMenuItemStyle('item3')} 
                                         icon={<FolderRounded sx={{ marginBottom: '3px', color: colors.primary }} />}>
                                         Categories
                                     </MenuItem>
-                                    <MenuItem className='p-1' sx={{ display: 'flex', alignItems: 'center', fontSize: '5rem' }}
+                                    <MenuItem 
+                                        className='p-1'
+                                        onMouseEnter={() => handleItemHover('item4')}
+                                        onMouseLeave={() => handleItemHover(null)}
+                                        style={getMenuItemStyle('item4')} 
                                         icon={<ShoppingCartRounded sx={{ marginBottom: '3px', color: colors.primary }} />}>
                                         Products
                                     </MenuItem>
-                                    <MenuItem className='p-1' sx={{ display: 'flex', alignItems: 'center', fontSize: '5rem' }}
+                                    <MenuItem 
+                                        className='p-1'
+                                        onMouseEnter={() => handleItemHover('item5')}
+                                        onMouseLeave={() => handleItemHover(null)}
+                                        style={getMenuItemStyle('item5')}
                                         icon={<InventoryRounded sx={{ marginBottom: '3px', color: colors.primary }} />}>
                                         Inventory
                                     </MenuItem>
                                     <SubMenu
-                                        className='p-1' 
+                                        className='p-1'
+                                        onMouseEnter={() => handleItemHover('records')}
+                                        onMouseLeave={() => handleItemHover(null)}
+                                        style={getMenuItemStyle('records')} 
                                         label="Records" 
                                         icon={<LeaderboardRounded 
                                             sx={{ 
@@ -156,11 +190,21 @@ export default function SideBar() {
                                             />}
                                             
                                         >
-                                        <MenuItem className='p-1' sx={{ fontSize: '5rem' }}
+                                        <MenuItem 
+                                            className='p-1'
+                                            onMouseEnter={() => handleItemHover('sales')}
+                                            onMouseLeave={() => handleItemHover(null)}
+                                            style={getMenuItemStyle('sales')}
+                                            sx={{fontSize: '5rem' }}
                                             icon={<ShowChartRounded sx={{ marginBottom: '3px', color: colors.primary }} />}>
                                             Sales
                                         </MenuItem>
-                                        <MenuItem className='p-1' sx={{ fontSize: '5rem' }}
+                                        <MenuItem 
+                                            className='p-1'
+                                            onMouseEnter={() => handleItemHover('analytics')}
+                                            onMouseLeave={() => handleItemHover(null)}
+                                            style={getMenuItemStyle('analytics')}
+                                            sx={{ fontSize: '5rem' }}
                                             icon={<DonutLargeRounded sx={{ marginBottom: '3px', color: colors.primary }} />}>
                                             Analytics
                                         </MenuItem>
@@ -176,10 +220,14 @@ export default function SideBar() {
                                 onClick={() => setCollapsed(!collapsed)}
                                 onMouseEnter={() => setHovered(true)}
                                 onMouseLeave={() => setHovered(false)}
-                                style={{
-                                    backgroundColor: 'transparent',
+                                sx={{
+                                    backgroundColor: 'none',
                                     borderRadius: '50%',
                                     color: colors.primary,
+                                    transition: '0.2s ease-in-out',
+                                    '&:hover': {
+                                        backgroundColor: '#e9e1c4',
+                                    }
                                 }}
                                 >
                                 {collapsed ? <UnfoldMoreDoubleRounded sx={{ transform: 'rotate(90deg)' }}/> : <UnfoldLessDoubleRounded sx={{ transform: 'rotate(90deg)' }}/>}

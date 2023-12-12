@@ -126,8 +126,9 @@ export default function Login() {
                             ),
                         }}
                         sx={{
-                            mb: 3, width: '100%',
+                            mb: 3, width: '100%', 
                             '& .MuiOutlinedInput-root': {
+                              height: '50px',
                             '& fieldset': {
                                 border: '2px solid lightgray',
                             },
@@ -162,6 +163,7 @@ export default function Login() {
                             sx={{
                             width: '100%',
                             '& .MuiOutlinedInput-root': {
+                              height: '50px',
                               '& fieldset': {
                                   border: '2px solid lightgray',
                               },
@@ -179,7 +181,8 @@ export default function Login() {
                 sx={{
                   textTransform: 'none',
                   boxShadow: 'none',
-                  width: '100%', 
+                  width: '100%',
+                  height: '55px', 
                   marginTop: 5, 
                   marginBottom: 1, 
                   padding: 2, 
