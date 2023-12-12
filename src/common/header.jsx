@@ -21,10 +21,19 @@ import {
     Grow,
 } from "@mui/material";
 
+const colors = {
+    primary: '#1D1D2C',
+    secondary: '#F7F4E9',
+    accentRed: '#E40C2B',
+    accentBlue: '#3CBCC3',
+    accentYellow: '#EBA63F',
+    accentGreen: '#438945',
+    fontColor: '#181818',
+  };
+
 export default function Header() {
 
     const navigate = useNavigate();
-
 
     const handleLogout = () => {
         navigate('/');
@@ -41,28 +50,27 @@ export default function Header() {
                     InputProps={{
                         startAdornment: (
                         <InputAdornment position="start">
-                            <SearchRounded sx={{color: '#1F2937'}}/>
+                            <SearchRounded sx={{color: colors.secondary}}/>
                         </InputAdornment>
                         ),
                     }}
                     sx={{
                         '& .MuiOutlinedInput-root': {
                             '& fieldset': {
-                                borderColor: '#1F2937',
-                                borderWidth: '2px'
+                                border: `2px solid ${colors.secondary}`,
                             },
                             '&.Mui-focused fieldset': {
-                                borderColor: '#1F2937',
+                                border: `4px solid ${colors.secondary}`,
                             },
                         },
                         '& input': {
-                            color: '#1F2937',
+                            color: colors.secondary,
                         },
                     }}
                     />
-                    <AccountCircleRounded style={{ cursor: 'pointer', color: '#1F2937', fontSize: '2rem' }} />
+                    <AccountCircleRounded style={{ cursor: 'pointer', color: colors.secondary, fontSize: '2rem' }} />
                     <Button>
-                        <LogoutRounded onClick={handleLogout} style={{ color: '#1F2937', fontSize: '2rem' }} />
+                        <LogoutRounded onClick={handleLogout} style={{ color: colors.secondary, fontSize: '2rem' }} />
                     </Button>
                 </Stack>
         </>

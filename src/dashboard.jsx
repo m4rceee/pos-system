@@ -23,6 +23,7 @@ import {
     AutoGraphRounded,
     ProductionQuantityLimitsRounded,
     WarningAmberRounded,
+    ReceiptRounded,
 } from '@mui/icons-material';
 
 const customTheme = createTheme({
@@ -31,7 +32,7 @@ const customTheme = createTheme({
     },
     palette: {
         text: {
-          primary: '#181818',
+          primary: '#F7F4E9',
         },
     },
   });
@@ -48,10 +49,20 @@ const xLabels = [
 ];
 
 const data = [
-    { id: 0, value: 44, label: 'Item 1' },
-    { id: 1, value: 41, label: 'Item 2' },
-    { id: 2, value: 25, label: 'Item 3' },
+    { id: 0, value: 44, label: 'Item 1', color: '#E40C2B' },
+    { id: 1, value: 41, label: 'Item 2', color: '#3CBCC3' },
+    { id: 2, value: 25, label: 'Item 3', color: '#EBA63F' },
   ];
+
+  const colors = {
+    primary: '#1D1D2C',
+    secondary: '#F7F4E9',
+    accentRed: '#E40C2B',
+    accentBlue: '#3CBCC3',
+    accentYellow: '#EBA63F',
+    accentGreen: '#438945',
+    fontColor: '#181818',
+  };
 
 export default function DashboardHome() {
 
@@ -83,125 +94,133 @@ export default function DashboardHome() {
 
                 <Container maxWidth="xl" style={{ paddingLeft: '35px', paddingTop: '20px' }}>
                     <Grid container >
-                        <Grid xs={12} sx={{ marginTop: '15px', marginBottom: '27px' }}>
+                        <Grid xs={12} sx={{ marginBottom: '27px' }}>
                             <Header />
                         </Grid>
                         <Grid xs={12}>
-                            <Typography variant='h2' sx={{ fontFamily: 'Poppins, sans-serif', fontWeight: '600', color: '#181818' }}>
-                                Welcome to Dashboard
+                            <Typography variant='h2' sx={{ fontFamily: 'Poppins, sans-serif', fontWeight: '600', color: colors.secondary }}>
+                                Welcome to your Dashboard
                             </Typography>
-                            <Typography variant='body2' sx={{ fontFamily: 'Poppins, sans-serif', color: '#181818' }}>
+                            <Typography variant='body2' sx={{ fontFamily: 'Poppins, sans-serif', color: colors.secondary }}>
                                 <Stack direction="row">
                                     <p className='pr-3'>{formatDate(currentDateTime)}</p>
+                                    <p className='pr-3'>||</p>
                                     <p>{formatTime(currentDateTime)}</p>
                                 </Stack>
                             </Typography>
                         </Grid>
 
                         <Grid className='pt-8' container spacing={2}>
-                            <Grid item xs={4}>
-                                <Card style={{ background: '#1F2937', boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)' }}>
-                                    <CardContent 
-                                        style={{ 
-                                            display: 'flex',   
-                                            flexDirection: 'column',
-                                            justifyContent: 'center', 
-                                            alignItems: 'center',
-                                        }}>
-                                        <div style={{ textAlign: 'center' }}>
-                                            <ShoppingBagRounded sx={{ fontSize: '4rem', color: '#75839B' }} />
-                                        </div>
-                                        <div style={{ textAlign: 'center', marginTop: '5px', color: '#F5F5F5' }}>
-                                            <p style={{ textAlign: 'center', marginTop: '5px', fontSize: '3rem', fontWeight: '600', color: '#6CA573' }}>
-                                                    215
-                                            </p>
-                                            <p>Products</p>
-                                        </div>
-                                    </CardContent>
-                                </Card>
-                            </Grid>
-                            <Grid item xs={4}>
-                                <Card style={{ background: '#1F2937', boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)' }}>
-                                    <CardContent style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-                                            <div style={{ textAlign: 'center' }}>
-                                                <AttachMoneyRounded sx={{ fontSize: '4rem', color: '#75839B' }} />
-                                            </div>
-                                            <div style={{ textAlign: 'center', marginTop: '5px', color: '#F5F5F5' }}>
-                                                <p style={{ textAlign: 'center', marginTop: '5px', fontSize: '3rem', fontWeight: '600', color: '#6CA573' }}>
-                                                    5,615.00
-                                                </p>
-                                                <p>Today's Sales</p>
-                                            </div>
-                                    </CardContent>
-                                </Card>
-                            </Grid>
-                            <Grid item xs={4}>
-                                <Card style={{ background: '#1F2937', boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)' }}>
-                                    <CardContent style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-                                            <div style={{ textAlign: 'center' }}>
-                                                <AutoGraphRounded sx={{ fontSize: '4rem', color: '#75839B' }} />
-                                            </div>
-                                            <div style={{ textAlign: 'center', marginTop: '5px', color: '#F5F5F5' }}>
-                                                <p style={{ textAlign: 'center', marginTop: '5px', fontSize: '3rem', fontWeight: '600', color: '#6CA573' }}>
-                                                    26,820.00
-                                                </p>
-                                                <p>Total Sales</p>
-                                            </div>
-                                    </CardContent>
-                                </Card>
-                            </Grid>
-                        </Grid>
-
-                        <Grid className='pt-3 ' container spacing={2}>
-                            <Grid item xs={6}>
-                                <Card style={{ background: '#1F2937', boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)' }}>
+                            <Grid item xs={7}>
+                                <Card style={{ background: colors.secondary, boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)' }}>
                                     <CardContent style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                                        <div style={{ textAlign: 'center', paddingRight: '15px' }}>
-                                            <ProductionQuantityLimitsRounded sx={{ textAlign: 'center', paddingLeft: '25px', fontSize: '6rem', color: '#75839B' }} />
-                                        </div>
-                                        <Stack sx={{paddingRight: '100px'}}>
-                                                <div style={{ textAlign: 'center', marginTop: '5px', fontSize: '3rem', fontWeight: '600', color: '#FFA833' }}>
-                                                    <p>15</p>
-                                                </div>
-                                                <div style={{ textAlign: 'center', marginTop: '5px', color: '#F5F5F5' }}>
-                                                    <p>Low Stock Items</p>
-                                                </div>
+                                        <ShoppingBagRounded sx={{ fontSize: '6rem', color: '#75839B' }} />
+                                        <Stack sx={{ paddingLeft: '15px', paddingRight: '100px', flex: 1 }}>
+                                            <Typography variant="h5" style={{ fontWeight: 'normal', color: colors.primary, fontFamily: 'Poppins, sans-serif' }}>
+                                            Products Registered
+                                            </Typography>
+                                            <Typography variant="h3" color={colors.primary} style={{fontWeight: '600', fontFamily: 'Poppins, sans-serif'}}>
+                                            247
+                                            </Typography>
                                         </Stack>
                                     </CardContent>
                                 </Card>
                             </Grid>
-                            <Grid item xs={6}>
-                                <Card style={{ background: '#1F2937', boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)' }}>
+                            <Grid item xs={5}>
+                                <Card style={{ background: colors.secondary, boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)' }}>
                                     <CardContent style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                                            <div style={{ textAlign: 'center', paddingLeft: '15px' }}>
-                                                    <WarningAmberRounded sx={{ textAlign: 'center', paddingLeft: '25px', fontSize: '6rem', color: '#75839B' }} />
-                                            </div>
-                                            <Stack sx={{paddingRight: '100px'}}>
-                                                <div style={{ textAlign: 'center', marginTop: '5px', fontSize: '3rem', fontWeight: '600', color: '#FF8888' }}>
-                                                    <p>10</p>
-                                                </div>
-                                                <div style={{ textAlign: 'center', marginTop: '5px', color: '#F5F5F5' }}>
-                                                    <p>Expiring/Expired Items</p>
-                                                </div>
-                                            </Stack>
-                                            
+                                        <ReceiptRounded sx={{ fontSize: '6rem', color: '#75839B' }} />
+                                        <Stack sx={{ paddingLeft: '15px', paddingRight: '100px', flex: 1 }}>
+                                            <Typography style={{ fontSize: '1rem', fontWeight: 'normal', color: colors.primary, fontFamily: 'Poppins, sans-serif' }}>
+                                            Today's Transactions
+                                            </Typography>
+                                            <Typography variant="h3" color={colors.primary} style={{fontWeight: '600', fontFamily: 'Poppins, sans-serif'}}>
+                                            83
+                                            </Typography>
+                                        </Stack>
                                     </CardContent>
                                 </Card>
                             </Grid>
                         </Grid>
 
-                        <Grid className='pt-10' container spacing={2}>
+                        <Grid className='pt-3' container spacing={2}>
+                            <Grid item xs={7}>
+                                <Card style={{ background: colors.secondary, boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)' }}>
+                                    <CardContent style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                                        <ProductionQuantityLimitsRounded sx={{ fontSize: '6rem', color: '#75839B' }} />
+                                        <Stack sx={{ paddingLeft: '15px', paddingRight: '100px', flex: 1 }}>
+                                            <Typography variant="h5" style={{ fontWeight: 'normal', color: colors.primary, fontFamily: 'Poppins, sans-serif' }}>
+                                            Low Stock Items
+                                            </Typography>
+                                            <Typography variant="h3" color={colors.accentYellow} style={{fontWeight: '600', fontFamily: 'Poppins, sans-serif'}}>
+                                            15
+                                            </Typography>
+                                        </Stack>
+                                    </CardContent>
+                                </Card>
+                            </Grid>
+                            <Grid item xs={5}>
+                                <Card style={{ background: colors.secondary, boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)' }}>
+                                    <CardContent style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                                        <AttachMoneyRounded sx={{ fontSize: '6rem', color: '#75839B' }} />
+                                        <Stack sx={{ paddingLeft: '15px', paddingRight: '100px', flex: 1 }}>
+                                            <Typography style={{ fontSize: '1rem', fontWeight: 'normal', color: colors.primary, fontFamily: 'Poppins, sans-serif' }}>
+                                            Today's Sales
+                                            </Typography>
+                                            <Typography variant="h3" color={colors.primary} style={{fontWeight: '600', fontFamily: 'Poppins, sans-serif'}}>
+                                            5,845.64
+                                            </Typography>
+                                        </Stack>
+                                    </CardContent>
+                                </Card>
+                            </Grid>
+                        </Grid>
+
+                        <Grid className='pt-3' container spacing={2}>
+                            <Grid item xs={7}>
+                                <Card style={{ background: colors.secondary, boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)' }}>
+                                    <CardContent style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                                        <WarningAmberRounded sx={{ fontSize: '6rem', color: '#75839B' }} />
+                                        <Stack sx={{ paddingLeft: '15px', paddingRight: '100px', flex: 1 }}>
+                                            <Typography variant="h5" style={{ fontWeight: 'normal', color: colors.primary, fontFamily: 'Poppins, sans-serif' }}>
+                                            Expiring/Expired Items
+                                            </Typography>
+                                            <Typography variant="h3" color={colors.accentRed} style={{fontWeight: '600', fontFamily: 'Poppins, sans-serif'}}>
+                                            21
+                                            </Typography>
+                                        </Stack>
+                                    </CardContent>
+                                </Card>
+                            </Grid>
+                            <Grid item xs={5}>
+                                <Card style={{ background: colors.secondary, boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)' }}>
+                                    <CardContent style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                                        <AutoGraphRounded sx={{ fontSize: '6rem', color: '#75839B' }} />
+                                        <Stack sx={{ paddingLeft: '15px', paddingRight: '100px', flex: 1 }}>
+                                            <Typography style={{ fontSize: '1rem', fontWeight: 'normal', color: colors.primary, fontFamily: 'Poppins, sans-serif' }}>
+                                            Total Revenue
+                                            </Typography>
+                                            <Typography variant="h3" color={colors.primary} style={{fontWeight: '600', fontFamily: 'Poppins, sans-serif'}}>
+                                            25,910.55
+                                            </Typography>
+                                        </Stack>
+                                    </CardContent>
+                                </Card>
+                            </Grid>
+                        </Grid>
+
+                        <Grid className='pt-10' container spacing={1}>
                             <Grid item xs={7}>
                                 <ThemeProvider theme={customTheme}> 
                                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
-                                        <Typography sx={{ color: '#181818', fontSize: '1.5rem', fontWeight: '700' }}>Sales Chart</Typography>
+                                        <Typography sx={{ color: colors.secondary, fontSize: '1.5rem', fontWeight: '700' }}>Sales Chart</Typography>
                                             <BarChart
                                                 width={600}
                                                 height={400}
                                                 series={[
-                                                    { data: pData, label: 'Item 1', id: 'pvId', stack: 'total'},
-                                                    { data: uData, label: 'Item 2', id: 'uvId', stack: 'total'},
-                                                    { data: vData, label: 'Item 3', id: 'vvId', stack: 'total'},
+                                                    { data: pData, label: 'Item 1', id: 'pvId', stack: 'total', color: '#E40C2B'},
+                                                    { data: uData, label: 'Item 2', id: 'uvId', stack: 'total', color: '#3CBCC3'},
+                                                    { data: vData, label: 'Item 3', id: 'vvId', stack: 'total', color: '#EBA63F'},
                                                 ]}
                                                 xAxis={[{ data: xLabels, scaleType: 'band' }]}
                                                 
@@ -213,7 +232,7 @@ export default function DashboardHome() {
                             <Grid item xs={5}>
                                 <ThemeProvider theme={customTheme}>
                                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
-                                        <Typography sx={{ color: '#181818', fontSize: '1.5rem', fontWeight: '700' }}>Top Products</Typography>
+                                        <Typography sx={{ color: colors.secondary, fontSize: '1.5rem', fontWeight: '700' }}>Top Products</Typography>
                                         <PieChart
                                             series={[
                                                 {

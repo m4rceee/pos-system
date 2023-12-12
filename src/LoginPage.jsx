@@ -31,18 +31,26 @@ const containerStyle = {
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  backgroundColor: '#1F2937',
+  backgroundColor: '#F7F4E9',
   borderRadius: '20px',
   padding: '35px',
   width: '35%',
   dropShadow: '0 10px 8px rgba(0, 0, 0, 0.04), 0 4px 3px rgba(0, 0, 0, 0.1)',
 };
 
+const colors = {
+  primary: '#1D1D2C',
+  secondary: '#F7F4E9',
+  accentRed: '#E40C2B',
+  accentBlue: '#3CBCC3',
+  accentYellow: '#EBA63F',
+  accentGreen: '#438945',
+  fontColor: '#181818',
+};
+
 export default function Login() {
 
   const navigate = useNavigate();
-
-  //const [formData, setFormData] = useState({});
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -105,7 +113,7 @@ export default function Login() {
                 <FormControl fullWidth>
         
                         {/*USERNAME*/}
-                        <p className="mb-3 text-xl" style={{color:'#F5F5F5'}}>Username *</p>
+                        <p className="mb-3 text-xl" style={{color: colors.fontColor}}>Username *</p>
                         <TextField
                         name="username" 
                         id="username"
@@ -113,7 +121,7 @@ export default function Login() {
                         InputProps={{
                             endAdornment: (
                             <InputAdornment position="end">
-                                <AccountCircle sx={{color: '#F5F5F5'}}/>
+                                <AccountCircle sx={{color: 'gray'}}/>
                             </InputAdornment>
                             ),
                         }}
@@ -121,23 +129,17 @@ export default function Login() {
                             mb: 3, width: '100%',
                             '& .MuiOutlinedInput-root': {
                             '& fieldset': {
-                                borderColor: '#FFFFFF',
+                                border: '2px solid lightgray',
                             },
                             '&.Mui-focused fieldset': {
-                                borderColor: '#F5F5F5',
-                            },
-                            },
-                            '& .MuiInputLabel-root': {
-                            color: '',
-                            '&.Mui-focused': {
-                                color: '#F5F5F5',
+                                border: '3px solid gray',
                             },
                             },
                         }}
                         />
 
                         {/*PASSWORD*/}
-                        <p className="mb-3 text-xl" style={{color:'#F5F5F5'}}>Password *</p>
+                        <p className="mb-3 text-xl" style={{color: colors.fontColor}}>Password *</p>
                         <TextField
                         name="password" 
                         id="password" 
@@ -152,7 +154,7 @@ export default function Login() {
                                 onMouseDown={handleMouseDownPassword}
                                 edge="end"
                                 >
-                                {showPassword ? <VisibilityOff sx={{color: '#F5F5F5'}}/> : <Visibility sx={{color: '#F5F5F5'}}/>}
+                                {showPassword ? <VisibilityOff sx={{color: 'gray'}}/> : <Visibility sx={{color: 'gray'}}/>}
                                 </IconButton>
                             </InputAdornment>
                             ),
@@ -161,18 +163,12 @@ export default function Login() {
                             width: '100%',
                             '& .MuiOutlinedInput-root': {
                               '& fieldset': {
-                                borderColor: '#FFFFFF',
+                                  border: '2px solid lightgray',
                               },
-                                '&.Mui-focused fieldset': {
-                                borderColor: '#F5F5F5',
-                                },
-                            },
-                            '& .MuiInputLabel-root': {
-                                color: '',
-                                '&.Mui-focused': {
-                                color: '#F5F5F5',
-                                },
-                            },
+                              '&.Mui-focused fieldset': {
+                                  border: '3px solid gray',
+                              },
+                              },
                         }}/>
                 </FormControl>
 
@@ -181,19 +177,21 @@ export default function Login() {
                 variant="contained"
                 type="submit" 
                 sx={{
+                  textTransform: 'none',
+                  boxShadow: 'none',
                   width: '100%', 
                   marginTop: 5, 
                   marginBottom: 1, 
                   padding: 2, 
                   fontFamily: 'Poppins, sans-serif',
-                  backgroundColor: '#849E87',
-                  '&:hover': { backgroundColor: '#5C725A' }
+                  backgroundColor: colors.accentYellow,
+                  '&:hover': { backgroundColor: '#d19035' }
                   }}>
-                    <Typography sx={{fontFamily: 'Poppins, sans-serif', fontWeight: '500'}}>Log In</Typography>
+                    <Typography sx={{fontFamily: 'Poppins, sans-serif', fontWeight: '500', fontSize: '20px',}}>Log In</Typography>
                 </Button>
                 
                 {/*REALTIME DISPLAY OF DATE & TIME*/}
-                <div className='mt-3 text-center' style={{color:'#F5F5F5'}}>
+                <div className='mt-3 text-center' style={{color: colors.fontColor}}>
                   <div>
                     <strong>Date:</strong> {formatDate(currentDateTime)}
                   </div>

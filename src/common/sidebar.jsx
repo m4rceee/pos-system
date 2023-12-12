@@ -11,8 +11,8 @@ import {
 } from 'react-pro-sidebar';
 
 import { 
-    ArrowBackIosRounded,
-    ArrowForwardIosRounded,
+    UnfoldLessDoubleRounded,
+    UnfoldMoreDoubleRounded,
     DashboardRounded,
     CategoryRounded,
     InventoryRounded,
@@ -29,8 +29,19 @@ import {
     IconButton,
     Divider,
     Chip,
+    Icon,
     Typography,
 } from '@mui/material';
+
+const colors = {
+    primary: '#1D1D2C',
+    secondary: '#F7F4E9',
+    accentRed: '#E40C2B',
+    accentBlue: '#3CBCC3',
+    accentYellow: '#EBA63F',
+    accentGreen: '#438945',
+    fontColor: '#181818',
+  };
 
 export default function SideBar() {
 
@@ -62,23 +73,21 @@ export default function SideBar() {
                     collapsed={collapsed}
                     width='200px' 
                     transitionDuration={750} 
-                    backgroundColor="#1F2937" 
-                    style={{ 
-                        boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)',
-                        }}>
+                    backgroundColor={colors.secondary}
+                    >
                     
-                    <div className='text-center' style={{ padding: '20px', color: '#A0A0A0', opacity: 0.5 }}  transitionDuration={750}>
+                    <div className='text-center' style={{ padding: '20px', color: 'lightgray' }} >
                         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                             <BlockRounded style={{ fontSize: iconSize, marginBottom: '5px' }} />
                             <p>No Logo Yet</p>
 
                             {collapsed && (
-                                <Divider variant='fullWidth' sx={{ marginTop: '2rem', width: '100%', backgroundColor: '#849E87', height: '3px' }} />
+                                <Divider variant='fullWidth' sx={{ marginTop: '2rem', width: '100%', backgroundColor: colors.primary, height: '3px' }} />
                             )}
 
                             {!collapsed && (
                             <Divider variant='fullWidth' sx={{ marginTop: '2rem', width: '100%' }}>
-                                <Chip label="M" style={{ color: 'white', backgroundColor: '#849E87' }} />
+                                <Chip label="M" style={{ color: colors.secondary, backgroundColor:  colors.primary }} />
                             </Divider>
                             )}
 
@@ -92,22 +101,22 @@ export default function SideBar() {
                                     <MenuItem
                                         onClick={handleDashboardHome} 
                                         className='text-center'>
-                                        <DashboardRounded sx={{ fontSize: '2rem', color: '#849E87' }}/>
+                                        <DashboardRounded sx={{ fontSize: '2rem', color: colors.primary }}/>
                                     </MenuItem>
                                     <MenuItem className='text-center'>
-                                        <PointOfSaleRounded sx={{ fontSize: '2rem', color: '#849E87' }}/>
+                                        <PointOfSaleRounded sx={{ fontSize: '2rem', color: colors.primary }}/>
                                     </MenuItem>
                                     <MenuItem onClick={handleCategoryHome} className='text-center'>
-                                        <FolderRounded sx={{ fontSize: '2rem', color: '#849E87' }}/>
+                                        <FolderRounded sx={{ fontSize: '2rem', color: colors.primary }}/>
                                     </MenuItem>
                                     <MenuItem className='text-center'>
-                                        <ShoppingCartRounded sx={{ fontSize: '2rem', color: '#849E87' }}/>
+                                        <ShoppingCartRounded sx={{ fontSize: '2rem', color: colors.primary }}/>
                                     </MenuItem>
                                     <MenuItem className='text-center'>
-                                        <InventoryRounded sx={{ fontSize: '2rem', color: '#849E87' }}/>
+                                        <InventoryRounded sx={{ fontSize: '2rem', color: colors.primary }}/>
                                     </MenuItem>
                                     <MenuItem className='text-center'>
-                                        <LeaderboardRounded sx={{ fontSize: '2rem', color: '#849E87' }}/>
+                                        <LeaderboardRounded sx={{ fontSize: '2rem', color: colors.primary }}/>
                                     </MenuItem>
                                 </>
                             ) : (
@@ -115,45 +124,45 @@ export default function SideBar() {
                                     <MenuItem
                                         onClick={handleDashboardHome} 
                                         className='p-1'
-                                        sx={{display: 'flex', alignItems: 'center', fontSize: '5rem', color: '#849E87',}}>
-                                        <DashboardRounded sx={{ marginRight: '10px', marginBottom: '3px', color: '#849E87' }} />
-                                        <span style={{ color: '#F5F5F5' }}>Dashboard</span>
+                                        sx={{display: 'flex', alignItems: 'center', fontSize: '5rem', color: colors.primary }}
+                                        icon={<DashboardRounded sx={{ marginBottom: '3px', color: colors.primary }} />}>
+                                        Dashboard
                                     </MenuItem>
-                                    <MenuItem className='p-1' sx={{ display: 'flex', alignItems: 'center', fontSize: '5rem' }}>
-                                        <PointOfSaleRounded sx={{ marginRight: '10px', marginBottom: '3px', color: '#849E87' }} />
-                                        <span style={{ color: '#F5F5F5' }}>POS</span>
+                                    <MenuItem className='p-1' sx={{ display: 'flex', alignItems: 'center', fontSize: '5rem' }}
+                                        icon={<PointOfSaleRounded sx={{ marginBottom: '3px', color: colors.primary }} />}>
+                                        POS
                                     </MenuItem>
-                                    <MenuItem onClick={handleCategoryHome} className='p-1' sx={{ display: 'flex', alignItems: 'center', fontSize: '5rem' }}>
-                                        <FolderRounded sx={{ marginRight: '10px', marginBottom: '3px', color: '#849E87' }} />
-                                        <span style={{ color: '#F5F5F5' }}>Categories</span>
+                                    <MenuItem onClick={handleCategoryHome} className='p-1' sx={{ display: 'flex', alignItems: 'center', fontSize: '5rem' }}
+                                        icon={<FolderRounded sx={{ marginBottom: '3px', color: colors.primary }} />}>
+                                        Categories
                                     </MenuItem>
-                                    <MenuItem className='p-1' sx={{ display: 'flex', alignItems: 'center', fontSize: '5rem' }}>
-                                        <ShoppingCartRounded sx={{ marginRight: '10px', marginBottom: '3px', color: '#849E87' }} />
-                                        <span style={{ color: '#F5F5F5' }}>Products</span>
+                                    <MenuItem className='p-1' sx={{ display: 'flex', alignItems: 'center', fontSize: '5rem' }}
+                                        icon={<ShoppingCartRounded sx={{ marginBottom: '3px', color: colors.primary }} />}>
+                                        Products
                                     </MenuItem>
-                                    <MenuItem className='p-1' sx={{ display: 'flex', alignItems: 'center', fontSize: '5rem' }}>
-                                        <InventoryRounded sx={{ marginRight: '10px', marginBottom: '3px', color: '#849E87' }} />
-                                        <span style={{ color: '#F5F5F5' }}>Inventory</span>
+                                    <MenuItem className='p-1' sx={{ display: 'flex', alignItems: 'center', fontSize: '5rem' }}
+                                        icon={<InventoryRounded sx={{ marginBottom: '3px', color: colors.primary }} />}>
+                                        Inventory
                                     </MenuItem>
                                     <SubMenu
                                         className='p-1' 
-                                        label={<span style={{ color: '#F5F5F5' }}>Records</span>} 
+                                        label="Records" 
                                         icon={<LeaderboardRounded 
                                             sx={{ 
                                                 marginRight: '7px', 
                                                 marginBottom: '3px', 
-                                                color: '#849E87' 
+                                                color: colors.primary 
                                                 }} 
                                             />}
                                             
                                         >
-                                        <MenuItem className='p-1' sx={{ display: 'flex', alignItems: 'center', fontSize: '5rem' }}>
-                                            <ShowChartRounded sx={{ marginRight: '10px', marginBottom: '3px', color: '#849E87' }} />
-                                            <span style={{ color: '#849E87' }}>Sales</span>
+                                        <MenuItem className='p-1' sx={{ fontSize: '5rem' }}
+                                            icon={<ShowChartRounded sx={{ marginBottom: '3px', color: colors.primary }} />}>
+                                            Sales
                                         </MenuItem>
-                                        <MenuItem className='p-1' sx={{ display: 'flex', alignItems: 'center', fontSize: '5rem' }}>
-                                            <DonutLargeRounded sx={{ marginRight: '10px', marginBottom: '3px', color: '#849E87' }} />
-                                            <span style={{ color: '#849E87' }}>Analytics</span>
+                                        <MenuItem className='p-1' sx={{ fontSize: '5rem' }}
+                                            icon={<DonutLargeRounded sx={{ marginBottom: '3px', color: colors.primary }} />}>
+                                            Analytics
                                         </MenuItem>
                                     </SubMenu>
                                 </>
@@ -168,13 +177,12 @@ export default function SideBar() {
                                 onMouseEnter={() => setHovered(true)}
                                 onMouseLeave={() => setHovered(false)}
                                 style={{
-                                    backgroundColor: hovered ? '#5C725A' : '#849E87',
+                                    backgroundColor: 'transparent',
                                     borderRadius: '50%',
-                                    color: '#F5F5F5',
-                                    boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)',
+                                    color: colors.primary,
                                 }}
                                 >
-                                {collapsed ? <ArrowForwardIosRounded /> : <ArrowBackIosRounded />}
+                                {collapsed ? <UnfoldMoreDoubleRounded sx={{ transform: 'rotate(90deg)' }}/> : <UnfoldLessDoubleRounded sx={{ transform: 'rotate(90deg)' }}/>}
                             </IconButton>
                         </div>
                     </main>
