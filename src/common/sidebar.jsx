@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
 import "../styles.css"
 import 'typeface-poppins';
 import { 
@@ -32,9 +34,19 @@ import {
 
 export default function SideBar() {
 
+    const navigate = useNavigate();
+
     const [collapsed, setCollapsed] = useState(false);
     const [hovered, setHovered] = useState(false);
     const iconSize = collapsed ? 50 : 100;
+
+    const handleCategoryHome = () => {
+        navigate('/category-home');
+      }
+    
+    const handleDashboardHome = () => {
+        navigate('/dashboard');
+      }
 
     return(
         
@@ -77,14 +89,15 @@ export default function SideBar() {
                         <Menu>
                             {collapsed ? (
                                 <>
-                                    <MenuItem 
+                                    <MenuItem
+                                        onClick={handleDashboardHome} 
                                         className='text-center'>
                                         <DashboardRounded sx={{ fontSize: '2rem', color: '#849E87' }}/>
                                     </MenuItem>
                                     <MenuItem className='text-center'>
                                         <PointOfSaleRounded sx={{ fontSize: '2rem', color: '#849E87' }}/>
                                     </MenuItem>
-                                    <MenuItem className='text-center'>
+                                    <MenuItem onClick={handleCategoryHome} className='text-center'>
                                         <FolderRounded sx={{ fontSize: '2rem', color: '#849E87' }}/>
                                     </MenuItem>
                                     <MenuItem className='text-center'>
@@ -100,6 +113,7 @@ export default function SideBar() {
                             ) : (
                                 <>
                                     <MenuItem
+                                        onClick={handleDashboardHome} 
                                         className='p-1'
                                         sx={{display: 'flex', alignItems: 'center', fontSize: '5rem', color: '#849E87',}}>
                                         <DashboardRounded sx={{ marginRight: '10px', marginBottom: '3px', color: '#849E87' }} />
@@ -109,9 +123,9 @@ export default function SideBar() {
                                         <PointOfSaleRounded sx={{ marginRight: '10px', marginBottom: '3px', color: '#849E87' }} />
                                         <span style={{ color: '#F5F5F5' }}>POS</span>
                                     </MenuItem>
-                                    <MenuItem className='p-1' sx={{ display: 'flex', alignItems: 'center', fontSize: '5rem' }}>
+                                    <MenuItem onClick={handleCategoryHome} className='p-1' sx={{ display: 'flex', alignItems: 'center', fontSize: '5rem' }}>
                                         <FolderRounded sx={{ marginRight: '10px', marginBottom: '3px', color: '#849E87' }} />
-                                        <span style={{ color: '#F5F5F5' }}>Category</span>
+                                        <span style={{ color: '#F5F5F5' }}>Categories</span>
                                     </MenuItem>
                                     <MenuItem className='p-1' sx={{ display: 'flex', alignItems: 'center', fontSize: '5rem' }}>
                                         <ShoppingCartRounded sx={{ marginRight: '10px', marginBottom: '3px', color: '#849E87' }} />

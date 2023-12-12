@@ -15,8 +15,6 @@ import {
     Stack,
     Card,
     CardContent,
-    Box,
-    IconButton,
 } from '@mui/material';
 
 import { 
@@ -124,7 +122,7 @@ export default function DashboardHome() {
                             </Grid>
                             <Grid item xs={4}>
                                 <Card style={{ background: '#1F2937', boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)' }}>
-                                    <CardContent style={{ display: 'flex', flexDirection: 'column',justifyContent: 'center', alignItems: 'center' }}>
+                                    <CardContent style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
                                             <div style={{ textAlign: 'center' }}>
                                                 <AttachMoneyRounded sx={{ fontSize: '4rem', color: '#75839B' }} />
                                             </div>
@@ -139,7 +137,7 @@ export default function DashboardHome() {
                             </Grid>
                             <Grid item xs={4}>
                                 <Card style={{ background: '#1F2937', boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)' }}>
-                                    <CardContent style={{ display: 'flex', flexDirection: 'column',justifyContent: 'center', alignItems: 'center' }}>
+                                    <CardContent style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
                                             <div style={{ textAlign: 'center' }}>
                                                 <AutoGraphRounded sx={{ fontSize: '4rem', color: '#75839B' }} />
                                             </div>
