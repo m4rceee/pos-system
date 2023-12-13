@@ -111,23 +111,47 @@ export default function SideBar() {
                             {collapsed ? (
                                 <>
                                     <MenuItem
+                                        onMouseEnter={() => handleItemHover('item1')}
+                                        onMouseLeave={() => handleItemHover(null)}
+                                        style={getMenuItemStyle('item1')}
                                         onClick={handleDashboardHome} 
                                         className='text-center'>
                                         <DashboardRounded sx={{ fontSize: '2rem', color: colors.primary }}/>
                                     </MenuItem>
-                                    <MenuItem className='text-center'>
+                                    <MenuItem
+                                        onMouseEnter={() => handleItemHover('item2')}
+                                        onMouseLeave={() => handleItemHover(null)}
+                                        style={getMenuItemStyle('item2')} 
+                                        className='text-center'>
                                         <PointOfSaleRounded sx={{ fontSize: '2rem', color: colors.primary }}/>
                                     </MenuItem>
-                                    <MenuItem onClick={handleCategoryHome} className='text-center'>
+                                    <MenuItem
+                                        onMouseEnter={() => handleItemHover('item3')}
+                                        onMouseLeave={() => handleItemHover(null)}
+                                        style={getMenuItemStyle('item3')} 
+                                        onClick={handleCategoryHome} 
+                                        className='text-center'>
                                         <FolderRounded sx={{ fontSize: '2rem', color: colors.primary }}/>
                                     </MenuItem>
-                                    <MenuItem className='text-center'>
+                                    <MenuItem
+                                        onMouseEnter={() => handleItemHover('item4')}
+                                        onMouseLeave={() => handleItemHover(null)}
+                                        style={getMenuItemStyle('item4')} 
+                                        className='text-center'>
                                         <ShoppingCartRounded sx={{ fontSize: '2rem', color: colors.primary }}/>
                                     </MenuItem>
-                                    <MenuItem className='text-center'>
+                                    <MenuItem 
+                                        onMouseEnter={() => handleItemHover('item5')}
+                                        onMouseLeave={() => handleItemHover(null)}
+                                        style={getMenuItemStyle('item5')}
+                                        className='text-center'>
                                         <InventoryRounded sx={{ fontSize: '2rem', color: colors.primary }}/>
                                     </MenuItem>
-                                    <MenuItem className='text-center'>
+                                    <MenuItem 
+                                        onMouseEnter={() => handleItemHover('item6')}
+                                        onMouseLeave={() => handleItemHover(null)}
+                                        style={getMenuItemStyle('item6')}
+                                        className='text-center'>
                                         <LeaderboardRounded sx={{ fontSize: '2rem', color: colors.primary }}/>
                                     </MenuItem>
                                 </>
