@@ -6,11 +6,3 @@ body {
     background-color: #1D1D2C;
     font-family: poppins;
 }
-
-.iconButtonCollapse {
-    transition: black 0.2s ease-in-out;
-}
-
-.iconButtonCollapse:hover {
-    background-color: aquamarine;
-}

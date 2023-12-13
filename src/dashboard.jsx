@@ -108,7 +108,14 @@ export default function DashboardHome() {
                 <SideBar/>
                 <div style={{ marginLeft: '10px', marginRight: '5px', width: '100%'}}>
                     <Container maxWidth="xl" style={{ paddingTop: '20px' }}>
-                        <Grid container style={{display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                        <Grid 
+                            container
+                            style={{
+                                display: 'flex',
+                                flexDirection: 'row',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                            }}>
                                 <Grid xs={4} sx={{ alignItems: 'center' }}>
                                     <Typography sx={{ fontFamily: 'Poppins, sans-serif', fontWeight: '600', fontSize: '1.5rem', color: colors.secondary }}>
                                         Dashboard
