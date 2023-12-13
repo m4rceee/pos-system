@@ -61,6 +61,9 @@ export default function Header() {
                             '&.Mui-focused fieldset': {
                                 border: 'none',
                             },
+                            '&:hover': {
+                                cursor: 'text'
+                            },
                         },
                         '& input': {
                             fontFamily: 'Poppins, sans-serif',

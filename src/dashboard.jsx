@@ -7,6 +7,7 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 
 import { BarChart } from '@mui/x-charts/BarChart';
 import { PieChart } from '@mui/x-charts/PieChart';
+import { LineChart } from '@mui/x-charts/LineChart';
 
 import { 
     Grid, 
@@ -33,14 +34,14 @@ const customTheme = createTheme({
     },
     palette: {
         text: {
-          primary: '#1D1D2C',
+          primary: '#F7F4E9',
         },
     },
   });
 
-const uData = [5, 8, 10, 5, 16];
-const pData = [3, 25, 2, 1, 10];
-const vData = [6, 5, 0, 6, 8];
+  const uData = [5000, 8000, 10000, 5000, 16000];
+  const pData = [3000, 25000, 2000, 1000, 10000];
+  const vData = [6000, 5000, 0, 6000, 8000];
 const xLabels = [
   'January',
   'February',
@@ -53,6 +54,8 @@ const data = [
     { id: 0, value: 44, label: 'Item 1', color: '#E40C2B' },
     { id: 1, value: 41, label: 'Item 2', color: '#3CBCC3' },
     { id: 2, value: 25, label: 'Item 3', color: '#EBA63F' },
+    { id: 3, value: 15, label: 'Item 4', color: '#438945' },
+    { id: 4, value: 5, label: 'Item 5', color: '#7E22A7' },
   ];
 
   const colors = {
@@ -101,37 +104,37 @@ export default function DashboardHome() {
     return(
     
         <>
-            <div style={{ display: 'flex', justifyContent:'space-evenly' }}>
+            <div style={{ display: 'flex' }}>
                 <SideBar/>
-                <div>
-                <Container maxWidth="xl" style={{ paddingTop: '20px' }}>
-                    <Grid container style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <Grid xs={4} sx={{ alignItems: 'center' }}>
-                                <Typography sx={{ fontFamily: 'Poppins, sans-serif', fontWeight: '600', fontSize: '1.5rem', color: colors.secondary }}>
-                                    Dashboard
-                                </Typography>
-                                <Typography variant='body2' sx={{ fontFamily: 'Poppins, sans-serif', color: colors.secondary, fontWeight: 'light' }}>
-                                    <Stack direction="row">
-                                        <p className='pr-3'>{formatDate(currentDateTime)}</p>
-                                        <p className='pr-3'>||</p>
-                                        <p>{formatTime(currentDateTime)}</p>
-                                    </Stack>
-                                </Typography>
-                            </Grid>
-                            <Grid xs={8} sx={{ alignItems: 'center' }}>
-                                <Header />
-                            </Grid>
-                    </Grid>
+                <div style={{ marginLeft: '10px', marginRight: '5px', width: '100%'}}>
+                    <Container maxWidth="xl" style={{ paddingTop: '20px' }}>
+                        <Grid container style={{display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                                <Grid xs={4} sx={{ alignItems: 'center' }}>
+                                    <Typography sx={{ fontFamily: 'Poppins, sans-serif', fontWeight: '600', fontSize: '1.5rem', color: colors.secondary }}>
+                                        Dashboard
+                                    </Typography>
+                                    <Typography variant='body2' sx={{ fontFamily: 'Poppins, sans-serif', color: colors.secondary, fontWeight: 'light' }}>
+                                        <Stack direction="row">
+                                            <p className='pr-3'>{formatDate(currentDateTime)}</p>
+                                            <p className='pr-3'>||</p>
+                                            <p>{formatTime(currentDateTime)}</p>
+                                        </Stack>
+                                    </Typography>
+                                </Grid>
+                                <Grid xs={8} sx={{ alignItems: 'center' }}>
+                                    <Header />
+                                </Grid>
+                        </Grid>
 
                         <Card className='mt-8' style={{backgroundColor: '#27273b', boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)'}}>
-                            <CardContent style={{ padding: '20px', alignItems: 'stretch'}}>
+                            <CardContent style={{ padding: '20px'}}>
                                 <Typography variant="h5" gutterBottom style={{ fontFamily: 'Poppins, sans-serif', fontWeight: '600', color: colors.secondary }}>
                                 Overview
                                 </Typography>
                                 <Grid container spacing={2} style={{ paddingTop: '5px', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
                                     <Grid item xs={3} >
                                         <Card style={{ background: '#13131c', boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)' }}>
-                                            <CardContent style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                                            <CardContent style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
                                                 <ShoppingBagRounded sx={{ fontSize: '3.5rem', color: '#515178' }} />
                                                 <Stack sx={{ paddingLeft: '15px', flex: 1 }}>
                                                     <Typography  style={{ fontSize: '1rem', fontWeight: 'normal', color: colors.secondary, fontFamily: 'Poppins, sans-serif' }}>
@@ -146,7 +149,7 @@ export default function DashboardHome() {
                                     </Grid>
                                     <Grid item xs={3}>
                                         <Card style={{ background: '#13131c', boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)' }}>
-                                            <CardContent style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                                            <CardContent style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
                                                 <ReceiptRounded sx={{ fontSize: '3.5rem', color: '#515178' }} />
                                                 <Stack sx={{ paddingLeft: '15px', flex: 1 }}>
                                                     <Typography style={{ fontSize: '1rem', fontWeight: 'normal', color: colors.secondary, fontFamily: 'Poppins, sans-serif' }}>
@@ -161,7 +164,7 @@ export default function DashboardHome() {
                                     </Grid>
                                     <Grid item xs={3}>
                                         <Card style={{ background: '#13131c', boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)' }}>
-                                            <CardContent style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                                            <CardContent style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
                                                 <ProductionQuantityLimitsRounded sx={{ fontSize: '3.5rem', color: '#515178' }} />
                                                 <Stack sx={{ paddingLeft: '15px', flex: 1 }}>
                                                     <Typography style={{ fontSize: '1rem', fontWeight: 'normal', color: colors.secondary, fontFamily: 'Poppins, sans-serif' }}>
@@ -176,7 +179,7 @@ export default function DashboardHome() {
                                     </Grid>
                                     <Grid item xs={3}>
                                         <Card style={{ background: '#13131c', boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)' }}>
-                                            <CardContent style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                                            <CardContent style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
                                                 <WarningAmberRounded sx={{ fontSize: '3.5rem', color: '#515178' }} />
                                                 <Stack sx={{ paddingLeft: '15px', flex: 1 }}>
                                                     <Typography style={{ fontSize: '1rem', fontWeight: 'normal', color: colors.secondary, fontFamily: 'Poppins, sans-serif' }}>
@@ -229,19 +232,19 @@ export default function DashboardHome() {
                         <Grid className='pt-5' container spacing={2}>
                             <Grid item xs={7}>
                                 <ThemeProvider theme={customTheme}> 
-                                    <Card style={{marginBottom: '30px'}}>
-                                        <CardContent style={{ backgroundColor: colors.secondary, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', padding: '1.5rem' }}>
+                                    <Card style={{backgroundColor: '#27273b', boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)', marginBottom: '30px'}}>
+                                        <CardContent style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', padding: '1.5rem' }}>
                                             <Stack>
-                                                <Typography sx={{ paddingLeft: '30px', paddingBottom: '30px', color: colors.primary, fontSize: '1.5rem', fontWeight: '700', textAlign: 'left' }}>Sales Chart</Typography>
-                                                <BarChart
-                                                    width={600}
-                                                    height={300}
+                                                <Typography sx={{ paddingBottom: '10px', color: colors.secondary, fontSize: '1.5rem', fontWeight: '700', textAlign: 'left' }}>Sales Chart</Typography>
+                                                <LineChart
+                                                    xAxis={[{ scaleType: 'point', data: xLabels }]}
                                                     series={[
-                                                    { data: pData, label: 'Product1', id: 'pvId', stack: 'total', color: '#E40C2B' },
-                                                    { data: uData, label: 'Product2', id: 'uvId', stack: 'total', color: '#3CBCC3' },
-                                                    { data: vData, label: 'Product3', id: 'vvId', stack: 'total', color: '#EBA63F' },
+                                                        { data: pData, label: 'Year 1', color: '#E40C2B' },
+                                                        { data: uData, label: 'Year 2', color: '#3CBCC3' },
+                                                        { data: vData, label: 'Year 3', color: '#EBA63F' },
                                                     ]}
-                                                    xAxis={[{ data: xLabels, scaleType: 'band' }]}
+                                                    width={500}
+                                                    height={300}
                                                 />
                                             </Stack>
                                         </CardContent>
@@ -251,15 +254,21 @@ export default function DashboardHome() {
                             
                             <Grid item xs={5}>
                                 <ThemeProvider theme={customTheme}>
-                                    <Card style={{ backgroundColor: colors.secondary }}>
+                                    <Card style={{backgroundColor: '#27273b', boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)', marginBottom: '30px'}}>
                                             <Stack style={{ display: 'flex', flexDirection: 'column', alignItems: 'left', justifyContent: 'center', height: '100%', padding: '1.5rem' }}>
-                                                <Typography style={{ paddingBottom: '30px', color: colors.primary, fontSize: '1.5rem', fontWeight: '700', textAlign: 'left' }}>Top Products</Typography>
+                                                <Typography style={{ paddingBottom: '10px', color: colors.secondary, fontSize: '1.5rem', fontWeight: '700', textAlign: 'left' }}>Top Products</Typography>
                                                 <PieChart
                                                     series={[
                                                         {
                                                         data,
-                                                        highlightScope: { faded: 'global', highlighted: 'item' },
-                                                        faded: { innerRadius: 30, additionalRadius: -30 },
+                                                        innerRadius: 50,
+                                                        outerRadius: 100,
+                                                        paddingAngle: 5,
+                                                        cornerRadius: 5,
+                                                        startAngle: -90,
+                                                        endAngle: 180,
+                                                        cx: 120,
+                                                        cy: 140,
                                                         },
                                                     ]}
                                                     height={300}

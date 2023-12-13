@@ -59,6 +59,7 @@ export default function SideBar() {
     const getMenuItemStyle = (itemId) => ({
         backgroundColor: hoveredItem === itemId ? '#e9e1c4' : 'transparent',
         transition: '0.2s ease',
+        cursor: hoveredItem === itemId ? 'pointer' : 'default',
       });
 
     const iconSize = collapsed ? 50 : 100;
@@ -244,13 +245,14 @@ export default function SideBar() {
                                 onClick={() => setCollapsed(!collapsed)}
                                 onMouseEnter={() => setHovered(true)}
                                 onMouseLeave={() => setHovered(false)}
-                                sx={{
+                                style={{
                                     backgroundColor: 'none',
                                     borderRadius: '50%',
                                     color: colors.primary,
                                     transition: '0.2s ease-in-out',
                                     '&:hover': {
                                         backgroundColor: '#e9e1c4',
+                                        cursor: 'pointer',
                                     }
                                 }}
                                 >
