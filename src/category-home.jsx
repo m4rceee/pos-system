@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { useState, useEffect } from 'react';
 
-import "../styles.css";
+import "./styles.css";
 import 'typeface-poppins';
-import SideBar from '../common/sidebar';
-import Header from '../common/header';
+import SideBar from './common/sidebar';
+import Header from './common/header';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import { useNavigate } from 'react-router-dom';
 
@@ -50,8 +50,8 @@ const colors = {
 
 const columns = [
     { field: 'id', headerName: 'ID', width: 90 },
+    { field: 'categoryCode', headerName: 'Category Code', width: 200 },
     { field: 'categoryName', headerName: 'Category Name', width: 350 },
-    { field: 'categoryCode', headerName: 'Category Code', width: 350 },
     { 
         field: 'categoryActions', 
         headerName: 'Actions',
@@ -85,7 +85,6 @@ const columns = [
     { id: '0006', categoryName: 'Frozen Goods', categoryCode: '' },
     { id: '0007', categoryName: 'Rice and Grains', categoryCode: '' },
     { id: '0008', categoryName: 'Canned Goods', categoryCode: '' },
-
   ];
 
   rows.forEach(row => {
@@ -277,7 +276,6 @@ export default function CategoryHome() {
                                 <Grid xs={12}>
                                     <div style={{ height: 'auto', width: '100%' }}>
                                         <DataGrid
-                                        className='printableTable'
                                             rows={rows}
                                             columns={columns}
                                             initialState={{
@@ -313,13 +311,7 @@ export default function CategoryHome() {
                             </Grid>
                         </CardContent>
                     </Card>
-
-                        
-
-                    
                 </Container>
-                
-                
             </div>
         </>
     );

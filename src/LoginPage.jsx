@@ -118,6 +118,7 @@ export default function Login() {
                         name="username" 
                         id="username"
                         variant="outlined"
+                        required
                         InputProps={{
                             endAdornment: (
                             <InputAdornment position="end">
@@ -146,6 +147,7 @@ export default function Login() {
                         id="password" 
                         type={showPassword ? 'text' : 'password'}
                         variant="outlined"
+                        required
                         InputProps={{
                             endAdornment: (
                             <InputAdornment position="end">

@@ -72,6 +72,10 @@ export default function SideBar() {
         navigate('/dashboard');
       }
 
+    const handleProductHome = () => {
+        navigate('/product-home');
+      } 
+
     return(
         
         <>
@@ -138,6 +142,7 @@ export default function SideBar() {
                                         onMouseEnter={() => handleItemHover('item4')}
                                         onMouseLeave={() => handleItemHover(null)}
                                         style={getMenuItemStyle('item4')} 
+                                        onClick={handleProductHome} 
                                         className='text-center'>
                                         <ShoppingCartRounded sx={{ fontSize: '2rem', color: colors.primary }}/>
                                     </MenuItem>
@@ -185,6 +190,7 @@ export default function SideBar() {
                                         Categories
                                     </MenuItem>
                                     <MenuItem 
+                                        onClick={handleProductHome}
                                         className='p-1'
                                         onMouseEnter={() => handleItemHover('item4')}
                                         onMouseLeave={() => handleItemHover(null)}
