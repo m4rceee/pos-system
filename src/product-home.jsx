@@ -30,7 +30,16 @@ import {
     DialogContentText,
     Card,
     CardContent,
+    Select,
+    MenuItem,
 } from '@mui/material';
+
+import {
+    Unstable_NumberInput as BaseNumberInput,
+    numberInputClasses,
+  } from '@mui/base/Unstable_NumberInput';
+
+import { styled } from '@mui/system';
 
 const colors = {
     primary: '#1D1D2C',
@@ -64,14 +73,14 @@ const colors = {
         description: 'This column has a value getter and is not sortable.',
         sortable: false,
         renderCell: (params) => (
-            <div>
+            <>
                 <IconButton>
                     <EditRounded sx={{color: '#3CBCC3'}}/>
                 </IconButton>
                 <IconButton>
                     <DeleteRounded sx={{color: '#E40C2B'}}/>
                 </IconButton>
-            </div>
+            </>
             
                 
         ),
@@ -105,9 +114,35 @@ const colors = {
     row.id = String(index + 1).padStart(4, '0');;
   });
 
+  const NumberInput = React.forwardRef(function CustomNumberInput(props, ref) {
+    return (
+      <BaseNumberInput
+        slots={{
+          root: StyledInputRoot,
+          input: StyledInputElement,
+          incrementButton: StyledButton,
+          decrementButton: StyledButton,
+        }}
+        slotProps={{
+          incrementButton: {
+            children: '▴',
+          },
+          decrementButton: {
+            children: '▾',
+          },
+        }}
+        {...props}
+        ref={ref}
+      />
+    );
+  });
+
+  
+
 export default function ProductHome() {
 
     const [open, setOpen] = useState(false);
+    const [value, setValue] = useState();
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -143,25 +178,37 @@ export default function ProductHome() {
         window.print();
     }
 
+    const [selectedCategory, setSelectedCategory] = useState('');
+
+  const handleCategoryChange = (event) => {
+      setSelectedCategory(event.target.value);
+  };
+
     return(
         <>
             <div style={{display: 'flex'}}>
                 <SideBar />
                 <Container maxWidth="xl" style={{ paddingLeft: '35px', paddingTop: '20px', overflowX: 'auto' }}>
-                    <Grid container style={{display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-                        <Grid xs={4} sx={{ alignItems: 'center' }}>
+                    <Grid container sx={{display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                        <Grid item xs={4} sx={{ alignItems: 'center' }}>
                             <Typography sx={{ fontFamily: 'Poppins, sans-serif', fontWeight: '600', fontSize: '1.5rem', color: colors.secondary }}>
                             Products
                             </Typography>
                             <Typography variant='body2' sx={{ fontFamily: 'Poppins, sans-serif', color: colors.secondary, fontWeight: 'light' }}>
                                 <Stack direction="row">
-                                    <p className='pr-3'>{formatDate(currentDateTime)}</p>
-                                    <p className='pr-3'>||</p>
-                                    <p>{formatTime(currentDateTime)}</p>
+                                    <Typography component="span" variant='body2' sx={{fontFamily: 'Poppins, sans-serif'}}>
+                                        {formatDate(currentDateTime)}
+                                    </Typography>
+                                    <Typography component="span" variant='body2' sx={{fontFamily: 'Poppins, sans-serif', marginLeft: '8px', marginRight: '8px'}}>
+                                        ||
+                                    </Typography>
+                                    <Typography component="span" variant='body2' sx={{fontFamily: 'Poppins, sans-serif'}}>
+                                        {formatTime(currentDateTime)}
+                                    </Typography>
                                 </Stack>
                             </Typography>
                         </Grid>
-                        <Grid xs={8} sx={{ alignItems: 'center' }}>
+                        <Grid item xs={8} sx={{ alignItems: 'center' }}>
                             <Header />
                         </Grid>
                     </Grid>
@@ -207,7 +254,6 @@ export default function ProductHome() {
                                                 },
                                             }}>
                                             <AddRounded
-                                                onClick={handleClickOpen}
                                                 sx={{ 
                                                 color: colors.secondary, 
                                                 fontSize: '2rem', 
@@ -219,17 +265,86 @@ export default function ProductHome() {
                                             />
                                         </IconButton>
                                         <Dialog open={open} onClose={handleClose} >
-                                            <DialogTitle sx={{fontFamily: 'Poppins, sans-serif'}}>Add Category</DialogTitle>
+                                            <DialogTitle sx={{fontFamily: 'Poppins, sans-serif'}}>Add Item</DialogTitle>
                                             <DialogContent sx={{width: '500px'}}>
                                                 <DialogContentText sx={{fontFamily: 'Poppins, sans-serif'}}>
-                                                Please enter a category name:
+                                                Item name:
                                                 </DialogContentText>
                                                 <TextField
-                                                    margin="dense"
-                                                    id="categoryName"
+                                                    id="itemName"
                                                     fullWidth
                                                     variant="outlined"
                                                     sx={{
+                                                        marginTop: '5px',
+                                                        width: '100%',
+                                                        '& .MuiOutlinedInput-root': {
+                                                        '& fieldset': {
+                                                            border: '1px solid #1F2937',
+                                                        },
+                                                            '&.Mui-focused fieldset': {
+                                                            border: '2px solid #1F2937',
+                                                            },
+                                                        },
+                                                    }}
+                                                />
+                                                <DialogContentText sx={{fontFamily: 'Poppins, sans-serif', marginTop: '15px'}}>
+                                                Item Category:
+                                                </DialogContentText>
+                                                <Select
+                                                    value={selectedCategory}
+                                                    onChange={handleCategoryChange}
+                                                    displayEmpty
+                                                    fullWidth
+                                                    variant="outlined"
+                                                    sx={{
+                                                        fontFamily: 'Poppins, sans-serif',
+                                                        marginTop: '5px',
+                                                        width: '100%',
+                                                        '& .MuiOutlinedInput-root': {
+                                                            '& fieldset': {
+                                                                border: '1px solid #1F2937',
+                                                            },
+                                                            '&.Mui-focused fieldset': {
+                                                                border: '2px solid #1F2937',
+                                                            },
+                                                        },
+                                                    }}
+                                                >
+                                                    <MenuItem value="" disabled sx={{fontFamily: 'Poppins, sans-serif'}}>
+                                                        Select Category
+                                                    </MenuItem>
+                                                    <MenuItem value="category1" sx={{fontFamily: 'Poppins, sans-serif'}}>Snacks</MenuItem>
+                                                    <MenuItem value="category2" sx={{fontFamily: 'Poppins, sans-serif'}}>Beverages</MenuItem>
+                                                    <MenuItem value="category3" sx={{fontFamily: 'Poppins, sans-serif'}}>School and Office Supplies</MenuItem>
+                                                    <MenuItem value="category4" sx={{fontFamily: 'Poppins, sans-serif'}}>Laundry Supplies</MenuItem>
+                                                    <MenuItem value="category5" sx={{fontFamily: 'Poppins, sans-serif'}}>Personal Care</MenuItem>
+                                                    <MenuItem value="category6" sx={{fontFamily: 'Poppins, sans-serif'}}>Frozen Goods</MenuItem>
+                                                    <MenuItem value="category7" sx={{fontFamily: 'Poppins, sans-serif'}}>Rice and Grains</MenuItem>
+                                                    <MenuItem value="category8" sx={{fontFamily: 'Poppins, sans-serif'}}>Canned Goods</MenuItem>
+                                                </Select>
+                                                <DialogContentText sx={{fontFamily: 'Poppins, sans-serif', marginTop: '15px'}}>
+                                                    Item Quantity:
+                                                </DialogContentText>
+                                                <NumberInput
+                                                    aria-label="Demo number input"
+                                                    placeholder="Type a number…"
+                                                    value={value}
+                                                    onChange={(event, val) => setValue(val)}
+                                                    sx={{
+                                                        fontFamily: 'Poppins, sans-serif',
+                                                        marginTop: '5px',
+                                                        width: '100%',
+                                                    }}
+                                                />
+                                                <DialogContentText sx={{fontFamily: 'Poppins, sans-serif', marginTop: '15px'}}>
+                                                Item Price (per piece):
+                                                </DialogContentText>
+                                                <TextField
+                                                    id="itemPrice"
+                                                    fullWidth
+                                                    variant="outlined"
+                                                    sx={{
+                                                        marginTop: '5px',
                                                         width: '100%',
                                                         '& .MuiOutlinedInput-root': {
                                                         '& fieldset': {
@@ -242,6 +357,8 @@ export default function ProductHome() {
                                                     }}
                                                 />
                                             </DialogContent>
+                                                
+                                           
                                         <DialogActions sx={{marginRight: '15px', marginBottom: '10px'}}>
                                             <Button 
                                                 onClick={handleClose} 
@@ -276,7 +393,7 @@ export default function ProductHome() {
                                     </div>
                                 </div>
                                 <Grid className='mt-5' container>
-                                    <Grid xs={12}>
+                                    <Grid item xs={12}>
                                         <div style={{ height: 'auto', width: '100%' }}>
                                             <DataGrid
                                                 rows={rows}
@@ -319,3 +436,140 @@ export default function ProductHome() {
         </>
     );
 }
+
+const blue = {
+    100: '#DAECFF',
+    200: '#80BFFF',
+    400: '#3399FF',
+    500: '#007FFF',
+    600: '#0072E5',
+  };
+  
+  const grey = {
+    50: '#F3F6F9',
+    100: '#E5EAF2',
+    200: '#DAE2ED',
+    300: '#C7D0DD',
+    400: '#B0B8C4',
+    500: '#9DA8B7',
+    600: '#6B7A90',
+    700: '#434D5B',
+    800: '#303740',
+    900: '#1C2025',
+  };
+  
+  const StyledInputRoot = styled('div')(
+    ({ theme }) => `
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-weight: 400;
+    border-radius: 8px;
+    color: ${theme.palette.mode === 'dark' ? grey[300] : grey[900]};
+    background: ${theme.palette.mode === 'dark' ? grey[900] : '#fff'};
+    border: 1px solid ${theme.palette.mode === 'dark' ? grey[700] : grey[200]};
+    box-shadow: 0px 2px 2px ${theme.palette.mode === 'dark' ? grey[900] : grey[50]};
+    display: grid;
+    grid-template-columns: 1fr 19px;
+    grid-template-rows: 1fr 1fr;
+    overflow: hidden;
+    column-gap: 8px;
+    padding: 4px;
+  
+    &.${numberInputClasses.focused} {
+      border-color: ${blue[400]};
+      box-shadow: 0 0 0 3px ${theme.palette.mode === 'dark' ? blue[600] : blue[200]};
+    }
+  
+    &:hover {
+      border-color: ${blue[400]};
+    }
+  
+    // firefox
+    &:focus-visible {
+      outline: 0;
+    }
+  `,
+  );
+  
+  const StyledInputElement = styled('input')(
+    ({ theme }) => `
+    font-size: 0.875rem;
+    font-family: inherit;
+    font-weight: 400;
+    line-height: 1.5;
+    grid-column: 1/2;
+    grid-row: 1/3;
+    color: ${theme.palette.mode === 'dark' ? grey[300] : grey[900]};
+    background: inherit;
+    border: none;
+    border-radius: inherit;
+    padding: 8px 12px;
+    outline: 0;
+  `,
+  );
+  
+  const StyledButton = styled('button')(
+    ({ theme }) => `
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+    align-items: center;
+    appearance: none;
+    padding: 0;
+    width: 19px;
+    height: 19px;
+    font-family: system-ui, sans-serif;
+    font-size: 0.875rem;
+    line-height: 1;
+    box-sizing: border-box;
+    background: ${theme.palette.mode === 'dark' ? grey[900] : '#fff'};
+    border: 0;
+    color: ${theme.palette.mode === 'dark' ? grey[300] : grey[900]};
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 120ms;
+  
+    &:hover {
+      background: ${theme.palette.mode === 'dark' ? grey[800] : grey[50]};
+      border-color: ${theme.palette.mode === 'dark' ? grey[600] : grey[300]};
+      cursor: pointer;
+    }
+  
+    &.${numberInputClasses.incrementButton} {
+      grid-column: 2/3;
+      grid-row: 1/2;
+      border-top-left-radius: 4px;
+      border-top-right-radius: 4px;
+      border: 1px solid;
+      border-bottom: 0;
+      &:hover {
+        cursor: pointer;
+        background: ${blue[400]};
+        color: ${grey[50]};
+      }
+  
+    border-color: ${theme.palette.mode === 'dark' ? grey[800] : grey[200]};
+    background: ${theme.palette.mode === 'dark' ? grey[900] : grey[50]};
+    color: ${theme.palette.mode === 'dark' ? grey[200] : grey[900]};
+    }
+  
+    &.${numberInputClasses.decrementButton} {
+      grid-column: 2/3;
+      grid-row: 2/3;
+      border-bottom-left-radius: 4px;
+      border-bottom-right-radius: 4px;
+      border: 1px solid;
+      &:hover {
+        cursor: pointer;
+        background: ${blue[400]};
+        color: ${grey[50]};
+      }
+  
+    border-color: ${theme.palette.mode === 'dark' ? grey[800] : grey[200]};
+    background: ${theme.palette.mode === 'dark' ? grey[900] : grey[50]};
+    color: ${theme.palette.mode === 'dark' ? grey[200] : grey[900]};
+    }
+    & .arrow {
+      transform: translateY(-1px);
+    }
+  `,
+  );

@@ -61,14 +61,14 @@ const columns = [
         description: 'This column has a value getter and is not sortable.',
         sortable: false,
         renderCell: (params) => (
-            <div>
+            <>
                 <IconButton>
                     <EditRounded sx={{color: '#3CBCC3'}}/>
                 </IconButton>
                 <IconButton>
                     <DeleteRounded sx={{color: '#E40C2B'}}/>
                 </IconButton>
-            </div>
+            </>
             
                 
         ),
@@ -142,31 +142,35 @@ export default function CategoryHome() {
                 <SideBar />
                 <Container maxWidth="xl" style={{ paddingLeft: '35px', paddingTop: '20px' }}>
                     <Grid container style={{display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-                                <Grid xs={4} sx={{ alignItems: 'center' }}>
-                                    <Typography sx={{ fontFamily: 'Poppins, sans-serif', fontWeight: '600', fontSize: '1.5rem', color: colors.secondary }}>
-                                        Categories
+                        <Grid item xs={4} sx={{ alignItems: 'center' }}>
+                            <Typography sx={{ fontFamily: 'Poppins, sans-serif', fontWeight: '600', fontSize: '1.5rem', color: colors.secondary }}>
+                                Categories
+                            </Typography>
+                            <Typography variant='body2' sx={{ fontFamily: 'Poppins, sans-serif', color: colors.secondary, fontWeight: 'light' }}>
+                                <Stack direction="row">
+                                    <Typography component="span" variant='body2' sx={{fontFamily: 'Poppins, sans-serif'}}>
+                                        {formatDate(currentDateTime)}
                                     </Typography>
-                                    <Typography variant='body2' sx={{ fontFamily: 'Poppins, sans-serif', color: colors.secondary, fontWeight: 'light' }}>
-                                        <Stack direction="row">
-                                            <p className='pr-3'>{formatDate(currentDateTime)}</p>
-                                            <p className='pr-3'>||</p>
-                                            <p>{formatTime(currentDateTime)}</p>
-                                        </Stack>
+                                    <Typography component="span" variant='body2' sx={{fontFamily: 'Poppins, sans-serif', marginLeft: '8px', marginRight: '8px'}}>
+                                        ||
                                     </Typography>
-                                </Grid>
-                                <Grid xs={8} sx={{ alignItems: 'center' }}>
-                                    <Header />
-                                </Grid>
+                                    <Typography component="span" variant='body2' sx={{fontFamily: 'Poppins, sans-serif'}}>
+                                        {formatTime(currentDateTime)}
+                                    </Typography>
+                                </Stack>
+                            </Typography>
                         </Grid>
+                        <Grid item xs={8} sx={{ alignItems: 'center' }}>
+                            <Header />
+                        </Grid>
+                    </Grid>
 
                     <Card className='mt-8' style={{backgroundColor: '#27273b', boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)', marginBottom: '30px' }}>
                         <CardContent style={{ padding: '20px'}}>
                             <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
-                                <div>
-                                    <Typography variant='h5' sx={{ fontFamily: 'Poppins, sans-serif', fontWeight: '300', color: colors.secondary }}>
+                                <Typography variant='h5' sx={{ fontFamily: 'Poppins, sans-serif', fontWeight: '300', color: colors.secondary }}>
                                         Please use the table below to navigate or filter the results.
-                                    </Typography>
-                                </div>
+                                </Typography>
                                 <div sx={{ textAlign: 'center', marginTop: '16px' }}>
                                     <IconButton 
                                         onClick={printCategories}
@@ -201,7 +205,6 @@ export default function CategoryHome() {
                                             },
                                         }}>
                                         <AddRounded
-                                            onClick={handleClickOpen}
                                             sx={{ 
                                             color: colors.secondary, 
                                             fontSize: '2rem', 
@@ -273,7 +276,7 @@ export default function CategoryHome() {
                             </div>
                             
                             <Grid className='mt-5' container>
-                                <Grid xs={12}>
+                                <Grid item xs={12}>
                                     <div style={{ height: 'auto', width: '100%' }}>
                                         <DataGrid
                                             rows={rows}

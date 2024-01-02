@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import shortLogo from '../svg pics/logo2.png'
 
 import "../styles.css"
 import 'typeface-poppins';
@@ -89,7 +90,7 @@ export default function SideBar() {
                 <Sidebar 
                     collapsed={collapsed}
                     width='200px' 
-                    transitionDuration={750} 
+                    transitionduration={750} 
                     backgroundColor={colors.secondary}
                     >
                     
@@ -111,7 +112,7 @@ export default function SideBar() {
                         </div>
                     </div>
                     
-                    <div style={{ display: 'flex', flexDirection: 'column'}}  transitionDuration={750}>
+                    <div style={{ display: 'flex', flexDirection: 'column'}}  transitionduration={750}>
                         <Menu>
                             {collapsed ? (
                                 <>
@@ -245,7 +246,7 @@ export default function SideBar() {
                             )}
                         </Menu>
                     </div>
-                    <main className='text-center' style={{ padding: 10 }} transitionDuration={750}>
+                    <main className='text-center' style={{ padding: 10 }} transitionduration={750}>
                         <div>
                             <IconButton
                                 onClick={() => setCollapsed(!collapsed)}

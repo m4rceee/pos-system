@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import fullLogo from './svg pics/logo1.png';
+
 import "./styles.css"
 import 'typeface-poppins';
 import {
@@ -11,7 +13,7 @@ import {
   FormControl, 
   TextField,
   InputAdornment,
-  IconButton,
+  IconButton, Container,
 } from '@mui/material';
 
 import { 
@@ -35,7 +37,7 @@ const containerStyle = {
   borderRadius: '20px',
   padding: '35px',
   width: '35%',
-  dropShadow: '0 10px 8px rgba(0, 0, 0, 0.04), 0 4px 3px rgba(0, 0, 0, 0.1)',
+  boxShadow: '0 10px 8px rgba(0, 0, 0, 0.04), 0 4px 3px rgba(0, 0, 0, 0.1)',
 };
 
 const colors = {
@@ -98,74 +100,35 @@ export default function Login() {
 
   return(
         <>
-          <Card sx={{ minWidth: 275 }} style={containerStyle}>
-    
-            <CardContent sx={{ width: '100%' }}>
-    
-              {/*LOGO*/}
-              <div className='text-center' style={{ marginBottom: '10%', color: 'lightgray' }}>
-                <BlockRounded style={{ fontSize: 100 }}/>
-                <p>No Logo Yet</p>
-              </div>
-    
-              {/*FORM*/}
-              <form onSubmit={handleSubmit}>
-                <FormControl fullWidth>
-        
-                        {/*USERNAME*/}
-                        <p className="mb-3 text-xl" style={{color: colors.fontColor}}>Username *</p>
-                        <TextField
-                        name="username" 
-                        id="username"
-                        variant="outlined"
-                        required
-                        InputProps={{
-                            endAdornment: (
-                            <InputAdornment position="end">
-                                <AccountCircle sx={{color: 'gray'}}/>
-                            </InputAdornment>
-                            ),
-                        }}
-                        sx={{
-                            mb: 3, width: '100%', 
-                            '& .MuiOutlinedInput-root': {
-                              height: '50px',
-                            '& fieldset': {
-                                border: '2px solid lightgray',
-                            },
-                            '&.Mui-focused fieldset': {
-                                border: '3px solid gray',
-                            },
-                            },
-                        }}
-                        />
+          <Container style={containerStyle}>
+            <Card style={{display: 'flex', justifyContent: 'center', alignItems: 'center', width: '500px'}}>
+              <CardContent sx={{ width: '85%' }}>
+                <div className='text-center' style={{ display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+                  <img src={fullLogo} alt="" style={{width: '200px', height: '200px'}} />
+                </div>
 
-                        {/*PASSWORD*/}
-                        <p className="mb-3 text-xl" style={{color: colors.fontColor}}>Password *</p>
-                        <TextField
-                        name="password" 
-                        id="password" 
-                        type={showPassword ? 'text' : 'password'}
-                        variant="outlined"
-                        required
-                        InputProps={{
-                            endAdornment: (
-                            <InputAdornment position="end">
-                                <IconButton
-                                aria-label="toggle password visibility"
-                                onClick={handleClickShowPassword}
-                                onMouseDown={handleMouseDownPassword}
-                                edge="end"
-                                >
-                                {showPassword ? <VisibilityOff sx={{color: 'gray'}}/> : <Visibility sx={{color: 'gray'}}/>}
-                                </IconButton>
-                            </InputAdornment>
-                            ),
-                        }}
-                            sx={{
-                            width: '100%',
-                            '& .MuiOutlinedInput-root': {
-                              height: '50px',
+                <form onSubmit={handleSubmit}>
+                  <FormControl fullWidth>
+
+                          {/*USERNAME*/}
+                          <p className="mb-3 text-s" style={{color: colors.fontColor}}>Username *</p>
+                          <TextField
+                          name="username" 
+                          id="username"
+                          variant="outlined"
+                          required
+                          InputProps={{
+                              endAdornment: (
+                              <InputAdornment position="end">
+                                  <AccountCircle sx={{color: 'gray'}}/>
+                              </InputAdornment>
+                              ),
+                          }}
+                          sx={{
+                              height: '40px', mb: 3, width: '100%', 
+                              '& .MuiOutlinedInput-root': {
+                                height: '40px',
+                                fontFamily: 'Poppins, sans-serif',
                               '& fieldset': {
                                   border: '2px solid lightgray',
                               },
@@ -173,40 +136,79 @@ export default function Login() {
                                   border: '3px solid gray',
                               },
                               },
-                        }}/>
-                </FormControl>
+                          }}
+                          />
 
-                {/*LOG IN BUTTON*/}
-                <Button 
-                variant="contained"
-                type="submit" 
-                sx={{
-                  textTransform: 'none',
-                  boxShadow: 'none',
-                  width: '100%',
-                  height: '55px', 
-                  marginTop: 5, 
-                  marginBottom: 1, 
-                  padding: 2, 
-                  fontFamily: 'Poppins, sans-serif',
-                  backgroundColor: colors.accentYellow,
-                  '&:hover': { backgroundColor: '#d19035' }
-                  }}>
-                    <Typography sx={{fontFamily: 'Poppins, sans-serif', fontWeight: '500', fontSize: '20px',}}>Log In</Typography>
-                </Button>
-                
-                {/*REALTIME DISPLAY OF DATE & TIME*/}
-                <div className='mt-3 text-center' style={{color: colors.fontColor}}>
-                  <div>
-                    <strong>Date:</strong> {formatDate(currentDateTime)}
+                          {/*PASSWORD*/}
+                          <p className="mb-3 text-s" style={{color: colors.fontColor}}>Password *</p>
+                          <TextField
+                          name="password" 
+                          id="password" 
+                          type={showPassword ? 'text' : 'password'}
+                          variant="outlined"
+                          required
+                          InputProps={{
+                              endAdornment: (
+                              <InputAdornment position="end">
+                                  <IconButton
+                                  aria-label="toggle password visibility"
+                                  onClick={handleClickShowPassword}
+                                  onMouseDown={handleMouseDownPassword}
+                                  edge="end"
+                                  >
+                                  {showPassword ? <VisibilityOff sx={{color: 'gray'}}/> : <Visibility sx={{color: 'gray'}}/>}
+                                  </IconButton>
+                              </InputAdornment>
+                              ),
+                          }}
+                              sx={{
+                                height: '40px',
+                              width: '100%',
+                              '& .MuiOutlinedInput-root': {
+                                height: '40px',
+                                fontFamily: 'Poppins, sans-serif',
+                                '& fieldset': {
+                                    border: '2px solid lightgray',
+                                },
+                                '&.Mui-focused fieldset': {
+                                    border: '3px solid gray',
+                                },
+                                },
+                          }}/>
+                  </FormControl>
+
+                  {/*LOG IN BUTTON*/}
+                  <Button 
+                  variant="contained"
+                  type="submit" 
+                  sx={{
+                    textTransform: 'none',
+                    width: '100%',
+                    height: '50px', 
+                    marginTop: 5, 
+                    marginBottom: 1, 
+                    padding: 2, 
+                    fontFamily: 'Poppins, sans-serif',
+                    backgroundColor: colors.primary,
+                    boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)',
+                    '&:hover': { backgroundColor: '#3b3b5a' }
+                    }}>
+                      <Typography sx={{fontFamily: 'Poppins, sans-serif', fontWeight: '500', fontSize: '20px',}}>Log In</Typography>
+                  </Button>
+                  
+                  {/*REALTIME DISPLAY OF DATE & TIME*/}
+                  <div className='mt-3 text-center text-sm' style={{color: colors.fontColor}}>
+                    <div>
+                      <strong>Date:</strong> {formatDate(currentDateTime)}
+                    </div>
+                    <div>
+                      <strong>Time:</strong> {formatTime(currentDateTime)}
+                    </div>
                   </div>
-                  <div>
-                    <strong>Time:</strong> {formatTime(currentDateTime)}
-                  </div>
-                </div>
-              </form>
-            </CardContent>
-          </Card>
+                </form>
+              </CardContent>
+            </Card>
+          </Container>
         </>
       );
 

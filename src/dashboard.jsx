@@ -116,19 +116,25 @@ export default function DashboardHome() {
                                 justifyContent: 'center',
                                 alignItems: 'center',
                             }}>
-                                <Grid xs={4} sx={{ alignItems: 'center' }}>
+                                <Grid item xs={4} sx={{ alignItems: 'center' }}>
                                     <Typography sx={{ fontFamily: 'Poppins, sans-serif', fontWeight: '600', fontSize: '1.5rem', color: colors.secondary }}>
                                         Dashboard
                                     </Typography>
                                     <Typography variant='body2' sx={{ fontFamily: 'Poppins, sans-serif', color: colors.secondary, fontWeight: 'light' }}>
                                         <Stack direction="row">
-                                            <p className='pr-3'>{formatDate(currentDateTime)}</p>
-                                            <p className='pr-3'>||</p>
-                                            <p>{formatTime(currentDateTime)}</p>
+                                            <Typography component="span" variant='body2' sx={{fontFamily: 'Poppins, sans-serif'}}>
+                                                {formatDate(currentDateTime)}
+                                            </Typography>
+                                            <Typography component="span" variant='body2' sx={{fontFamily: 'Poppins, sans-serif', marginLeft: '8px', marginRight: '8px'}}>
+                                                ||
+                                            </Typography>
+                                            <Typography component="span" variant='body2' sx={{fontFamily: 'Poppins, sans-serif'}}>
+                                                {formatTime(currentDateTime)}
+                                            </Typography>
                                         </Stack>
                                     </Typography>
                                 </Grid>
-                                <Grid xs={8} sx={{ alignItems: 'center' }}>
+                                <Grid item xs={8} sx={{ alignItems: 'center' }}>
                                     <Header />
                                 </Grid>
                         </Grid>
@@ -267,7 +273,7 @@ export default function DashboardHome() {
                                                 <PieChart
                                                     series={[
                                                         {
-                                                        data,
+                                                        data: data,
                                                         innerRadius: 50,
                                                         outerRadius: 100,
                                                         paddingAngle: 5,
