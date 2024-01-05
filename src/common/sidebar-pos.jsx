@@ -49,7 +49,7 @@ export default function SideBar() {
 
     const navigate = useNavigate();
 
-    const [collapsed, setCollapsed] = useState(false);
+    const [collapsed, setCollapsed] = useState(true);
     const [hovered, setHovered] = useState(false);
     const [hoveredItem, setHoveredItem] = useState(null);
 

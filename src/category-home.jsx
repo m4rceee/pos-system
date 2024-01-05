@@ -122,8 +122,6 @@ export default function CategoryHome() {
         const formattedDate = date.toLocaleTimeString(undefined, options).replace(/,/g, '');
 
         const [weekday, month, day, year] = formattedDate.split(' ');
-
-        // Concatenate the parts in the desired order
         return `${weekday} ${day} ${month} ${year}`;
     };
         

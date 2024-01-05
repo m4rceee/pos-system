@@ -94,7 +94,20 @@ export default function Login() {
     };
     
     console.log('Form data submitted:', data);
-    navigate('/dashboard');
+
+
+    if(formElements.username.value == "admin"){
+      if(formElements.password.value == "123456"){
+        navigate('/dashboard');
+      }else{
+        alert("Invalid Password!");
+      }
+    }else{
+      alert("Invalid Username!");
+    }
+
+
+    
   
   }
 
