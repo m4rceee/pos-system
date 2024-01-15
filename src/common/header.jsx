@@ -31,8 +31,11 @@ export default function Header() {
     const navigate = useNavigate();
 
     const handleLogout = () => {
-        navigate('/');
-        handleClose();
+        const isConfirmed = window.confirm("Are you sure you want to logout?");
+
+        if (isConfirmed) {
+            navigate('/');
+        }
     };
 
     return(

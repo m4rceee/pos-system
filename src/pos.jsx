@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {Box, Tab} from '@mui/material';
 import {TabContext, TabList, TabPanel} from '@mui/lab';
 import { styled } from '@mui/system';
@@ -54,6 +55,8 @@ const colors = {
 
 
 export default function PosPage() {
+
+    const navigate = useNavigate();
 
     const [selectedItem, setSelectedItem] = useState(null);
     const [tableItems, setTableItems] = useState([]);
@@ -149,6 +152,15 @@ export default function PosPage() {
         { id: '', itemCode: '', itemName: 'Century Tuna', itemCategory: 'Canned Goods', itemQuantity: '8', itemPrice: '45.00'},
         { id: '', itemCode: '', itemName: 'Del Monte Fruit Cocktail', itemCategory: 'Canned Goods', itemQuantity: '6', itemPrice: '60.00'},
 ];
+
+    const handleCancelBill = () => {
+        const isConfirmed = window.confirm("Are you sure you want to cancel the bill?");
+
+        if (isConfirmed) {
+            navigate('/pos');
+            window.location.reload();
+        }
+    }
 
     return(
         <div style={{display: 'flex', marginLeft: '5rem' }}>
@@ -288,6 +300,44 @@ export default function PosPage() {
                                                 <Typography variant='h6' sx={{ color: colors.secondary, fontFamily: 'Poppins, sans-derif'}}>
                                                     ₱ 0.00 
                                                 </Typography>
+                                            </div>
+                                            <div style={{display: 'flex', width: '100%'}}>
+                                                <Button
+                                                    variant="contained"
+                                                    fullWidth
+                                                    onClick={() => handleCancelBill()}
+                                                    sx={{
+                                                    backgroundColor: colors.accentRed,
+                                                    borderTopLeftRadius: '0px',
+                                                    borderTopRightRadius: '0px',
+                                                    borderBottomLeftRadius: '0px', 
+                                                    borderBottomRightRadius: '0px',
+                                                    fontFamily: 'Poppins, sans-serif',
+                                                    '&:hover':  {
+                                                        backgroundColor: 'rgba(0, 0, 0, 0.15)'
+                                                      }
+                                                    }}
+                                                >
+                                                    Cancel
+                                                </Button>
+                                                <Button
+                                                    variant="contained"
+                                                    fullWidth
+                                                    onClick={() => handlePay(totalAmount)}
+                                                    sx={{
+                                                    padding: '10px',
+                                                    borderTopLeftRadius: '0px',
+                                                    borderTopRightRadius: '0px',
+                                                    borderBottomLeftRadius: '0px', 
+                                                    borderBottomRightRadius: '0px',
+                                                    fontFamily: 'Poppins, sans-serif',
+                                                    '&:hover':  {
+                                                        backgroundColor: 'rgba(0, 0, 0, 0.15)'
+                                                      }
+                                                    }}
+                                                >
+                                                    Discount
+                                                </Button>
                                             </div>
                                             <Button
                                                 variant="contained"
