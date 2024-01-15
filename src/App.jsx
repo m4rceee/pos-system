@@ -5,6 +5,7 @@ import DashboardHome from './dashboard';
 import CategoryHome from './category-home';
 import ProductHome from './product-home';
 import PosPage from './pos';
+import Analytics from './analytics';
 
 export default function App() {
   return (
@@ -15,6 +16,7 @@ export default function App() {
         <Route path="/category-home" element={<CategoryHome />} />
         <Route path="/product-home" element={<ProductHome />} />
         <Route path="/pos" element={<PosPage />} />
+        <Route path="/analytics" element={<Analytics />} />
       </Routes>
     </Router>
   );

@@ -81,6 +81,10 @@ export default function SideBar() {
         navigate('/pos');
     }
 
+    const handleAnalytics = () => {
+        navigate('/analytics');
+    }
+
     return (
         <div
             style={{
@@ -157,6 +161,7 @@ export default function SideBar() {
                                 </MenuItem>
                                 <MenuItem
                                     style={getMenuItemStyle('item7')}
+                                    onClick={handleAnalytics}
                                     className='p-1 menu-item'
                                     icon={<DonutLargeRounded sx={{ marginBottom: '3px', color: colors.primary }} />}
                                 >
