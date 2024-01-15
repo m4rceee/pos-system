@@ -217,7 +217,7 @@ export default function DashboardHome() {
                                                     Daily Sales
                                                     </Typography>
                                                     <Typography variant="h3" color={colors.accentOlive} style={{fontWeight: '600', fontFamily: 'Poppins, sans-serif'}}>
-                                                    3,734.<span style={{fontSize: '2rem'}}>27</span>
+                                                    ₱ 3,734.<span style={{fontSize: '2rem'}}>27</span>
                                                     </Typography>
                                                 </Stack>
                                             </CardContent>
@@ -232,7 +232,7 @@ export default function DashboardHome() {
                                                     Weekly Sales
                                                     </Typography>
                                                     <Typography variant="h3" color={colors.accentOlive} style={{fontWeight: '600', fontFamily: 'Poppins, sans-serif'}}>
-                                                    26,139.<span style={{fontSize: '2rem'}}>88</span>
+                                                    ₱ 26,139.<span style={{fontSize: '2rem'}}>88</span>
                                                     </Typography>
                                                 </Stack>
                                             </CardContent>

@@ -1,5 +1,8 @@
 import * as React from 'react';
 import { useState, useEffect, useRef } from 'react';
+import {Box, Tab} from '@mui/material';
+import {TabContext, TabList, TabPanel} from '@mui/lab';
+import { styled } from '@mui/system';
 
 import "./styles.css";
 import 'typeface-poppins';
@@ -22,7 +25,13 @@ import {
     InputAdornment,
     TextField,
     CardActionArea,
-    Paper
+    Paper,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
 } from '@mui/material';
 
 import { ColorizeSharp, SearchRounded } from '@mui/icons-material';
@@ -45,6 +54,43 @@ const colors = {
 
 
 export default function PosPage() {
+
+    const [selectedItem, setSelectedItem] = useState(null);
+    const [tableItems, setTableItems] = useState([]);
+
+    const handleItemClick = (item) => {
+        const existingItemIndex = tableItems.findIndex((tableItem) => tableItem.itemName === item.itemName);
+
+        if (existingItemIndex !== -1) {
+            const updatedItems = [...tableItems];
+            updatedItems[existingItemIndex].itemQuantity += 1;
+            setTableItems(updatedItems);
+        } else {
+            const newItem = { ...item, itemQuantity: 1 };
+            setTableItems([...tableItems, newItem]);
+        }
+
+        setSelectedItem(item);
+    };
+
+    // Assuming you have a function to calculate the total amount from the tableItems
+    const calculateTotalAmount = () => {
+        return tableItems.reduce((total, item) => total + (item.itemQuantity * item.itemPrice), 0);
+    };
+    
+    // Inside your component
+    const totalAmount = calculateTotalAmount();
+
+    const StyledTableCell = styled(TableCell)({
+        fontFamily: 'Poppins, sans-serif',
+        color: colors.secondary,
+      });
+
+    const [value, setValue] = React.useState('All');
+
+    const handleChange = (event, newValue) => {
+        setValue(newValue);
+    };
 
     const [currentDateTime, setCurrentDateTime] = useState(new Date());
     
@@ -97,7 +143,7 @@ export default function PosPage() {
         { id: '', itemCode: '', itemName: 'Safeguard Soap', itemCategory: 'Personal Care', itemQuantity: '12', itemPrice: '25.00 '},
         { id: '', itemCode: '', itemName: 'Colgate Toothpaste', itemCategory: 'Personal Care', itemQuantity: '10', itemPrice: '30.00 '},
         { id: '', itemCode: '', itemName: 'Magnolia Ice Cream', itemCategory: 'Frozen Goods', itemQuantity: '5', itemPrice: '150.00 '},
-        { id: '', itemCode: '', itemName: 'Hotdog (for making Filipino-style Spaghetti)', itemCategory: 'Frozen Goods', itemQuantity: '2', itemPrice: '70.00 '},
+        { id: '', itemCode: '', itemName: 'Tender Juicy Hotdog', itemCategory: 'Frozen Goods', itemQuantity: '2', itemPrice: '70.00 '},
         { id: '', itemCode: '', itemName: 'Jasmin Rice', itemCategory: 'Rice and Grains', itemQuantity: '15', itemPrice: '40.00/kg'},
         { id: '', itemCode: '', itemName: 'Sinandomeng Rice', itemCategory: 'Rice and Grains', itemQuantity: '10', itemPrice: '35.00/kg'},
         { id: '', itemCode: '', itemName: 'Century Tuna', itemCategory: 'Canned Goods', itemQuantity: '8', itemPrice: '45.00'},
@@ -132,114 +178,135 @@ export default function PosPage() {
                         </Grid>
                     </Grid>
 
-                    <Grid container spacing={2} style={{display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                    <Grid container spacing={1.5} style={{display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
                         <Grid item xs={8} sx={{ alignItems: 'center' }}>
                             <Card className='mt-8' style={{backgroundColor: '#27273b', boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)', height: '82vh', borderRadius: '20px', display: 'flex', flexDirection: 'row'}}>
-                                <List sx={{ overflowY: 'auto', width: '150px', borderRight: '1px solid #333', backgroundColor: '#13131c'}}>
-                                    {categories.map((category) => (
-                                        <ListItem
-                                            key={category}
-                                            onClick={() => handleCategoryClick(category)}
-                                            >
-                                                <ListItemButton selected={selectedCategory === category}>
-                                                    <ListItemText primary={category} primaryTypographyProps={{fontSize: '14px', fontFamily: 'Poppins, sans-serif', color: colors.secondary}}/>
-                                                </ListItemButton>
-                                            </ListItem>
-                                        ))}
-                                    </List>
-                                <CardContent style={{ padding: '20px', flex: 1, width: '100%', overflowY: 'auto' }}>
-                                    <TextField
-                                        name="username" 
-                                        id="username"
-                                        variant="outlined"
-                                        placeholder='Search an item here...'
-                                        InputProps={{
-                                            startAdornment: (
-                                            <InputAdornment position="start">
-                                                <SearchRounded sx={{fontSize: '1rem', color: colors.secondary}}/>
-                                            </InputAdornment>
-                                            ),
-                                        }}
-                                        sx={{
-                                            height: '40px', marginBottom: '20px', width: '100%', 
-                                            '& .MuiOutlinedInput-root': {
-                                                backgroundColor: '#27273b',
-                                                height: '40px',
-                                                boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)',
-                                                '& fieldset': {
-                                                    border: 'none',
-                                                },
-                                                '&.Mui-focused fieldset': {
-                                                    border: 'none',
-                                                },
-                                                '&:hover': {
-                                                    cursor: 'text'
-                                                },
-                                            },
-                                            '& input': {
-                                                fontFamily: 'Poppins, sans-serif',
-                                                fontWeight: '300',
-                                                color: colors.secondary,
-                                                fontSize: '15px',
-                                            },
-                                            '& input::placeholder': {
-                                                fontFamily: 'Poppins, sans-serif',
-                                                fontWeight: '300',
-                                                fontSize: '15px',
-                                                
-                                            }
-                                        }}
-                                    />
-                                    <Grid container spacing={1.5}>
-                                        {rows
-                                        .filter((item) => selectedCategory === 'All' || item.itemCategory === selectedCategory)
-                                        .map((item) => (
-                                        <Grid item key={item.id} xs={12} sm={6} md={4} lg={3}>
-                                            <CardActionArea onClick={() => handleItemClick(item)}>
-                                                <Card sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-                                                    <CardContent style={{ flex: 1, height: '100%', whiteSpace: 'nowrap' }}>
-                                                        <Typography variant="body1" component="div" sx={{ overflow: 'hidden', textOverflow: 'ellipsis' }} title={item.itemName}>
-                                                            {item.itemName}
-                                                        </Typography>
-                                                        <Typography variant="body2" color="text.secondary" title={item.itemName}>
-                                                            Quantity: {item.itemQuantity}
-                                                        </Typography>
-                                                        <Typography variant="body2" color="text.secondary" title={item.itemName}>
-                                                            Price: {item.itemPrice}
-                                                        </Typography>
-                                                    </CardContent>
-                                                </Card>
-                                            </CardActionArea>
-                                        </Grid>
-                                        ))}
-                                    </Grid>
-                                </CardContent>
+                                    <Box sx={{ overflowX: 'auto', width: '100%', typography: 'body1' }}>
+                                        <TabContext value={value}>
+                                            <Box sx={{ borderBottom: 1, borderColor: 'divider', overflowX: 'auto', position: 'sticky', top: 0, zIndex: 500, backgroundColor: '#13131c', boxShadow: '0 8px 16px rgba(169, 169, 169, 0.6)' }}>
+                                                <TabList
+                                                    variant='scrollable'
+                                                    scrollButtons="auto"
+                                                    onChange={handleChange}
+                                                    aria-label="lab API tabs example"
+                                                    sx={{ 
+                                                        borderBottom: 1, 
+                                                        borderColor: 'divider',
+                                                        '& .MuiTab-root': {
+                                                            fontFamily: 'Poppins, sans-serif',
+                                                            fontSize: '16px',
+                                                            fontWeight: 'bold',
+                                                            color: colors.secondary,
+                                                        },
+                                                        '& .MuiTabs-scrollButtons': {
+                                                            color: colors.secondary,
+                                                        },
+                                                    }}
+                                                >
+                                                    {categories.map((category) => (
+                                                        <Tab key={category} label={category} value={category} />
+                                                    ))}
+                                                </TabList>
+                                            </Box>
+                                            {categories.map((category) => (
+                                                <TabPanel key={category} value={category}>
+                                                    <Grid container spacing={2}>
+                                                        {rows
+                                                        .filter((item) => category === 'All' || item.itemCategory === category)
+                                                        .map((item) => (
+                                                            <Grid item key={item.id} xs={12} sm={6}>
+                                                            <CardActionArea onClick={() => handleItemClick(item)}>
+                                                                <Card style={{background: '#13131c', color: colors.secondary}}>
+                                                                    <CardContent sx={{ height: '200px', display: 'flex', flexDirection: 'column', textAlign: 'center'}}>
+                                                                        <div style={{display: 'flex', flexDirection: 'column', marginTop: 'auto', justifyContent: 'center', alignItems: 'center', textAlign: 'center'}}>
+                                                                            <Typography variant="body1" component="div" sx={{ fontSize: '25px', fontWeight: '700', fontFamily: 'Poppins, sans-serif', overflow: 'hidden', textOverflow: 'ellipsis' }} title={item.itemName}>
+                                                                                {item.itemName}
+                                                                            </Typography>
+                                                                            <Typography variant="body1" color="text.secondary" sx={{ fontSize: '18px', color: 'gray', fontFamily: 'Poppins, sans-serif'}} title={item.itemName}>
+                                                                                Price: ₱{item.itemPrice}
+                                                                            </Typography>
+                                                                        </div>
+                                                                        <div className="quantity" style={{ marginTop: 'auto', display: 'flex', alignItems: 'flex-end', justifyContent: 'flex-end'}}>
+                                                                            <Typography 
+                                                                                variant="body2"
+                                                                                sx={{
+                                                                                color: item.itemQuantity <= 10 ? colors.accentOrange : colors.secondary,
+                                                                                fontWeight: item.itemQuantity <= 10 ? '700' : 'normal',
+                                                                                fontFamily: 'Poppins, sans-serif'
+                                                                            }} title={item.itemName}>
+                                                                                Qty: {item.itemQuantity}
+                                                                            </Typography>
+                                                                        </div>
+                                                                    </CardContent>
+                                                                </Card>
+                                                            </CardActionArea>
+                                                            </Grid>
+                                                        ))}
+                                                    </Grid>
+                                                </TabPanel>
+                                            ))}
+                                        </TabContext>
+                                    </Box>
                             </Card>
                         </Grid>
                         <Grid item xs={4} sx={{ alignItems: 'center' }}>
                             <Card className='mt-8' style={{backgroundColor: '#27273b', boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)', height: '82vh', borderRadius: '20px'}}>
-                                <CardContent style={{ padding: '20px'}}>
-                                    <Card style={{ backgroundColor: colors.secondary, borderRadius: '10px', height: '400px' }}>
-                                        <CardContent style={{ padding: '15px' }}>
-                                        </CardContent>
-                                    </Card>
-                                    <div style={{ marginTop: '10px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
-                                        <Typography variant='h4' style={{ fontFamily: 'Poppins, sans-serif', color: colors.secondary, marginTop: '10px', width: '100%'}}>
-                                            Total: 
-                                        </Typography>
-                                        <Typography variant='h4' style={{ fontFamily: 'Poppins, sans-serif', color: colors.secondary, marginTop: '10px', width: '100%'}}>
-                                            $0000.00
-                                        </Typography>
-                                    </div>
-                                    
-                                    <CardActions style={{marginTop: '10px'}}>
-                                        <Button variant="contained" fullWidth style={{ padding: '20px', fontFamily: 'Poppins, sans-serif', backgroundColor: colors.accentRed, width: '100%'}}>
-                                            Discount
-                                        </Button>
-                                        <Button variant="contained" fullWidth style={{ padding: '20px', fontFamily: 'Poppins, sans-serif', backgroundColor: colors.accentOlive, width: '100%'}}>
-                                            Pay
-                                        </Button>
-                                    </CardActions>
+                                <CardContent style={{ padding: '3px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '100%' }}>
+                                    <Typography variant='h6' sx={{marginTop: '10px', fontFamily: 'Poppins, sans-serif', fontWeight: 'bold', textAlign: 'center', color: colors.secondary}}>
+                                        Bill Total
+                                    </Typography>
+                                    <Typography variant='body2' sx={{fontFamily: 'Poppins, sans-serif', textAlign: 'center', color: colors.secondary}}>
+                                        Melyson Enterprise
+                                    </Typography>
+                                    <div style={{ flex: 1 }}>
+                                            <TableContainer style={{ marginTop: '15px', maxHeight: '50vh', overflowY: 'auto' }}>
+                                                <Table>
+                                                    <TableHead>
+                                                        <TableRow>
+                                                            <StyledTableCell>Description</StyledTableCell>
+                                                            <StyledTableCell align="right">Quantity</StyledTableCell>
+                                                            <StyledTableCell align="right">Price</StyledTableCell>
+                                                        </TableRow>
+                                                    </TableHead>
+                                                    <TableBody>
+                                                        {tableItems.map((tableItem, index) => (
+                                                            <TableRow key={index}>
+                                                                <StyledTableCell>{tableItem.itemName}</StyledTableCell>
+                                                                <StyledTableCell align="right">{tableItem.itemQuantity}</StyledTableCell>
+                                                                <StyledTableCell align="right">{tableItem.itemPrice}</StyledTableCell>
+                                                            </TableRow>
+                                                        ))}
+                                                    </TableBody>
+                                                </Table>
+                                            </TableContainer>
+                                        </div>
+                                        <div>
+                                            <div style={{ margin: '15px', display: 'flex',  justifyContent: 'space-between'}}>
+                                                <Typography variant='h6' sx={{ color: colors.secondary, fontFamily: 'Poppins, sans-derif'}}>
+                                                    Discount: 
+                                                </Typography>
+                                                <Typography variant='h6' sx={{ color: colors.secondary, fontFamily: 'Poppins, sans-derif'}}>
+                                                    ₱ 0.00 
+                                                </Typography>
+                                            </div>
+                                            <Button
+                                                variant="contained"
+                                                fullWidth
+                                                onClick={() => handlePay(totalAmount)}
+                                                sx={{
+                                                backgroundColor: colors.accentOlive,
+                                                borderTopLeftRadius: '0px',
+                                                borderTopRightRadius: '0px',
+                                                borderBottomLeftRadius: '8px', 
+                                                borderBottomRightRadius: '8px',
+                                                padding: '10px',
+                                                fontFamily: 'Poppins, sans-serif',
+                                                fontSize: '25px'
+                                                }}
+                                            >
+                                                Pay: ₱{totalAmount.toFixed(2)}
+                                            </Button>
+                                        </div>
                                 </CardContent>
                             </Card>
                         </Grid>
