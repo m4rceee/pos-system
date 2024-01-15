@@ -186,7 +186,7 @@ export default function ProductHome() {
 
     return(
         <>
-            <div style={{display: 'flex'}}>
+            <div style={{display: 'flex', marginLeft: '5rem'}}>
                 <SideBar />
                 <Container maxWidth="xl" style={{ paddingLeft: '35px', paddingTop: '20px', overflowX: 'auto' }}>
                     <Grid container sx={{display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>

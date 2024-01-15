@@ -6,3 +6,7 @@ body {
     background-color: #1D1D2C;
     font-family: poppins;
 }
+
+.menu-item:hover {
+    background-color: rgba(0, 0, 0, 0.15);
+}

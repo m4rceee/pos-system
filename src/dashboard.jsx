@@ -104,7 +104,7 @@ export default function DashboardHome() {
     return(
     
         <>
-            <div style={{ display: 'flex' }}>
+            <div style={{ display: 'flex', marginLeft: '5rem' }}>
                 <SideBar/>
                 <div style={{ marginLeft: '10px', marginRight: '5px', width: '100%'}}>
                     <Container maxWidth="xl" style={{ paddingTop: '20px' }}>

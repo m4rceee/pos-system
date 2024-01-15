@@ -136,7 +136,7 @@ export default function CategoryHome() {
 
     return(
         <>
-            <div style={{display:'flex'}}>
+            <div style={{display:'flex', marginLeft: '5rem'}}>
                 <SideBar />
                 <Container maxWidth="xl" style={{ paddingLeft: '35px', paddingTop: '20px' }}>
                     <Grid container style={{display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
@@ -170,28 +170,6 @@ export default function CategoryHome() {
                                         Please use the table below to navigate or filter the results.
                                 </Typography>
                                 <div sx={{ textAlign: 'center', marginTop: '16px' }}>
-                                    <IconButton 
-                                        onClick={printCategories}
-                                        sx={{
-                                            backgroundColor: '#13131c',
-                                            borderRadius: '8px',
-                                            padding: '8px',
-                                            '&:hover': {
-                                                backgroundColor: colors.secondary,
-                                            },
-                                            marginRight: '5px',
-                                        }}>
-                                        <PrintRounded
-                                            sx={{ 
-                                            color: colors.secondary, 
-                                            fontSize: '2rem', 
-                                            transition: 'transform 0.2s',
-                                            ':hover': {
-                                                color: colors.fontColor,
-                                            }
-                                        }} 
-                                        />
-                                    </IconButton>
                                     <IconButton 
                                         onClick={handleClickOpen}
                                         sx={{

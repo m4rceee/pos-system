@@ -1,7 +1,10 @@
 import * as React from 'react';
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import fullLogo from './svg pics/logo1.png';
+import logo2 from './svg pics/2.svg';
+import logo3 from './svg pics/3.svg';
+import logo4 from './svg pics/logo2.png';
 
 import "./styles.css"
 import 'typeface-poppins';
@@ -105,19 +108,19 @@ export default function Login() {
     }else{
       alert("Invalid Username!");
     }
-
-
-    
-  
   }
+
+  const handleForgotPasswordClick = () => {
+    navigate('/dashboard');
+  };
 
   return(
         <>
           <Container style={containerStyle}>
             <Card style={{display: 'flex', justifyContent: 'center', alignItems: 'center', width: '500px'}}>
               <CardContent sx={{ width: '85%' }}>
-                <div className='text-center' style={{ display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-                  <img src={fullLogo} alt="" style={{width: '200px', height: '200px'}} />
+                <div className='text-center' style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '15px'}}>
+                  <img src={logo2} alt="" style={{width: '150px', height: '150px'}} />
                 </div>
 
                 <form onSubmit={handleSubmit}>
@@ -130,13 +133,6 @@ export default function Login() {
                           id="username"
                           variant="outlined"
                           required
-                          InputProps={{
-                              endAdornment: (
-                              <InputAdornment position="end">
-                                  <AccountCircle sx={{color: 'gray'}}/>
-                              </InputAdornment>
-                              ),
-                          }}
                           sx={{
                               height: '40px', mb: 3, width: '100%', 
                               '& .MuiOutlinedInput-root': {
@@ -188,6 +184,20 @@ export default function Login() {
                                 },
                                 },
                           }}/>
+                            <Typography 
+                              variant='body1'
+                              sx={{
+                                marginTop: '15px', 
+                                fontFamily: 'Poppins, sans-serif', 
+                                cursor: 'pointer',
+                                '&:hover': {
+                                  textDecoration: 'underline',
+                                },
+                              }}
+                              onClick={handleForgotPasswordClick}
+                              >
+                              Forgot Password?
+                            </Typography>
                   </FormControl>
 
                   {/*LOG IN BUTTON*/}

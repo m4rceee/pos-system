@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import shortLogo from '../svg pics/logo2.png'
+import shortLogo from '../svg pics/logo2.png';
+import logo3 from '../svg pics/3.svg';
 
 import "../styles.css"
 import 'typeface-poppins';
+
+import { Typography } from '@mui/material';
 
 import { 
     Sidebar, 
@@ -27,14 +30,6 @@ import {
     FolderRounded,
 } from '@mui/icons-material';
 
-import { 
-    IconButton,
-    Divider,
-    Chip,
-    Icon,
-    Typography,
-} from '@mui/material';
-
 const colors = {
     primary: '#1D1D2C',
     secondary: '#F7F4E9',
@@ -43,223 +38,174 @@ const colors = {
     accentYellow: '#EBA63F',
     accentGreen: '#438945',
     fontColor: '#181818',
-  };
+};
 
 export default function SideBar() {
-
     const navigate = useNavigate();
 
-    const [collapsed, setCollapsed] = useState(false);
-    const [hovered, setHovered] = useState(false);
-    const [hoveredItem, setHoveredItem] = useState(null);
+    const [collapsed, setCollapsed] = useState(true);
 
-    const handleItemHover = (itemId) => {
-        setHoveredItem(itemId);
+    const handleSidebarHover = () => {
+        if (collapsed) {
+            setCollapsed(false);
+        }
+    };
+
+    const handleSidebarLeave = () => {
+        if (!collapsed) {
+            setCollapsed(true);
+        }
     };
 
     const getMenuItemStyle = (itemId) => ({
-        backgroundColor: hoveredItem === itemId ? '#e9e1c4' : 'transparent',
+        backgroundColor: collapsed ? 'transparent' : 'transparent',
         transition: '0.2s ease',
-        cursor: hoveredItem === itemId ? 'pointer' : 'default',
-      });
+        cursor: 'pointer',
+    });
 
-    const iconSize = collapsed ? 50 : 100;
+    const iconSize = collapsed ? 75 : 200;
 
     const handleCategoryHome = () => {
         navigate('/category-home');
-      }
-    
+    }
+
     const handleDashboardHome = () => {
         navigate('/dashboard');
-      }
+    }
 
     const handleProductHome = () => {
         navigate('/product-home');
-      } 
+    }
 
     const handlePosPage = () => {
         navigate('/pos');
-      } 
+    }
 
-    return(
-        
-        <>
-            <div 
-                style={{ 
-                    display: 'flex', 
-                    minHeight: '100vh',
-                    flex: '0 0 auto', 
-                    overflowY: 'auto'
-                    }}>
-                <Sidebar 
-                    collapsed={collapsed}
-                    width='200px' 
-                    transitionduration={750} 
-                    backgroundColor={colors.secondary}
-                    >
-                    
-                    <div className='text-center' style={{ padding: '20px', color: 'lightgray' }} >
-                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                            <BlockRounded style={{ fontSize: iconSize, marginBottom: '5px' }} />
-                            <p>No Logo Yet</p>
-
-                            {collapsed && (
-                                <Divider variant='fullWidth' sx={{ marginTop: '2rem', width: '100%', backgroundColor: colors.primary, height: '3px' }} />
-                            )}
-
-                            {!collapsed && (
-                            <Divider variant='fullWidth' sx={{ marginTop: '2rem', width: '100%' }}>
-                                <Chip label="M" style={{ color: colors.secondary, backgroundColor:  colors.primary }} />
-                            </Divider>
-                            )}
-
-                        </div>
+    return (
+        <div
+            style={{
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                bottom: 0,
+                zIndex: 1000,
+                display: 'flex',
+                height: '100%',
+            }}
+        >
+            <Sidebar
+                collapsed={collapsed}
+                width='200px'
+                backgroundColor={colors.secondary}
+                onMouseEnter={handleSidebarHover}
+                onMouseLeave={handleSidebarLeave}
+            >
+                <div className='text-center'>
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                        <img src={logo3} alt="store logo" style={{iconSize}}/>
                     </div>
-                    
-                    <div style={{ display: 'flex', flexDirection: 'column'}}  transitionduration={750}>
-                        <Menu>
-                            {collapsed ? (
-                                <>
-                                    <MenuItem
-                                        onMouseEnter={() => handleItemHover('item1')}
-                                        onMouseLeave={() => handleItemHover(null)}
-                                        style={getMenuItemStyle('item1')}
-                                        onClick={handleDashboardHome} 
-                                        className='text-center'>
-                                        <DashboardRounded sx={{ fontSize: '2rem', color: colors.primary }}/>
-                                    </MenuItem>
-                                    <MenuItem
-                                        onMouseEnter={() => handleItemHover('item2')}
-                                        onMouseLeave={() => handleItemHover(null)}
-                                        style={getMenuItemStyle('item2')} 
-                                        onClick={handlePosPage} 
-                                        className='text-center'>
-                                        <PointOfSaleRounded sx={{ fontSize: '2rem', color: colors.primary }}/>
-                                    </MenuItem>
-                                    <MenuItem
-                                        onMouseEnter={() => handleItemHover('item3')}
-                                        onMouseLeave={() => handleItemHover(null)}
-                                        style={getMenuItemStyle('item3')} 
-                                        onClick={handleCategoryHome} 
-                                        className='text-center'>
-                                        <FolderRounded sx={{ fontSize: '2rem', color: colors.primary }}/>
-                                    </MenuItem>
-                                    <MenuItem
-                                        onMouseEnter={() => handleItemHover('item4')}
-                                        onMouseLeave={() => handleItemHover(null)}
-                                        style={getMenuItemStyle('item4')} 
-                                        onClick={handleProductHome} 
-                                        className='text-center'>
-                                        <ShoppingCartRounded sx={{ fontSize: '2rem', color: colors.primary }}/>
-                                    </MenuItem>
-                                    <MenuItem 
-                                        onMouseEnter={() => handleItemHover('item6')}
-                                        onMouseLeave={() => handleItemHover(null)}
-                                        style={getMenuItemStyle('item6')}
-                                        className='text-center'>
-                                        <LeaderboardRounded sx={{ fontSize: '2rem', color: colors.primary }}/>
-                                    </MenuItem>
-                                </>
-                            ) : (
-                                <>
-                                    <MenuItem
-                                        onMouseEnter={() => handleItemHover('item1')}
-                                        onMouseLeave={() => handleItemHover(null)}
-                                        style={getMenuItemStyle('item1')}
-                                        onClick={handleDashboardHome} 
-                                        className='p-1'
-                                        icon={<DashboardRounded sx={{ marginBottom: '3px',color: colors.primary,}}/>}>
-                                        Dashboard
-                                    </MenuItem>
-                                    <MenuItem 
-                                        className='p-1' 
-                                        onMouseEnter={() => handleItemHover('item2')}
-                                        onMouseLeave={() => handleItemHover(null)}
-                                        style={getMenuItemStyle('item2')}
-                                        onClick={handlePosPage}
-                                        icon={<PointOfSaleRounded sx={{ marginBottom: '3px', color: colors.primary }} />}>
-                                        POS
-                                    </MenuItem>
-                                    <MenuItem 
-                                        onClick={handleCategoryHome} 
-                                        className='p-1'
-                                        onMouseEnter={() => handleItemHover('item3')}
-                                        onMouseLeave={() => handleItemHover(null)}
-                                        style={getMenuItemStyle('item3')} 
-                                        icon={<FolderRounded sx={{ marginBottom: '3px', color: colors.primary }} />}>
-                                        Categories
-                                    </MenuItem>
-                                    <MenuItem 
-                                        onClick={handleProductHome}
-                                        className='p-1'
-                                        onMouseEnter={() => handleItemHover('item4')}
-                                        onMouseLeave={() => handleItemHover(null)}
-                                        style={getMenuItemStyle('item4')} 
-                                        icon={<ShoppingCartRounded sx={{ marginBottom: '3px', color: colors.primary }} />}>
-                                        Products
-                                    </MenuItem>
-                                    <SubMenu
-                                        className='p-1'
-                                        onMouseEnter={() => handleItemHover('records')}
-                                        onMouseLeave={() => handleItemHover(null)}
-                                        style={getMenuItemStyle('records')} 
-                                        label="Records" 
-                                        icon={<LeaderboardRounded 
-                                            sx={{ 
-                                                marginRight: '7px', 
-                                                marginBottom: '3px', 
-                                                color: colors.primary 
-                                                }} 
-                                            />}
-                                            
-                                        >
-                                        <MenuItem 
-                                            className='p-1'
-                                            onMouseEnter={() => handleItemHover('sales')}
-                                            onMouseLeave={() => handleItemHover(null)}
-                                            style={getMenuItemStyle('sales')}
-                                            sx={{fontSize: '5rem' }}
-                                            icon={<ShowChartRounded sx={{ marginBottom: '3px', color: colors.primary }} />}>
-                                            Sales
-                                        </MenuItem>
-                                        <MenuItem 
-                                            className='p-1'
-                                            onMouseEnter={() => handleItemHover('analytics')}
-                                            onMouseLeave={() => handleItemHover(null)}
-                                            style={getMenuItemStyle('analytics')}
-                                            sx={{ fontSize: '5rem' }}
-                                            icon={<DonutLargeRounded sx={{ marginBottom: '3px', color: colors.primary }} />}>
-                                            Analytics
-                                        </MenuItem>
-                                    </SubMenu>
-                                </>
-                                
-                            )}
-                        </Menu>
-                    </div>
-                    <main className='text-center' style={{ padding: 10 }} transitionduration={750}>
-                        <div>
-                            <IconButton
-                                onClick={() => setCollapsed(!collapsed)}
-                                onMouseEnter={() => setHovered(true)}
-                                onMouseLeave={() => setHovered(false)}
-                                style={{
-                                    backgroundColor: 'none',
-                                    borderRadius: '50%',
-                                    color: colors.primary,
-                                    transition: '0.2s ease-in-out',
-                                    '&:hover': {
-                                        backgroundColor: '#e9e1c4',
-                                        cursor: 'pointer',
-                                    }
-                                }}
+                </div>
+
+                <div style={{ display: 'flex', flexDirection: 'column' }} transitionDuration={750}>
+                <Menu>
+                    {!collapsed ? (
+                        <>
+                            <MenuItem
+                                style={getMenuItemStyle('item1')}
+                                onClick={handleDashboardHome}
+                                className='p-1 menu-item'
+                                icon={<DashboardRounded sx={{ marginBottom: '3px', color: colors.primary }} />}
+                            >
+                                Dashboard
+                            </MenuItem>
+                            <MenuItem
+                                style={getMenuItemStyle('item2')}
+                                onClick={handlePosPage}
+                                className='p-1 menu-item'
+                                icon={<PointOfSaleRounded sx={{ marginBottom: '3px', color: colors.primary }} />}
+                            >
+                                POS
+                            </MenuItem>
+                            <MenuItem
+                                style={getMenuItemStyle('item3')}
+                                onClick={handleCategoryHome}
+                                className='p-1 menu-item'
+                                icon={<FolderRounded sx={{ marginBottom: '3px', color: colors.primary }} />}
+                            >
+                                Categories
+                            </MenuItem>
+                            <MenuItem
+                                style={getMenuItemStyle('item4')}
+                                onClick={handleProductHome}
+                                className='p-1 menu-item'
+                                icon={<ShoppingCartRounded sx={{ marginBottom: '3px', color: colors.primary }} />}
+                            >
+                                Products
+                            </MenuItem>
+                            <SubMenu
+                                style={getMenuItemStyle('item5')}
+                                className='p-1 menu-item'
+                                icon={<LeaderboardRounded sx={{ marginBottom: '3px', color: colors.primary }} />}
+                                label="Records"
+                            >
+                                <MenuItem
+                                    style={getMenuItemStyle('item6')}
+                                    className='p-1 menu-item'
+                                    icon={<ShowChartRounded sx={{ marginBottom: '3px', color: colors.primary }} />}
                                 >
-                                {collapsed ? <UnfoldMoreDoubleRounded sx={{ transform: 'rotate(90deg)' }}/> : <UnfoldLessDoubleRounded sx={{ transform: 'rotate(90deg)' }}/>}
-                            </IconButton>
-                        </div>
-                    </main>
-                </Sidebar>
-            </div>
-        </>
+                                Sales
+                                </MenuItem>
+                                <MenuItem
+                                    style={getMenuItemStyle('item7')}
+                                    className='p-1 menu-item'
+                                    icon={<DonutLargeRounded sx={{ marginBottom: '3px', color: colors.primary }} />}
+                                >
+                                Analytics
+                                </MenuItem>
+                            </SubMenu>
+                        </>
+                    ) : (
+                        <>
+                            <MenuItem
+                                style={getMenuItemStyle('item1')}
+                                onClick={handleDashboardHome}
+                                className='text-center menu-item'
+                            >
+                                <DashboardRounded sx={{ fontSize: '2rem', color: colors.primary }} />
+                            </MenuItem>
+                            <MenuItem
+                                style={getMenuItemStyle('item2')}
+                                onClick={handlePosPage}
+                                className='text-center menu-item'
+                            >
+                                <PointOfSaleRounded sx={{ fontSize: '2rem', color: colors.primary }} />
+                            </MenuItem>
+                            <MenuItem
+                                style={getMenuItemStyle('item3')}
+                                onClick={handleCategoryHome}
+                                className='text-center'
+                            >
+                                <FolderRounded sx={{ fontSize: '2rem', color: colors.primary }} />
+                            </MenuItem>
+                            <MenuItem
+                                style={getMenuItemStyle('item4')}
+                                onClick={handleProductHome}
+                                className='text-center menu-item'
+                            >
+                                <ShoppingCartRounded sx={{ fontSize: '2rem', color: colors.primary }} />
+                            </MenuItem>
+                            <MenuItem
+                                style={getMenuItemStyle('item5')}
+                                className='text-center menu-item'
+                            >
+                                <LeaderboardRounded sx={{ fontSize: '2rem', color: colors.primary }} />
+                            </MenuItem>
+                        </>
+
+                    )}
+                    </Menu>
+                </div>
+            </Sidebar>
+        </div>
     );
 }

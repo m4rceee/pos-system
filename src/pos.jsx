@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 import "./styles.css";
 import 'typeface-poppins';
-import SideBar from './common/sidebar-pos';
+import SideBar from './common/sidebar';
 import Header from './common/header';
 
 import { 
@@ -105,7 +105,7 @@ export default function PosPage() {
 ];
 
     return(
-        <div style={{display: 'flex'}}>
+        <div style={{display: 'flex', marginLeft: '5rem' }}>
                 <SideBar />
                 <Container maxWidth="xl" style={{ paddingLeft: '35px', paddingTop: '20px' }}>
                     <Grid container style={{display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
