@@ -5,6 +5,7 @@ import fullLogo from './svg pics/logo1.png';
 import logo2 from './svg pics/2.svg';
 import logo3 from './svg pics/3.svg';
 import logo4 from './svg pics/logo2.png';
+import final from './svg pics/final.svg';
 
 import "./styles.css"
 import 'typeface-poppins';
@@ -120,7 +121,7 @@ export default function Login() {
             <Card style={{display: 'flex', justifyContent: 'center', alignItems: 'center', width: '500px'}}>
               <CardContent sx={{ width: '85%' }}>
                 <div className='text-center' style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '15px'}}>
-                  <img src={logo2} alt="" style={{width: '150px', height: '150px'}} />
+                  <img src={final} alt="" style={{width: '500px', height: '200px'}} />
                 </div>
 
                 <form onSubmit={handleSubmit}>
