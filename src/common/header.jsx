@@ -1,5 +1,7 @@
 import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { database } from '../firebaseConfig';
+import { signOut } from 'firebase/auth';
 import '../styles.css';
 
 import { 
@@ -31,11 +33,10 @@ export default function Header() {
     const navigate = useNavigate();
 
     const handleLogout = () => {
-        const isConfirmed = window.confirm("Are you sure you want to logout?");
-
-        if (isConfirmed) {
+        signOut(database).then(val=>{
             navigate('/');
-        }
+        })
+        
     };
 
     return(

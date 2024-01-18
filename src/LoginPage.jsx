@@ -1,11 +1,9 @@
 import * as React from 'react';
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import fullLogo from './svg pics/logo1.png';
-import logo2 from './svg pics/2.svg';
-import logo3 from './svg pics/3.svg';
-import logo4 from './svg pics/logo2.png';
 import final from './svg pics/final.svg';
+import { database } from './firebaseConfig';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 
 import "./styles.css"
 import 'typeface-poppins';
@@ -57,9 +55,7 @@ const colors = {
 export default function Login() {
 
   const navigate = useNavigate();
-
   const [showPassword, setShowPassword] = useState(false);
-
   const [currentDateTime, setCurrentDateTime] = useState(new Date());
     
   useEffect(() => {
@@ -88,19 +84,25 @@ export default function Login() {
     event.preventDefault();
   };
 
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    const formElements = e.target.elements;
+    const username = e.target.username.value;
+    const password = e.target.password.value;
     
-    const data = {
-      username: formElements.username.value,
-      password: formElements.password.value,
-    };
-    
-    console.log('Form data submitted:', data);
+    //Login Auth
+    signInWithEmailAndPassword(database, username, password).then(data =>{
+      console.log(data, "authData");
+      navigate('/dashboard');
+    });
+
+    //SignIn Auth
+    /*createUserWithEmailAndPassword(database, username, password).then(data =>{
+      console.log(data, "authData");
+    });*/
 
 
-    if(formElements.username.value == "admin"){
+    /*if(formElements.username.value == "admin"){
       if(formElements.password.value == "123456"){
         navigate('/dashboard');
       }else{
@@ -108,7 +110,7 @@ export default function Login() {
       }
     }else{
       alert("Invalid Username!");
-    }
+    }*/
   }
 
   const handleForgotPasswordClick = () => {
@@ -124,7 +126,7 @@ export default function Login() {
                   <img src={final} alt="" style={{width: '500px', height: '200px'}} />
                 </div>
 
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={(e)=> handleSubmit(e)}>
                   <FormControl fullWidth>
 
                           {/*USERNAME*/}
