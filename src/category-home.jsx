@@ -79,20 +79,18 @@ const columns = [
   ];
   
   const rows = [
-    { id: '0001', categoryName: 'Snacks', categoryCode: '' },
-    { id: '0002', categoryName: 'Beverages', categoryCode: '' },
-    { id: '0003', categoryName: 'School and Office Supplies', categoryCode: '' },
-    { id: '0004', categoryName: 'Laundry Supplies', categoryCode: '' },
-    { id: '0005', categoryName: 'Personal Care', categoryCode: '' },
-    { id: '0006', categoryName: 'Frozen Goods', categoryCode: '' },
-    { id: '0007', categoryName: 'Rice and Grains', categoryCode: '' },
-    { id: '0008', categoryName: 'Canned Goods', categoryCode: '' },
+    { id: '', categoryName: 'Snacks'},
+    { id: '', categoryName: 'Beverages'},
+    { id: '', categoryName: 'School and Office Supplies'},
+    { id: '', categoryName: 'Laundry Supplies'},
+    { id: '', categoryName: 'Personal Care'},
+    { id: '', categoryName: 'Frozen Goods'},
+    { id: '', categoryName: 'Rice and Grains'},
+    { id: '', categoryName: 'Canned Goods'},
   ];
 
-  rows.forEach(row => {
-    if (row.categoryName) {
-      row.categoryCode = row.categoryName.slice(0, 3).toUpperCase() + Math.floor(Math.random() * 1000).toString();
-    }
+  rows.forEach((row, index) => {
+    row.id = "C" + String(index + 1).padStart(4, '0');
   });
 
 export default function CategoryHome() {
@@ -240,7 +238,7 @@ export default function CategoryHome() {
                                                     }}
                                                 />
 
-                                                <DialogActions sx={{marginRight: '15px', marginBottom: '10px'}}>
+                                                <DialogActions>
                                                     <Button 
                                                         onClick={handleClose} 
                                                         sx={{
@@ -290,7 +288,6 @@ export default function CategoryHome() {
                                             },
                                             }}
                                             pageSizeOptions={[10, 50, 100]}
-                                            checkboxSelection
                                             sx={{
                                                 fontFamily: 'Poppins, sans-serif',
                                                 color: colors.fontColor,

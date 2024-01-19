@@ -151,7 +151,7 @@ export default function SideBar() {
                                 className='p-1 menu-item'
                                 icon={<LeaderboardRounded sx={{ marginBottom: '3px', color: colors.primary }} />}
                             >
-                                Records
+                                Reports
                             </MenuItem>
                         </>
                     ) : (
