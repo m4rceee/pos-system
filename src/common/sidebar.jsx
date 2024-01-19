@@ -81,9 +81,9 @@ export default function SideBar() {
         navigate('/pos');
     }
 
-    /*const handleAnalytics = () => {
-        navigate('/analytics');
-    }*/
+    const handleReports = () => {
+        navigate('/reports-home');
+    }
 
     return (
         <div
@@ -148,6 +148,7 @@ export default function SideBar() {
                             </MenuItem>
                             <MenuItem
                                 style={getMenuItemStyle('item5')}
+                                onClick={handleReports}
                                 className='p-1 menu-item'
                                 icon={<LeaderboardRounded sx={{ marginBottom: '3px', color: colors.primary }} />}
                             >
