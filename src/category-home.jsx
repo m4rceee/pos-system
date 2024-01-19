@@ -9,6 +9,7 @@ import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import { useNavigate } from 'react-router-dom';
 
 import { firestore } from './firebaseConfig';
+import { addDoc, collection, doc, onSnapshot } from '@firebase/firestore';
 
 import {
     AddRounded,
@@ -33,7 +34,7 @@ import {
     Card,
     CardContent,
 } from '@mui/material';
-import { addDoc, collection, doc } from '@firebase/firestore';
+
 
 const colors = {
     primary: '#1D1D2C',
@@ -52,8 +53,9 @@ const colors = {
   };
 
 const columns = [
-    { field: 'id', headerName: 'ID', width: 90 },
+    { field: 'categoryId', headerName: 'ID', width: 90 },
     { field: 'categoryName', headerName: 'Category Name', width: 450 },
+    { field: 'categoryTotalCount', headerName: 'Product Count', width: 450 },
     { 
         field: 'categoryActions', 
         headerName: 'Actions',
@@ -77,28 +79,23 @@ const columns = [
     },
     
   ];
-  
-  const rows = [
-    { id: '0001', categoryName: 'Snacks', categoryCode: '' },
-    { id: '0002', categoryName: 'Beverages', categoryCode: '' },
-    { id: '0003', categoryName: 'School and Office Supplies', categoryCode: '' },
-    { id: '0004', categoryName: 'Laundry Supplies', categoryCode: '' },
-    { id: '0005', categoryName: 'Personal Care', categoryCode: '' },
-    { id: '0006', categoryName: 'Frozen Goods', categoryCode: '' },
-    { id: '0007', categoryName: 'Rice and Grains', categoryCode: '' },
-    { id: '0008', categoryName: 'Canned Goods', categoryCode: '' },
-  ];
-
-  rows.forEach(row => {
-    if (row.categoryName) {
-      row.categoryCode = row.categoryName.slice(0, 3).toUpperCase() + Math.floor(Math.random() * 1000).toString();
-    }
-  });
 
 export default function CategoryHome() {
 
     const [open, setOpen] = useState(false);
     const [count, setCount] = useState(0);
+
+    const [category, setCategory] = useState([]);
+
+    useEffect(() => {
+        const getCategoryData = onSnapshot(collection(firestore, 'Product_Category'), (snapshot) => {
+            const categoryArray = snapshot.docs.map((doc) => ({
+                ...doc.data(), id: doc.id
+            }));
+            setCategory(categoryArray);
+        });
+    return () => getCategoryData();
+  }, []); 
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -107,6 +104,7 @@ export default function CategoryHome() {
     const handleClose = () => {
         setOpen(false);
       };
+
 
     const handleAddCategory = (e) => {
         e.preventDefault();
@@ -282,7 +280,7 @@ export default function CategoryHome() {
                                 <Grid item xs={12}>
                                     <div style={{ height: 'auto', width: '100%' }}>
                                         <DataGrid
-                                            rows={rows}
+                                            rows={category}
                                             columns={columns}
                                             initialState={{
                                             pagination: {
@@ -290,7 +288,6 @@ export default function CategoryHome() {
                                             },
                                             }}
                                             pageSizeOptions={[10, 50, 100]}
-                                            checkboxSelection
                                             sx={{
                                                 fontFamily: 'Poppins, sans-serif',
                                                 color: colors.fontColor,
