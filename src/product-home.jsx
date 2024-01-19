@@ -69,7 +69,7 @@ const colors = {
     { field: 'itemId', headerName: 'ID', width: 90 },
     { field: 'itemCode', headerName: 'Item Code', width: 200 },
     { field: 'itemName', headerName: 'Item Name', width: 300 },
-    { field: 'itemCategory', headerName: 'Category', width: 250 },
+    { field: 'categoryName', headerName: 'Category', width: 250 },
     { field: 'itemQuantity', headerName: 'Quantity', width: 100 },
     { field: 'itemPrice', headerName: 'Price', width: 75 },
     { 
@@ -196,7 +196,7 @@ export default function ProductHome() {
 
   const [count, setCount] = useState(0);
   const [category, setCategory] = useState([]);
-  //const [productItem, setProduct] = useState([]);
+  const [productItem, setProduct] = useState([]);
 
     useEffect(() => {
         const getCategoryData = onSnapshot(collection(firestore, 'Product_Category'), (snapshot) => {
@@ -208,7 +208,7 @@ export default function ProductHome() {
     return () => getCategoryData();
   }, []); 
 
-    /*useEffect(() => {
+    useEffect(() => {
         const getProductData = onSnapshot(collection(firestore, 'Products'), (snapshot) => {
             const productArray = snapshot.docs.map((doc) => ({
                 ...doc.data(), id: doc.id
@@ -216,7 +216,7 @@ export default function ProductHome() {
             setProduct(productArray);
         });
     return () => getProductData();
-  }, []); */
+  }, []); 
 
   const handleAddProduct = (e) => {
     e.preventDefault();
@@ -245,67 +245,42 @@ export default function ProductHome() {
     
   };
 
-  
-  const StyledTableCell = styled(TableCell)({
-    fontFamily: 'Poppins, sans-serif',
-    color: colors.secondary,
-  });
 
-
-
-  const [productItem, setProductItem] = useState([]);
-  const [productItemWithCategory, setProductItemWithCategory] = useState([]);
-
+  const [products, setProducts] = useState([]);
   useEffect(() => {
-    // Fetching productItem data
-    const getProductItemData = onSnapshot(collection(firestore, 'Products'), (snapshot) => {
-      const productItemArray = snapshot.docs.map((doc) => ({
+    const unsubscribe = onSnapshot(collection(firestore, 'Products'), (snapshot) => {
+      const productArray = snapshot.docs.map((doc) => ({
         ...doc.data(),
         id: doc.id
       }));
-      setProductItem(productItemArray);
-    });
 
-    // Fetching category names for each productItem
-    const fetchCategoryName = (categoryId) => {
-      const categoryRef = doc(firestore, 'Product_Category', categoryId);
+      // Fetch category information for each product
+      const fetchCategoryInfo = async () => {
+        const productsWithCategory = await Promise.all(
+          productArray.map(async (product) => {
+            const categoryRef = doc(firestore, 'Product_Category', product.itemCategory);
+            const categorySnapshot = await getDoc(categoryRef);
 
-      return getDoc(categoryRef)
-        .then((categorySnapshot) => {
-          if (categorySnapshot.exists()) {
-            const categoryData = categorySnapshot.data();
-            return categoryData.categoryName;
-          } else {
-            console.log(`Category with ID ${categoryId} not found.`);
-            return '';
-          }
-        })
-        .catch((error) => {
-          console.error('Error fetching category data: ', error);
-          return '';
-        });
-    };
-
-    // Combining the two fetching operations
-    const fetchData = () => {
-      try {
-        const promises = productItem.map((item) =>
-          fetchCategoryName(item.itemCategory).then((categoryName) => ({ ...item, categoryName }))
+            if (categorySnapshot.exists()) {
+              const categoryData = categorySnapshot.data();
+              console.log(`${categoryData.categoryName}`);
+              return { ...product, categoryName: categoryData.categoryName };     
+            } else {
+              console.log(`Category with ID ${product.itemCategory} not found.`);
+              return product; // Return the product without category information
+            }
+          })
         );
 
-        Promise.all(promises).then((updatedProductItem) => {
-          setProductItemWithCategory(updatedProductItem);
-        });
-      } catch (error) {
-        console.error('Error fetching data: ', error);
-      }
-    };
+        setProducts(productsWithCategory);
+      };
 
-    fetchData(); // Call the function when the component mounts
-    return () => {
-      getProductItemData(); // Cleanup for productItem listener
-    };
+      fetchCategoryInfo();
+    });
+
+    return () => unsubscribe();
   }, []);
+
 
     return(
         <>
@@ -543,34 +518,42 @@ export default function ProductHome() {
                                     </Dialog>
                                     </div>
                                 </div>
-                                <TableContainer style={{ marginTop: '15px', overflowY: 'auto' }}>
-                                    <Table>
-                                        <TableHead>
-                                            <TableRow>
-                                                <StyledTableCell>ID</StyledTableCell>
-                                                <StyledTableCell>Item Code</StyledTableCell>
-                                                <StyledTableCell>Item Name</StyledTableCell>
-                                                <StyledTableCell>Category</StyledTableCell>
-                                                <StyledTableCell>Quantity</StyledTableCell>
-                                                <StyledTableCell>Price</StyledTableCell>
-                                                <StyledTableCell>Action</StyledTableCell>
-                                            </TableRow>
-                                        </TableHead>
-                                        <TableBody>
-                                            {productItemWithCategory.map((item) => (
-                                                <TableRow key={item.id}>
-                                                <StyledTableCell>{item.itemId}</StyledTableCell>
-                                                <StyledTableCell>{item.itemCode}</StyledTableCell>
-                                                <StyledTableCell>{item.itemName}</StyledTableCell>
-                                                <StyledTableCell>{item.categoryName}</StyledTableCell>
-                                                <StyledTableCell>{item.itemQuantity}</StyledTableCell>
-                                                <StyledTableCell>{item.itemPrice}</StyledTableCell>
-                                                <StyledTableCell>{item.id}</StyledTableCell>
-                                                </TableRow>
-                                            ))}
-                                        </TableBody>
-                                    </Table>
-                                </TableContainer>
+                                <Grid className='mt-5' container>
+                                    <Grid item xs={12}>
+                                        <div style={{ height: 'auto', width: '100%' }}>
+                                            <DataGrid
+                                                rows={products}
+                                                columns={columns}
+                                                initialState={{
+                                                    pagination: {
+                                                    paginationModel: { page: 0, pageSize: 5 },
+                                                    },
+                                                }}
+                                                pageSizeOptions={[5, 10]}
+                                                sx={{
+                                                    fontFamily: 'Poppins, sans-serif',
+                                                    color: colors.fontColor,
+                                                    backgroundColor: colors.secondary,
+                                                    '& .MuiDataGrid-columnHeaders': {
+                                                    backgroundColor: colors.primary,
+                                                    color: colors.secondary,
+                                                    '& .css-i4bv87-MuiSvgIcon-root': {
+                                                        color: colors.secondary,
+                                                    },
+                                                    '& .css-1pe4mpk-MuiButtonBase-root-MuiIconButton-root': {
+                                                        color: colors.secondary,
+                                                    },
+                                                    },
+                                                    '& .MuiDataGrid-row': {
+                                                    '& .css-i4bv87-MuiSvgIcon-root': {
+                                                        color: colors.primary,
+                                                    },
+                                                    },
+                                                }}
+                                            />
+                                        </div>
+                                    </Grid>
+                                </Grid>
                             </CardContent>
                         </Card>
                 </Container>
