@@ -194,7 +194,7 @@ const handleClose = (confirmed) => {
 
                     <Grid container spacing={1.5} style={{display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
                         <Grid item xs={8} sx={{ alignItems: 'center' }}>
-                            <Card className='mt-8' style={{backgroundColor: '#27273b', boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)', height: '82vh', borderRadius: '20px', display: 'flex', flexDirection: 'row'}}>
+                            <Card className='mt-8' style={{backgroundColor: '#27273b', boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)', height: '82vh', borderRadius: '5px', display: 'flex', flexDirection: 'row'}}>
                                     <Box sx={{ overflowX: 'auto', width: '100%', typography: 'body1' }}>
                                         <TabContext value={value}>
                                             <Box sx={{ borderBottom: 1, borderColor: 'divider', overflowX: 'auto', position: 'sticky', top: 0, zIndex: 500, backgroundColor: '#13131c', boxShadow: '0 8px 16px rgba(169, 169, 169, 0.6)' }}>
