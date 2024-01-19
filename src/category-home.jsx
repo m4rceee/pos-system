@@ -84,8 +84,8 @@ export default function CategoryHome() {
 
     const [open, setOpen] = useState(false);
     const [count, setCount] = useState(0);
-
     const [category, setCategory] = useState([]);
+    const [loading, setLoading] = useState(true); // Add loading state
 
     useEffect(() => {
         const getCategoryData = onSnapshot(collection(firestore, 'Product_Category'), (snapshot) => {
@@ -93,6 +93,7 @@ export default function CategoryHome() {
                 ...doc.data(), id: doc.id
             }));
             setCategory(categoryArray);
+            setLoading(false); // Set loading to false when data is loaded
         });
     return () => getCategoryData();
   }, []); 
@@ -183,135 +184,145 @@ export default function CategoryHome() {
 
                     <Card className='mt-8' style={{backgroundColor: '#27273b', boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)', marginBottom: '30px' }}>
                         <CardContent style={{ padding: '20px'}}>
-                            <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
-                                <Typography variant='h5' sx={{ fontFamily: 'Poppins, sans-serif', fontWeight: '300', color: colors.secondary }}>
-                                        Please use the table below to navigate or filter the results.
-                                </Typography>
-                                <div sx={{ textAlign: 'center', marginTop: '16px' }}>
-                                    <IconButton 
-                                        onClick={handleClickOpen}
-                                        sx={{
-                                            backgroundColor: '#13131c',
-                                            borderRadius: '8px',
-                                            padding: '8px',
-                                            '&:hover': {
-                                                backgroundColor: colors.secondary,
-                                            },
-                                        }}>
-                                        <AddRounded
-                                            sx={{ 
-                                            color: colors.secondary, 
-                                            fontSize: '2rem', 
-                                            transition: 'transform 0.2s',
-                                            ':hover': {
-                                                color: colors.fontColor,
-                                            }
-                                        }} 
-                                        />
-                                    </IconButton>
-                                    
-                                    {/*Dialog*/}
-                                    <Dialog open={open} onClose={handleClose} >
-                                        <DialogTitle sx={{fontFamily: 'Poppins, sans-serif'}}>Add Category</DialogTitle>
-                                        <DialogContent sx={{width: '500px'}}>
-                                            <DialogContentText sx={{fontFamily: 'Poppins, sans-serif'}}>
-                                                Please enter a category name:
-                                            </DialogContentText>
-
-                                            <form onSubmit={(e)=> handleAddCategory(e)}>
-                                                <TextField
-                                                    name="categoryName"
-                                                    margin="dense"
-                                                    id="categoryName"
-                                                    fullWidth
-                                                    variant="outlined"
-                                                    sx={{
-                                                        width: '100%',
-                                                        '& .MuiOutlinedInput-root': {
-                                                        '& fieldset': {
-                                                            border: '1px solid #1F2937',
-                                                        },
-                                                            '&.Mui-focused fieldset': {
-                                                            border: '2px solid #1F2937',
-                                                            },
-                                                        },
-                                                    }}
-                                                />
-
-                                                <DialogActions>
-                                                    <Button 
-                                                        onClick={handleClose} 
-                                                        sx={{
-                                                            textTransform: 'none',
-                                                            color: colors.secondary,
-                                                            backgroundColor: '#27273b',
-                                                            fontFamily: 'Poppins, sans-serif',
-                                                            '&:hover': {
-                                                                backgroundColor: 'none',
-                                                                color: colors.fontColor,
-                                                            },
-                                                        }}>
-                                                        Cancel
-                                                    </Button>
-                                                    <Button 
-                                                        type="submit" 
-                                                        sx={{
-                                                            textTransform: 'none',
-                                                            color: colors.secondary,
-                                                            backgroundColor: '#27273b',
-                                                            fontFamily: 'Poppins, sans-serif',
-                                                            '&:hover': {
-                                                                backgroundColor: 'none',
-                                                                color: colors.fontColor,
-                                                            },
-                                                        }}>
-                                                        Add
-                                                    </Button>
-                                                </DialogActions>
-                                            </form>
-                                            
-                                            </DialogContent>
-                                        
-                                    </Dialog>
+                            {loading ? (
+                                // Render loading indicator while loading
+                                <div style={{ textAlign: 'center', color: colors.secondary }}>
+                                    Loading...
                                 </div>
-                            </div>
-                            
-                            <Grid className='mt-5' container>
-                                <Grid item xs={12}>
-                                    <div style={{ height: 'auto', width: '100%' }}>
-                                        <DataGrid
-                                            rows={category}
-                                            columns={columns}
-                                            initialState={{
-                                            pagination: {
-                                                paginationModel: { page: 0, pageSize: 10 },
-                                            },
-                                            }}
-                                            pageSizeOptions={[10, 50, 100]}
+                                ) : (
+                                    <>
+                                    <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
+                                    <Typography variant='h5' sx={{ fontFamily: 'Poppins, sans-serif', fontWeight: '300', color: colors.secondary }}>
+                                            Please use the table below to navigate or filter the results.
+                                    </Typography>
+                                    <div sx={{ textAlign: 'center', marginTop: '16px' }}>
+                                        <IconButton 
+                                            onClick={handleClickOpen}
                                             sx={{
-                                                fontFamily: 'Poppins, sans-serif',
-                                                color: colors.fontColor,
-                                                backgroundColor: colors.secondary,
-                                                '& .MuiDataGrid-columnHeaders': {
-                                                    backgroundColor: colors.primary,
-                                                    color: colors.secondary,
-                                                    '& .css-i4bv87-MuiSvgIcon-root': {
-                                                        color: colors.secondary,
-                                                    },
-                                                    '& .css-1pe4mpk-MuiButtonBase-root-MuiIconButton-root': {
-                                                        color: colors.secondary,
-                                                    }
+                                                backgroundColor: '#13131c',
+                                                borderRadius: '8px',
+                                                padding: '8px',
+                                                '&:hover': {
+                                                    backgroundColor: colors.secondary,
                                                 },
-                                                '& .MuiDataGrid-row': {
-                                                    '& .css-i4bv87-MuiSvgIcon-root': {
-                                                        color: colors.primary,
-                                                    },
-                                                },
-                                            }}
-                                        />
+                                            }}>
+                                            <AddRounded
+                                                sx={{ 
+                                                color: colors.secondary, 
+                                                fontSize: '2rem', 
+                                                transition: 'transform 0.2s',
+                                                ':hover': {
+                                                    color: colors.fontColor,
+                                                }
+                                            }} 
+                                            />
+                                        </IconButton>
+                                        
+                                        {/*Dialog*/}
+                                        <Dialog open={open} onClose={handleClose} >
+                                            <DialogTitle sx={{fontFamily: 'Poppins, sans-serif'}}>Add Category</DialogTitle>
+                                            <DialogContent sx={{width: '500px'}}>
+                                                <DialogContentText sx={{fontFamily: 'Poppins, sans-serif'}}>
+                                                    Please enter a category name:
+                                                </DialogContentText>
+    
+                                                <form onSubmit={(e)=> handleAddCategory(e)}>
+                                                    <TextField
+                                                        name="categoryName"
+                                                        margin="dense"
+                                                        id="categoryName"
+                                                        fullWidth
+                                                        variant="outlined"
+                                                        sx={{
+                                                            width: '100%',
+                                                            '& .MuiOutlinedInput-root': {
+                                                            '& fieldset': {
+                                                                border: '1px solid #1F2937',
+                                                            },
+                                                                '&.Mui-focused fieldset': {
+                                                                border: '2px solid #1F2937',
+                                                                },
+                                                            },
+                                                        }}
+                                                    />
+    
+                                                    <DialogActions>
+                                                        <Button 
+                                                            onClick={handleClose} 
+                                                            sx={{
+                                                                textTransform: 'none',
+                                                                color: colors.secondary,
+                                                                backgroundColor: '#27273b',
+                                                                fontFamily: 'Poppins, sans-serif',
+                                                                '&:hover': {
+                                                                    backgroundColor: 'none',
+                                                                    color: colors.fontColor,
+                                                                },
+                                                            }}>
+                                                            Cancel
+                                                        </Button>
+                                                        <Button 
+                                                            type="submit" 
+                                                            sx={{
+                                                                textTransform: 'none',
+                                                                color: colors.secondary,
+                                                                backgroundColor: '#27273b',
+                                                                fontFamily: 'Poppins, sans-serif',
+                                                                '&:hover': {
+                                                                    backgroundColor: 'none',
+                                                                    color: colors.fontColor,
+                                                                },
+                                                            }}>
+                                                            Add
+                                                        </Button>
+                                                    </DialogActions>
+                                                </form>
+                                                
+                                                </DialogContent>
+                                            
+                                        </Dialog>
                                     </div>
-                                </Grid>
-                            </Grid>
+                                </div>
+                                
+                                <Grid className='mt-5' container>
+                                    <Grid item xs={12}>
+                                        <div style={{ height: 'auto', width: '100%' }}>
+                                            <DataGrid
+                                                rows={category}
+                                                columns={columns}
+                                                initialState={{
+                                                pagination: {
+                                                    paginationModel: { page: 0, pageSize: 10 },
+                                                },
+                                                }}
+                                                pageSizeOptions={[10, 50, 100]}
+                                                sx={{
+                                                    fontFamily: 'Poppins, sans-serif',
+                                                    color: colors.fontColor,
+                                                    backgroundColor: colors.secondary,
+                                                    '& .MuiDataGrid-columnHeaders': {
+                                                        backgroundColor: colors.primary,
+                                                        color: colors.secondary,
+                                                        '& .css-i4bv87-MuiSvgIcon-root': {
+                                                            color: colors.secondary,
+                                                        },
+                                                        '& .css-1pe4mpk-MuiButtonBase-root-MuiIconButton-root': {
+                                                            color: colors.secondary,
+                                                        }
+                                                    },
+                                                    '& .MuiDataGrid-row': {
+                                                        '& .css-i4bv87-MuiSvgIcon-root': {
+                                                            color: colors.primary,
+                                                        },
+                                                    },
+                                                }}
+                                            />
+                                        </div>
+                                    </Grid>
+                                </Grid> 
+                                </>
+                                )
+                            }
                         </CardContent>
                     </Card>
                 </Container>
