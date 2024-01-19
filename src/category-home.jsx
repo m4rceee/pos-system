@@ -9,6 +9,7 @@ import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import { useNavigate } from 'react-router-dom';
 
 import { firestore } from './firebaseConfig';
+import { addDoc, collection, doc, onSnapshot } from '@firebase/firestore';
 
 import {
     AddRounded,
@@ -33,7 +34,7 @@ import {
     Card,
     CardContent,
 } from '@mui/material';
-import { addDoc, collection, doc } from '@firebase/firestore';
+
 
 const colors = {
     primary: '#1D1D2C',
@@ -52,8 +53,9 @@ const colors = {
   };
 
 const columns = [
-    { field: 'id', headerName: 'ID', width: 90 },
+    { field: 'categoryId', headerName: 'ID', width: 90 },
     { field: 'categoryName', headerName: 'Category Name', width: 450 },
+    { field: 'categoryTotalCount', headerName: 'Product Count', width: 450 },
     { 
         field: 'categoryActions', 
         headerName: 'Actions',
@@ -77,26 +79,23 @@ const columns = [
     },
     
   ];
-  
-  const rows = [
-    { id: '', categoryName: 'Snacks'},
-    { id: '', categoryName: 'Beverages'},
-    { id: '', categoryName: 'School and Office Supplies'},
-    { id: '', categoryName: 'Laundry Supplies'},
-    { id: '', categoryName: 'Personal Care'},
-    { id: '', categoryName: 'Frozen Goods'},
-    { id: '', categoryName: 'Rice and Grains'},
-    { id: '', categoryName: 'Canned Goods'},
-  ];
-
-  rows.forEach((row, index) => {
-    row.id = "C" + String(index + 1).padStart(4, '0');
-  });
 
 export default function CategoryHome() {
 
     const [open, setOpen] = useState(false);
     const [count, setCount] = useState(0);
+
+    const [category, setCategory] = useState([]);
+
+    useEffect(() => {
+        const getCategoryData = onSnapshot(collection(firestore, 'Product_Category'), (snapshot) => {
+            const categoryArray = snapshot.docs.map((doc) => ({
+                ...doc.data(), id: doc.id
+            }));
+            setCategory(categoryArray);
+        });
+    return () => getCategoryData();
+  }, []); 
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -105,6 +104,7 @@ export default function CategoryHome() {
     const handleClose = () => {
         setOpen(false);
       };
+
 
     const handleAddCategory = (e) => {
         e.preventDefault();
@@ -280,7 +280,7 @@ export default function CategoryHome() {
                                 <Grid item xs={12}>
                                     <div style={{ height: 'auto', width: '100%' }}>
                                         <DataGrid
-                                            rows={rows}
+                                            rows={category}
                                             columns={columns}
                                             initialState={{
                                             pagination: {
