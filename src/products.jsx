@@ -24,7 +24,7 @@ import {
 } from '@mui/material';
 
 import {
-    Inventory2RoundedIcon, 
+    Inventory2Rounded,
     NavigateNextRounded,
 } from '@mui/icons-material';
 
@@ -44,7 +44,28 @@ const colors = {
     accentPink: '#E84B8A', 
   };
 
+  function handleClick(event) {
+    event.preventDefault();
+    console.info('You clicked a breadcrumb.');
+  }
+  
+
 export default function Products() {
+
+    const breadcrumbs = [
+        <Link underline="hover" key="1" color="inherit" onClick={handleClick}>
+          Reports
+        </Link>,
+        <Link
+          underline="hover"
+          key="2"
+          color="secondary"
+          href="/products"
+          onClick={handleClick}
+        >
+          Products
+        </Link>,
+      ];
 
     const StyledTableCell = styled(TableCell)({
         fontFamily: 'Poppins, sans-serif',
@@ -90,14 +111,12 @@ export default function Products() {
                                     justifyContent: 'center',
                                     alignItems: 'center',
                                 }}>
-                                    <Grid item xs={4} sx={{ alignItems: 'center' }}>
-                                        <Breadcrumbs separator={<NavigateNextRounded fontSize="small" />} aria-label="breadcrumb">
-                                            <Link color="inherit" underline="hover" href="/reports-home">
-                                                Reports
-                                            </Link>
-                                            <Typography sx={{ fontFamily: 'Poppins, sans-serif', fontWeight: '600', fontSize: '1.5rem', color: colors.secondary }}>
-                                                Products
-                                            </Typography>
+                                    <Grid item xs={4}>
+                                        <Breadcrumbs
+                                            separator={<NavigateNextRounded fontSize="small" />}
+                                            aria-label="breadcrumb"
+                                        >
+                                            {breadcrumbs}
                                         </Breadcrumbs>
                                         <Typography variant='body2' sx={{ fontFamily: 'Poppins, sans-serif', color: colors.secondary, fontWeight: 'light' }}>
                                             <Stack direction="row">
@@ -133,7 +152,7 @@ export default function Products() {
                                                         backgroundColor: colors.secondary,
                                                     },
                                                 }}>
-                                                <Inventory2RoundedIcon
+                                                <Inventory2Rounded
                                                     sx={{ 
                                                     color: colors.secondary, 
                                                     fontSize: '2rem', 
