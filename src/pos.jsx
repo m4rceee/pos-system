@@ -17,22 +17,19 @@ import {
     Stack,
     Card,
     CardContent,
-    CardActions,
     Button,
-    List,
-    ListItem,
-    ListItemText,
-    ListItemButton,
-    InputAdornment,
-    TextField,
     CardActionArea,
-    Paper,
     Table,
     TableBody,
     TableCell,
     TableContainer,
     TableHead,
     TableRow,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    DialogContentText,
 } from '@mui/material';
 
 import { ColorizeSharp, SearchRounded } from '@mui/icons-material';
@@ -58,6 +55,7 @@ export default function PosPage() {
 
     const navigate = useNavigate();
 
+    const [open, setOpen] = useState(false);
     const [selectedItem, setSelectedItem] = useState(null);
     const [tableItems, setTableItems] = useState([]);
 
@@ -153,14 +151,18 @@ export default function PosPage() {
         { id: '', itemCode: '', itemName: 'Del Monte Fruit Cocktail', itemCategory: 'Canned Goods', itemQuantity: '6', itemPrice: '60.00'},
 ];
 
-    const handleCancelBill = () => {
-        const isConfirmed = window.confirm("Are you sure you want to cancel the bill?");
+const handleCancelBill = () => {
+    setOpen(true);
+};
 
-        if (isConfirmed) {
-            navigate('/pos');
-            window.location.reload();
-        }
+const handleClose = (confirmed) => {
+    setOpen(false);
+
+    if (confirmed) {
+        navigate('/pos');
+        window.location.reload();
     }
+};
 
     return(
         <div style={{display: 'flex', marginLeft: '5rem' }}>
@@ -320,6 +322,22 @@ export default function PosPage() {
                                                 >
                                                     Cancel
                                                 </Button>
+                                                <Dialog open={open} onClose={() => handleClose(false)}>
+                                                    <DialogTitle sx={{fontFamily: 'Poppins, sans-serif'}}>Confirm Cancellation</DialogTitle>
+                                                    <DialogContent>
+                                                        <DialogContentText sx={{fontFamily: 'Poppins, sans-serif'}}>
+                                                            Are you sure you want to cancel the bill?
+                                                        </DialogContentText>
+                                                    </DialogContent>
+                                                    <DialogActions>
+                                                        <Button onClick={() => handleClose(false)} color="primary" sx={{fontFamily: 'Poppins, sans-serif'}}>
+                                                            No
+                                                        </Button>
+                                                        <Button onClick={() => handleClose(true)} color="primary" sx={{fontFamily: 'Poppins, sans-serif'}}>
+                                                            Yes
+                                                        </Button>
+                                                    </DialogActions>
+                                                </Dialog>
                                                 <Button
                                                     variant="contained"
                                                     fullWidth

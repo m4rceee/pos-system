@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { database } from '../firebaseConfig';
 import { signOut } from 'firebase/auth';
@@ -16,6 +17,11 @@ import {
     Stack,
     Button,
     IconButton,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    DialogContentText,
 } from "@mui/material";
 
 const colors = {
@@ -31,12 +37,20 @@ const colors = {
 export default function Header() {
 
     const navigate = useNavigate();
+    const [open, setOpen] = useState(false);
 
     const handleLogout = () => {
-        signOut(database).then(val=>{
-            navigate('/');
-        })
-        
+        setOpen(true);
+    };
+
+    const handleClose = (confirmed) => {
+        setOpen(false);
+    
+        if (confirmed) {
+            signOut(database).then(val=>{
+                navigate('/');
+            })
+        }
     };
 
     return(
@@ -87,6 +101,22 @@ export default function Header() {
                         <LogoutRounded  style={{ color: colors.secondary, fontSize: '2rem' }} />
                     </IconButton>
                 </Stack>
+                <Dialog open={open} onClose={() => handleClose(false)}>
+                    <DialogTitle sx={{fontFamily: 'Poppins, sans-serif'}}>Confirm Log Out</DialogTitle>
+                        <DialogContent>
+                            <DialogContentText sx={{fontFamily: 'Poppins, sans-serif'}}>
+                                Are you sure you want to logout?
+                            </DialogContentText>
+                        </DialogContent>
+                    <DialogActions>
+                        <Button onClick={() => handleClose(false)} color="primary" sx={{fontFamily: 'Poppins, sans-serif'}}>
+                            No
+                        </Button>
+                        <Button onClick={() => handleClose(true)} color="primary" sx={{fontFamily: 'Poppins, sans-serif'}}>
+                            Yes
+                        </Button>
+                    </DialogActions>
+                </Dialog>
         </>
         
     );
