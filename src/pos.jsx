@@ -228,15 +228,15 @@ const handleClose = (confirmed) => {
                                                         {rows
                                                         .filter((item) => category === 'All' || item.itemCategory === category)
                                                         .map((item) => (
-                                                            <Grid item key={item.id} xs={12} sm={6}>
+                                                            <Grid item key={item.id} xs={12} sm={4}>
                                                             <CardActionArea onClick={() => handleItemClick(item)}>
                                                                 <Card style={{background: '#13131c', color: colors.secondary}}>
                                                                     <CardContent sx={{ height: '200px', display: 'flex', flexDirection: 'column', textAlign: 'center'}}>
                                                                         <div style={{display: 'flex', flexDirection: 'column', marginTop: 'auto', justifyContent: 'center', alignItems: 'center', textAlign: 'center'}}>
-                                                                            <Typography variant="body1" component="div" sx={{ fontSize: '25px', fontWeight: '700', fontFamily: 'Poppins, sans-serif', overflow: 'hidden', textOverflow: 'ellipsis' }} title={item.itemName}>
+                                                                            <Typography variant="body1" component="div" sx={{ fontSize: '15px', fontWeight: '700', fontFamily: 'Poppins, sans-serif', overflow: 'hidden', textOverflow: 'ellipsis' }} title={item.itemName}>
                                                                                 {item.itemName}
                                                                             </Typography>
-                                                                            <Typography variant="body1" color="text.secondary" sx={{ fontSize: '18px', color: 'gray', fontFamily: 'Poppins, sans-serif'}} title={item.itemName}>
+                                                                            <Typography variant="body1" color="text.secondary" sx={{ fontSize: '13px', color: 'gray', fontFamily: 'Poppins, sans-serif'}} title={item.itemName}>
                                                                                 Price: ₱{item.itemPrice}
                                                                             </Typography>
                                                                         </div>
