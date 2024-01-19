@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import "./styles.css"
 import 'typeface-poppins';
+import { useNavigate } from 'react-router-dom';
 import SideBar from './common/sidebar';
 import Header from './common/header';
 import { styled } from '@mui/system';
@@ -43,29 +44,23 @@ const colors = {
     accentOlive: '#A4B82F', 
     accentPink: '#E84B8A', 
   };
-
-  function handleClick(event) {
-    event.preventDefault();
-    console.info('You clicked a breadcrumb.');
-  }
   
 
 export default function Products() {
 
-    const breadcrumbs = [
-        <Link underline="hover" key="1" color="inherit" onClick={handleClick}>
-          Reports
-        </Link>,
-        <Link
-          underline="hover"
-          key="2"
-          color="secondary"
-          href="/products"
-          onClick={handleClick}
-        >
-          Products
-        </Link>,
-      ];
+    const navigate = useNavigate();
+
+    const handleReportsHomePage = (event) => {
+        event.preventDefault();
+        console.info('You clicked a Reports Home Page.');
+        navigate('/reports-home');
+    }
+
+    const handleProductsPage = (event) => {
+        event.preventDefault();
+        console.info('You clicked a Product Report Page.');
+        navigate('/products');
+    }
 
     const StyledTableCell = styled(TableCell)({
         fontFamily: 'Poppins, sans-serif',
@@ -113,10 +108,25 @@ export default function Products() {
                                 }}>
                                     <Grid item xs={4}>
                                         <Breadcrumbs
-                                            separator={<NavigateNextRounded fontSize="small" />}
+                                            separator={<NavigateNextRounded fontSize="medium" sx={{ color: colors.secondary }} />}
                                             aria-label="breadcrumb"
                                         >
-                                            {breadcrumbs}
+                                            <Link 
+                                                underline="hover" 
+                                                key="1" 
+                                                onClick={handleReportsHomePage}
+                                                sx={{fontFamily: 'Poppins, sans-serif', fontWeight: '600', fontSize: '1.5rem', color: colors.secondary, cursor: 'pointer' }}
+                                                >
+                                                Reports
+                                            </Link>,
+                                            <Link
+                                                underline="hover"
+                                                key="2"
+                                                onClick={handleProductsPage}
+                                                sx={{fontFamily: 'Poppins, sans-serif', fontWeight: '600', fontSize: '1.5rem', color: colors.secondary, cursor: 'pointer' }}
+                                                >
+                                                Products
+                                            </Link>
                                         </Breadcrumbs>
                                         <Typography variant='body2' sx={{ fontFamily: 'Poppins, sans-serif', color: colors.secondary, fontWeight: 'light' }}>
                                             <Stack direction="row">
