@@ -8,7 +8,7 @@ import Header from './common/header';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import { useNavigate } from 'react-router-dom';
 import { firestore } from './firebaseConfig';
-import { addDoc, collection, doc, onSnapshot } from '@firebase/firestore';
+import { addDoc, collection, onSnapshot, doc, getDoc} from '@firebase/firestore';
 
 import {
     AddRounded,
@@ -34,6 +34,12 @@ import {
     CardContent,
     Select,
     MenuItem,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
 } from '@mui/material';
 
 import {
@@ -190,7 +196,7 @@ export default function ProductHome() {
 
   const [count, setCount] = useState(0);
   const [category, setCategory] = useState([]);
-  const [productItem, setProduct] = useState([]);
+  //const [productItem, setProduct] = useState([]);
 
     useEffect(() => {
         const getCategoryData = onSnapshot(collection(firestore, 'Product_Category'), (snapshot) => {
@@ -202,7 +208,7 @@ export default function ProductHome() {
     return () => getCategoryData();
   }, []); 
 
-    useEffect(() => {
+    /*useEffect(() => {
         const getProductData = onSnapshot(collection(firestore, 'Products'), (snapshot) => {
             const productArray = snapshot.docs.map((doc) => ({
                 ...doc.data(), id: doc.id
@@ -210,7 +216,7 @@ export default function ProductHome() {
             setProduct(productArray);
         });
     return () => getProductData();
-  }, []); 
+  }, []); */
 
   const handleAddProduct = (e) => {
     e.preventDefault();
@@ -236,7 +242,70 @@ export default function ProductHome() {
     console.log("Name: " + itemName + "\nBarcode: " + itemCode + "\nCategory: " + itemCategory + "\nQuantity: " + itemQuantity + "\nPrice: " + itemPrice);
 
     setOpen(false);
+    
   };
+
+  
+  const StyledTableCell = styled(TableCell)({
+    fontFamily: 'Poppins, sans-serif',
+    color: colors.secondary,
+  });
+
+
+
+  const [productItem, setProductItem] = useState([]);
+  const [productItemWithCategory, setProductItemWithCategory] = useState([]);
+
+  useEffect(() => {
+    // Fetching productItem data
+    const getProductItemData = onSnapshot(collection(firestore, 'Products'), (snapshot) => {
+      const productItemArray = snapshot.docs.map((doc) => ({
+        ...doc.data(),
+        id: doc.id
+      }));
+      setProductItem(productItemArray);
+    });
+
+    // Fetching category names for each productItem
+    const fetchCategoryName = (categoryId) => {
+      const categoryRef = doc(firestore, 'Product_Category', categoryId);
+
+      return getDoc(categoryRef)
+        .then((categorySnapshot) => {
+          if (categorySnapshot.exists()) {
+            const categoryData = categorySnapshot.data();
+            return categoryData.categoryName;
+          } else {
+            console.log(`Category with ID ${categoryId} not found.`);
+            return '';
+          }
+        })
+        .catch((error) => {
+          console.error('Error fetching category data: ', error);
+          return '';
+        });
+    };
+
+    // Combining the two fetching operations
+    const fetchData = () => {
+      try {
+        const promises = productItem.map((item) =>
+          fetchCategoryName(item.itemCategory).then((categoryName) => ({ ...item, categoryName }))
+        );
+
+        Promise.all(promises).then((updatedProductItem) => {
+          setProductItemWithCategory(updatedProductItem);
+        });
+      } catch (error) {
+        console.error('Error fetching data: ', error);
+      }
+    };
+
+    fetchData(); // Call the function when the component mounts
+    return () => {
+      getProductItemData(); // Cleanup for productItem listener
+    };
+  }, []);
 
     return(
         <>
@@ -388,7 +457,7 @@ export default function ProductHome() {
                                                             }}>
                                                             <MenuItem value="" disabled sx={{fontFamily: 'Poppins, sans-serif'}}>Select Category</MenuItem>
                                                             {category.map((item) => (
-                                                                <MenuItem value={item.categoryId} sx={{fontFamily: 'Poppins, sans-serif'}}>{item.categoryName}</MenuItem>
+                                                                <MenuItem value={item.id} sx={{fontFamily: 'Poppins, sans-serif'}}>{item.categoryName}</MenuItem>
                                                             ))}
                                                         </Select>
                                                     <DialogContentText sx={{fontFamily: 'Poppins, sans-serif', marginTop: '15px'}}>Item Quantity:</DialogContentText>
@@ -474,42 +543,34 @@ export default function ProductHome() {
                                     </Dialog>
                                     </div>
                                 </div>
-                                <Grid className='mt-5' container>
-                                    <Grid item xs={12}>
-                                        <div style={{ height: 'auto', width: '100%' }}>
-                                            <DataGrid
-                                                rows={productItem}
-                                                columns={columns}
-                                                initialState={{
-                                                    pagination: {
-                                                    paginationModel: { page: 0, pageSize: 5 },
-                                                    },
-                                                }}
-                                                pageSizeOptions={[5, 10]}
-                                                sx={{
-                                                    fontFamily: 'Poppins, sans-serif',
-                                                    color: colors.fontColor,
-                                                    backgroundColor: colors.secondary,
-                                                    '& .MuiDataGrid-columnHeaders': {
-                                                    backgroundColor: colors.primary,
-                                                    color: colors.secondary,
-                                                    '& .css-i4bv87-MuiSvgIcon-root': {
-                                                        color: colors.secondary,
-                                                    },
-                                                    '& .css-1pe4mpk-MuiButtonBase-root-MuiIconButton-root': {
-                                                        color: colors.secondary,
-                                                    },
-                                                    },
-                                                    '& .MuiDataGrid-row': {
-                                                    '& .css-i4bv87-MuiSvgIcon-root': {
-                                                        color: colors.primary,
-                                                    },
-                                                    },
-                                                }}
-                                            />
-                                        </div>
-                                    </Grid>
-                                </Grid>
+                                <TableContainer style={{ marginTop: '15px', overflowY: 'auto' }}>
+                                    <Table>
+                                        <TableHead>
+                                            <TableRow>
+                                                <StyledTableCell>ID</StyledTableCell>
+                                                <StyledTableCell>Item Code</StyledTableCell>
+                                                <StyledTableCell>Item Name</StyledTableCell>
+                                                <StyledTableCell>Category</StyledTableCell>
+                                                <StyledTableCell>Quantity</StyledTableCell>
+                                                <StyledTableCell>Price</StyledTableCell>
+                                                <StyledTableCell>Action</StyledTableCell>
+                                            </TableRow>
+                                        </TableHead>
+                                        <TableBody>
+                                            {productItemWithCategory.map((item) => (
+                                                <TableRow key={item.id}>
+                                                <StyledTableCell>{item.itemId}</StyledTableCell>
+                                                <StyledTableCell>{item.itemCode}</StyledTableCell>
+                                                <StyledTableCell>{item.itemName}</StyledTableCell>
+                                                <StyledTableCell>{item.categoryName}</StyledTableCell>
+                                                <StyledTableCell>{item.itemQuantity}</StyledTableCell>
+                                                <StyledTableCell>{item.itemPrice}</StyledTableCell>
+                                                <StyledTableCell>{item.id}</StyledTableCell>
+                                                </TableRow>
+                                            ))}
+                                        </TableBody>
+                                    </Table>
+                                </TableContainer>
                             </CardContent>
                         </Card>
                 </Container>
