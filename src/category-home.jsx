@@ -53,7 +53,7 @@ const colors = {
   };
 
 const columns = [
-    { field: 'categoryId', headerName: 'ID', width: 90 },
+    { field: 'categoryId', headerName: 'ID', width: 120 },
     { field: 'categoryName', headerName: 'Category Name', width: 450 },
     { field: 'categoryTotalCount', headerName: 'Product Count', width: 450 },
     { 
