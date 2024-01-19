@@ -57,6 +57,7 @@ export default function Login() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [currentDateTime, setCurrentDateTime] = useState(new Date());
+  const [showPrompt, setShowPrompt] = useState(false);
     
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -94,23 +95,22 @@ export default function Login() {
     signInWithEmailAndPassword(database, username, password).then(data =>{
       console.log(data, "authData");
       navigate('/dashboard');
+    }).catch(error =>{
+      setShowPrompt(true);
     });
 
     //SignIn Auth
     /*createUserWithEmailAndPassword(database, username, password).then(data =>{
       console.log(data, "authData");
-    });*/
+    });
 
 
-    /*if(formElements.username.value == "admin"){
-      if(formElements.password.value == "123456"){
+    if(username == "admin" && password == "123456"){
         navigate('/dashboard');
-      }else{
-        alert("Invalid Password!");
-      }
     }else{
-      alert("Invalid Username!");
+        setShowPrompt(true);
     }*/
+    
   }
 
   const handleForgotPasswordClick = () => {
@@ -202,6 +202,12 @@ export default function Login() {
                               Forgot Password?
                             </Typography>
                   </FormControl>
+
+                  {showPrompt && (
+                        <div className="prompt">
+                          <p>Incorrect username or password.</p>
+                        </div>
+                      )}
 
                   {/*LOG IN BUTTON*/}
                   <Button 

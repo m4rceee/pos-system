@@ -8,6 +8,8 @@ import Header from './common/header';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import { useNavigate } from 'react-router-dom';
 
+import { firestore } from './firebaseConfig';
+
 import {
     AddRounded,
     EditRounded,
@@ -31,6 +33,7 @@ import {
     Card,
     CardContent,
 } from '@mui/material';
+import { addDoc, collection, doc } from '@firebase/firestore';
 
 const colors = {
     primary: '#1D1D2C',
@@ -50,8 +53,7 @@ const colors = {
 
 const columns = [
     { field: 'id', headerName: 'ID', width: 90 },
-    { field: 'categoryCode', headerName: 'Category Code', width: 200 },
-    { field: 'categoryName', headerName: 'Category Name', width: 350 },
+    { field: 'categoryName', headerName: 'Category Name', width: 450 },
     { 
         field: 'categoryActions', 
         headerName: 'Actions',
@@ -96,6 +98,7 @@ const columns = [
 export default function CategoryHome() {
 
     const [open, setOpen] = useState(false);
+    const [count, setCount] = useState(0);
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -103,6 +106,23 @@ export default function CategoryHome() {
     
     const handleClose = () => {
         setOpen(false);
+      };
+
+    const handleAddCategory = (e) => {
+        e.preventDefault();
+        setCount(count + 1);
+        const categoryName = e.target.categoryName.value;
+
+        //const val = doc(firestore, "MelysonProductDB", categoryName);
+        const collectVal = collection(firestore, "Product_Category");
+        addDoc(collectVal, {
+            categoryId:count, 
+            categoryName, 
+            categoryTotalCount:count
+        });
+        
+
+        console.log(categoryName);
       };
 
     const navigate = useNavigate();
@@ -199,54 +219,61 @@ export default function CategoryHome() {
                                             <DialogContentText sx={{fontFamily: 'Poppins, sans-serif'}}>
                                                 Please enter a category name:
                                             </DialogContentText>
-                                            <TextField
-                                                margin="dense"
-                                                id="categoryName"
-                                                fullWidth
-                                                variant="outlined"
-                                                sx={{
-                                                    width: '100%',
-                                                    '& .MuiOutlinedInput-root': {
-                                                    '& fieldset': {
-                                                        border: '1px solid #1F2937',
-                                                    },
-                                                        '&.Mui-focused fieldset': {
-                                                        border: '2px solid #1F2937',
+
+                                            <form onSubmit={(e)=> handleAddCategory(e)}>
+                                                <TextField
+                                                    name="categoryName"
+                                                    margin="dense"
+                                                    id="categoryName"
+                                                    fullWidth
+                                                    variant="outlined"
+                                                    sx={{
+                                                        width: '100%',
+                                                        '& .MuiOutlinedInput-root': {
+                                                        '& fieldset': {
+                                                            border: '1px solid #1F2937',
                                                         },
-                                                    },
-                                                }}
-                                            />
+                                                            '&.Mui-focused fieldset': {
+                                                            border: '2px solid #1F2937',
+                                                            },
+                                                        },
+                                                    }}
+                                                />
+
+                                                <DialogActions sx={{marginRight: '15px', marginBottom: '10px'}}>
+                                                    <Button 
+                                                        onClick={handleClose} 
+                                                        sx={{
+                                                            textTransform: 'none',
+                                                            color: colors.secondary,
+                                                            backgroundColor: '#27273b',
+                                                            fontFamily: 'Poppins, sans-serif',
+                                                            '&:hover': {
+                                                                backgroundColor: 'none',
+                                                                color: colors.fontColor,
+                                                            },
+                                                        }}>
+                                                        Cancel
+                                                    </Button>
+                                                    <Button 
+                                                        type="submit" 
+                                                        sx={{
+                                                            textTransform: 'none',
+                                                            color: colors.secondary,
+                                                            backgroundColor: '#27273b',
+                                                            fontFamily: 'Poppins, sans-serif',
+                                                            '&:hover': {
+                                                                backgroundColor: 'none',
+                                                                color: colors.fontColor,
+                                                            },
+                                                        }}>
+                                                        Add
+                                                    </Button>
+                                                </DialogActions>
+                                            </form>
+                                            
                                             </DialogContent>
-                                        <DialogActions sx={{marginRight: '15px', marginBottom: '10px'}}>
-                                            <Button 
-                                                onClick={handleClose} 
-                                                sx={{
-                                                    textTransform: 'none',
-                                                    color: colors.secondary,
-                                                    backgroundColor: '#27273b',
-                                                    fontFamily: 'Poppins, sans-serif',
-                                                    '&:hover': {
-                                                        backgroundColor: 'none',
-                                                        color: colors.fontColor,
-                                                    },
-                                                }}>
-                                                Cancel
-                                            </Button>
-                                            <Button 
-                                                onClick={handleClose} 
-                                                sx={{
-                                                    textTransform: 'none',
-                                                    color: colors.secondary,
-                                                    backgroundColor: '#27273b',
-                                                    fontFamily: 'Poppins, sans-serif',
-                                                    '&:hover': {
-                                                        backgroundColor: 'none',
-                                                        color: colors.fontColor,
-                                                    },
-                                                }}>
-                                                Add
-                                            </Button>
-                                        </DialogActions>
+                                        
                                     </Dialog>
                                 </div>
                             </div>
@@ -259,10 +286,10 @@ export default function CategoryHome() {
                                             columns={columns}
                                             initialState={{
                                             pagination: {
-                                                paginationModel: { page: 0, pageSize: 5 },
+                                                paginationModel: { page: 0, pageSize: 10 },
                                             },
                                             }}
-                                            pageSizeOptions={[5, 10]}
+                                            pageSizeOptions={[10, 50, 100]}
                                             checkboxSelection
                                             sx={{
                                                 fontFamily: 'Poppins, sans-serif',

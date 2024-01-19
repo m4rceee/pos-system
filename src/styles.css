@@ -10,3 +10,9 @@ body {
 .menu-item:hover {
     background-color: rgba(0, 0, 0, 0.15);
 }
+
+.prompt p {
+    text-align: center;
+    color: red;
+    margin-top: 20px;
+}
