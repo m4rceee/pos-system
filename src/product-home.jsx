@@ -196,7 +196,6 @@ export default function ProductHome() {
 
   const [count, setCount] = useState(0);
   const [category, setCategory] = useState([]);
-  const [productItem, setProduct] = useState([]);
 
     useEffect(() => {
         const getCategoryData = onSnapshot(collection(firestore, 'Product_Category'), (snapshot) => {
@@ -206,16 +205,6 @@ export default function ProductHome() {
             setCategory(categoryArray);
         });
     return () => getCategoryData();
-  }, []); 
-
-    useEffect(() => {
-        const getProductData = onSnapshot(collection(firestore, 'Products'), (snapshot) => {
-            const productArray = snapshot.docs.map((doc) => ({
-                ...doc.data(), id: doc.id
-            }));
-            setProduct(productArray);
-        });
-    return () => getProductData();
   }, []); 
 
   const handleAddProduct = (e) => {
@@ -238,8 +227,7 @@ export default function ProductHome() {
         itemPrice
     });
     
-
-    console.log("Name: " + itemName + "\nBarcode: " + itemCode + "\nCategory: " + itemCategory + "\nQuantity: " + itemQuantity + "\nPrice: " + itemPrice);
+    //console.log("Name: " + itemName + "\nBarcode: " + itemCode + "\nCategory: " + itemCategory + "\nQuantity: " + itemQuantity + "\nPrice: " + itemPrice);
 
     setOpen(false);
     
@@ -263,7 +251,6 @@ export default function ProductHome() {
 
             if (categorySnapshot.exists()) {
               const categoryData = categorySnapshot.data();
-              console.log(`${categoryData.categoryName}`);
               return { ...product, categoryName: categoryData.categoryName };     
             } else {
               console.log(`Category with ID ${product.itemCategory} not found.`);
@@ -271,13 +258,10 @@ export default function ProductHome() {
             }
           })
         );
-
         setProducts(productsWithCategory);
       };
-
       fetchCategoryInfo();
     });
-
     return () => unsubscribe();
   }, []);
 
