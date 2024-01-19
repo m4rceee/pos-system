@@ -7,6 +7,8 @@ import SideBar from './common/sidebar';
 import Header from './common/header';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import { useNavigate } from 'react-router-dom';
+import { firestore } from './firebaseConfig';
+import { addDoc, collection, doc, onSnapshot } from '@firebase/firestore';
 
 import {
     AddRounded,
@@ -58,11 +60,11 @@ const colors = {
   };
 
   const columns = [
-    { field: 'id', headerName: 'ID', width: 90 },
-    { field: 'itemCode', headerName: 'Item Code', width: 100 },
+    { field: 'itemId', headerName: 'ID', width: 90 },
+    { field: 'itemCode', headerName: 'Item Code', width: 200 },
     { field: 'itemName', headerName: 'Item Name', width: 300 },
     { field: 'itemCategory', headerName: 'Category', width: 250 },
-    { field: 'itemQuantity', headerName: 'Quantity', width: 75 },
+    { field: 'itemQuantity', headerName: 'Quantity', width: 100 },
     { field: 'itemPrice', headerName: 'Price', width: 75 },
     { 
         field: 'itemActions', 
@@ -88,6 +90,8 @@ const colors = {
     
   ];
   
+  
+
   const rows = [
     { id: '', itemCode: '', itemName: 'Chicharrón (Pork Cracklings)', itemCategory: 'Snacks', itemQuantity: '10', itemPrice: '50.00'},
     { id: '', itemCode: '', itemName: 'Banana Chips', itemCategory: 'Snacks', itemQuantity: '8', itemPrice: '30.00 '},
@@ -142,7 +146,6 @@ const colors = {
 export default function ProductHome() {
 
     const [open, setOpen] = useState(false);
-    const [value, setValue] = useState();
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -182,6 +185,57 @@ export default function ProductHome() {
 
   const handleCategoryChange = (event) => {
       setSelectedCategory(event.target.value);
+  };
+
+
+  const [count, setCount] = useState(0);
+  const [category, setCategory] = useState([]);
+  const [productItem, setProduct] = useState([]);
+
+    useEffect(() => {
+        const getCategoryData = onSnapshot(collection(firestore, 'Product_Category'), (snapshot) => {
+            const categoryArray = snapshot.docs.map((doc) => ({
+                ...doc.data(), id: doc.id
+            }));
+            setCategory(categoryArray);
+        });
+    return () => getCategoryData();
+  }, []); 
+
+    useEffect(() => {
+        const getProductData = onSnapshot(collection(firestore, 'Products'), (snapshot) => {
+            const productArray = snapshot.docs.map((doc) => ({
+                ...doc.data(), id: doc.id
+            }));
+            setProduct(productArray);
+        });
+    return () => getProductData();
+  }, []); 
+
+  const handleAddProduct = (e) => {
+    e.preventDefault();
+    setCount(count + 1);
+    
+    const itemName = e.target.itemName.value;
+    const itemCode = e.target.itemCode.value;
+    const itemCategory = e.target.itemCategory.value;
+    const itemQuantity = e.target.itemQuantity.value;
+    const itemPrice = e.target.itemPrice.value;
+
+    const collectVal = collection(firestore, "Products");
+    addDoc(collectVal, {
+        itemId:count, 
+        itemName, 
+        itemCode,
+        itemCategory,
+        itemQuantity,
+        itemPrice
+    });
+    
+
+    console.log("Name: " + itemName + "\nBarcode: " + itemCode + "\nCategory: " + itemCategory + "\nQuantity: " + itemQuantity + "\nPrice: " + itemPrice);
+
+    setOpen(false);
   };
 
     return(
@@ -266,129 +320,157 @@ export default function ProductHome() {
                                         </IconButton>
                                         <Dialog open={open} onClose={handleClose} >
                                             <DialogTitle sx={{fontFamily: 'Poppins, sans-serif'}}>Add Item</DialogTitle>
-                                            <DialogContent sx={{width: '500px'}}>
-                                                <DialogContentText sx={{fontFamily: 'Poppins, sans-serif'}}>
-                                                Item name:
-                                                </DialogContentText>
-                                                <TextField
-                                                    id="itemName"
-                                                    fullWidth
-                                                    variant="outlined"
-                                                    sx={{
-                                                        marginTop: '5px',
-                                                        width: '100%',
-                                                        '& .MuiOutlinedInput-root': {
-                                                        '& fieldset': {
-                                                            border: '1px solid #1F2937',
-                                                        },
-                                                            '&.Mui-focused fieldset': {
-                                                            border: '2px solid #1F2937',
-                                                            },
-                                                        },
-                                                    }}
-                                                />
-                                                <DialogContentText sx={{fontFamily: 'Poppins, sans-serif', marginTop: '15px'}}>
-                                                Item Category:
-                                                </DialogContentText>
-                                                <Select
-                                                    value={selectedCategory}
-                                                    onChange={handleCategoryChange}
-                                                    displayEmpty
-                                                    fullWidth
-                                                    variant="outlined"
-                                                    sx={{
-                                                        fontFamily: 'Poppins, sans-serif',
-                                                        marginTop: '5px',
-                                                        width: '100%',
-                                                        '& .MuiOutlinedInput-root': {
-                                                            '& fieldset': {
-                                                                border: '1px solid #1F2937',
-                                                            },
-                                                            '&.Mui-focused fieldset': {
-                                                                border: '2px solid #1F2937',
-                                                            },
-                                                        },
-                                                    }}
-                                                >
-                                                    <MenuItem value="" disabled sx={{fontFamily: 'Poppins, sans-serif'}}>
-                                                        Select Category
-                                                    </MenuItem>
-                                                    <MenuItem value="category1" sx={{fontFamily: 'Poppins, sans-serif'}}>Snacks</MenuItem>
-                                                    <MenuItem value="category2" sx={{fontFamily: 'Poppins, sans-serif'}}>Beverages</MenuItem>
-                                                    <MenuItem value="category3" sx={{fontFamily: 'Poppins, sans-serif'}}>School and Office Supplies</MenuItem>
-                                                    <MenuItem value="category4" sx={{fontFamily: 'Poppins, sans-serif'}}>Laundry Supplies</MenuItem>
-                                                    <MenuItem value="category5" sx={{fontFamily: 'Poppins, sans-serif'}}>Personal Care</MenuItem>
-                                                    <MenuItem value="category6" sx={{fontFamily: 'Poppins, sans-serif'}}>Frozen Goods</MenuItem>
-                                                    <MenuItem value="category7" sx={{fontFamily: 'Poppins, sans-serif'}}>Rice and Grains</MenuItem>
-                                                    <MenuItem value="category8" sx={{fontFamily: 'Poppins, sans-serif'}}>Canned Goods</MenuItem>
-                                                </Select>
-                                                <DialogContentText sx={{fontFamily: 'Poppins, sans-serif', marginTop: '15px'}}>
-                                                    Item Quantity:
-                                                </DialogContentText>
-                                                <NumberInput
-                                                    aria-label="Demo number input"
-                                                    placeholder="Type a number…"
-                                                    value={value}
-                                                    onChange={(event, val) => setValue(val)}
-                                                    sx={{
-                                                        fontFamily: 'Poppins, sans-serif',
-                                                        marginTop: '5px',
-                                                        width: '100%',
-                                                    }}
-                                                />
-                                                <DialogContentText sx={{fontFamily: 'Poppins, sans-serif', marginTop: '15px'}}>
-                                                Item Price (per piece):
-                                                </DialogContentText>
-                                                <TextField
-                                                    id="itemPrice"
-                                                    fullWidth
-                                                    variant="outlined"
-                                                    sx={{
-                                                        marginTop: '5px',
-                                                        width: '100%',
-                                                        '& .MuiOutlinedInput-root': {
-                                                        '& fieldset': {
-                                                            border: '1px solid #1F2937',
-                                                        },
-                                                            '&.Mui-focused fieldset': {
-                                                            border: '2px solid #1F2937',
-                                                            },
-                                                        },
-                                                    }}
-                                                />
-                                            </DialogContent>
+                                            
+                                                <form onSubmit={(e)=> handleAddProduct(e)}>
+                                                    <DialogContent sx={{width: '500px'}}><DialogContentText sx={{fontFamily: 'Poppins, sans-serif'}}>Item name:</DialogContentText>
+                                                        <TextField
+                                                            name="itemName"
+                                                            id="itemName"
+                                                            fullWidth
+                                                            variant="outlined"
+                                                            sx={{
+                                                                marginTop: '5px',
+                                                                width: '100%',
+                                                                '& .MuiOutlinedInput-root': {
+                                                                '& fieldset': {
+                                                                    border: '1px solid #1F2937',
+                                                                },
+                                                                    '&.Mui-focused fieldset': {
+                                                                    border: '2px solid #1F2937',
+                                                                    },
+                                                                },
+                                                            }}
+                                                        />
+                                                    <DialogContentText sx={{fontFamily: 'Poppins, sans-serif', marginTop: '15px'}}>Item Barcode:</DialogContentText>
+                                                        <TextField
+                                                            name="itemCode"
+                                                            id="itemCode"
+                                                            fullWidth
+                                                            variant="outlined"
+                                                            inputProps={{
+                                                                type: 'number',
+                                                                inputMode: 'numeric',
+                                                                pattern: '[0-9]*',
+                                                              }}
+                                                            sx={{
+                                                                marginTop: '5px',
+                                                                width: '100%',
+                                                                '& .MuiOutlinedInput-root': {
+                                                                '& fieldset': {
+                                                                    border: '1px solid #1F2937',
+                                                                },
+                                                                    '&.Mui-focused fieldset': {
+                                                                    border: '2px solid #1F2937',
+                                                                    },
+                                                                },
+                                                            }}
+                                                        />
+                                                    <DialogContentText sx={{fontFamily: 'Poppins, sans-serif', marginTop: '15px'}}>Item Category:</DialogContentText>
+                                                        <Select
+                                                            name="itemCategory"
+                                                            value={selectedCategory}
+                                                            onChange={handleCategoryChange}
+                                                            displayEmpty
+                                                            fullWidth
+                                                            variant="outlined"
+                                                            sx={{
+                                                                fontFamily: 'Poppins, sans-serif',
+                                                                marginTop: '5px',
+                                                                width: '100%',
+                                                                '& .MuiOutlinedInput-root': {
+                                                                    '& fieldset': {
+                                                                        border: '1px solid #1F2937',
+                                                                    },
+                                                                    '&.Mui-focused fieldset': {
+                                                                        border: '2px solid #1F2937',
+                                                                    },
+                                                                },
+                                                            }}>
+                                                            <MenuItem value="" disabled sx={{fontFamily: 'Poppins, sans-serif'}}>Select Category</MenuItem>
+                                                            {category.map((item) => (
+                                                                <MenuItem value={item.categoryId} sx={{fontFamily: 'Poppins, sans-serif'}}>{item.categoryName}</MenuItem>
+                                                            ))}
+                                                        </Select>
+                                                    <DialogContentText sx={{fontFamily: 'Poppins, sans-serif', marginTop: '15px'}}>Item Quantity:</DialogContentText>
+                                                        <TextField
+                                                            name="itemQuantity"
+                                                            id="itemQuantity"
+                                                            fullWidth
+                                                            variant="outlined"
+                                                            inputProps={{
+                                                                type: 'number',
+                                                                inputMode: 'numeric',
+                                                                pattern: '[0-9]*',
+                                                              }}
+                                                            sx={{
+                                                                marginTop: '5px',
+                                                                width: '100%',
+                                                                '& .MuiOutlinedInput-root': {
+                                                                '& fieldset': {
+                                                                    border: '1px solid #1F2937',
+                                                                },
+                                                                    '&.Mui-focused fieldset': {
+                                                                    border: '2px solid #1F2937',
+                                                                    },
+                                                                },
+                                                            }}
+                                                        />
+                                                    <DialogContentText sx={{fontFamily: 'Poppins, sans-serif', marginTop: '15px'}}>Item Price (per piece):</DialogContentText>
+                                                        <TextField
+                                                            name="itemPrice"
+                                                            id="itemPrice"
+                                                            fullWidth
+                                                            variant="outlined"
+                                                            inputProps={{
+                                                                type: 'number',
+                                                                inputMode: 'numeric',
+                                                                pattern: '[0-9]*',
+                                                              }}
+                                                            sx={{
+                                                                marginTop: '5px',
+                                                                width: '100%',
+                                                                '& .MuiOutlinedInput-root': {
+                                                                '& fieldset': {
+                                                                    border: '1px solid #1F2937',
+                                                                },
+                                                                    '&.Mui-focused fieldset': {
+                                                                    border: '2px solid #1F2937',
+                                                                    },
+                                                                },
+                                                            }}
+                                                        />
+                                                    </DialogContent>
+                                                        
                                                 
-                                           
-                                        <DialogActions sx={{marginRight: '15px', marginBottom: '10px'}}>
-                                            <Button 
-                                                onClick={handleClose} 
-                                                sx={{
-                                                    textTransform: 'none',
-                                                    color: colors.secondary,
-                                                    backgroundColor: '#27273b',
-                                                    fontFamily: 'Poppins, sans-serif',
-                                                    '&:hover': {
-                                                        backgroundColor: 'none',
-                                                        color: colors.fontColor,
-                                                    },
-                                                }}>
-                                                Cancel
-                                            </Button>
-                                            <Button 
-                                                onClick={handleClose} 
-                                                sx={{
-                                                    textTransform: 'none',
-                                                    color: colors.secondary,
-                                                    backgroundColor: '#27273b',
-                                                    fontFamily: 'Poppins, sans-serif',
-                                                    '&:hover': {
-                                                        backgroundColor: 'none',
-                                                        color: colors.fontColor,
-                                                    },
-                                                }}>
-                                                Add
-                                            </Button>
-                                        </DialogActions>
+                                                    <DialogActions sx={{marginRight: '15px', marginBottom: '10px'}}>
+                                                        <Button 
+                                                            onClick={handleClose} 
+                                                            sx={{
+                                                                textTransform: 'none',
+                                                                color: colors.secondary,
+                                                                backgroundColor: '#27273b',
+                                                                fontFamily: 'Poppins, sans-serif',
+                                                                '&:hover': {
+                                                                    backgroundColor: 'none',
+                                                                    color: colors.fontColor,
+                                                                },
+                                                            }}>Cancel</Button>
+
+                                                        <Button  
+                                                            type="submit"
+                                                            sx={{
+                                                                textTransform: 'none',
+                                                                color: colors.secondary,
+                                                                backgroundColor: '#27273b',
+                                                                fontFamily: 'Poppins, sans-serif',
+                                                                '&:hover': {
+                                                                    backgroundColor: 'none',
+                                                                    color: colors.fontColor,
+                                                                },
+                                                            }}>Add</Button>
+                                                    </DialogActions>
+                                                </form>
+                                                
                                     </Dialog>
                                     </div>
                                 </div>
@@ -396,7 +478,7 @@ export default function ProductHome() {
                                     <Grid item xs={12}>
                                         <div style={{ height: 'auto', width: '100%' }}>
                                             <DataGrid
-                                                rows={rows}
+                                                rows={productItem}
                                                 columns={columns}
                                                 initialState={{
                                                     pagination: {
