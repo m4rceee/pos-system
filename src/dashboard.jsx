@@ -153,7 +153,7 @@ export default function DashboardHome() {
                                                     <Typography  style={{ fontSize: '1rem', fontWeight: 'normal', color: colors.secondary, fontFamily: 'Poppins, sans-serif' }}>
                                                     Products
                                                     </Typography>
-                                                    <Typography variant="h3" color={colors.accentBlue} style={{fontWeight: '600', fontFamily: 'Poppins, sans-serif', color: '#fff'}}>
+                                                    <Typography variant="h3" style={{fontWeight: '600', fontFamily: 'Poppins, sans-serif', color: colors.secondary}}>
                                                     247
                                                     </Typography>
                                                 </Stack>
@@ -168,7 +168,7 @@ export default function DashboardHome() {
                                                     <Typography style={{ fontSize: '1rem', fontWeight: 'normal', color: colors.secondary, fontFamily: 'Poppins, sans-serif' }}>
                                                     Transactions
                                                     </Typography>
-                                                    <Typography variant="h3" color={colors.accentOlive} style={{fontWeight: '600', fontFamily: 'Poppins, sans-serif', color: '#fff'}}>
+                                                    <Typography variant="h3" color={colors.accentOlive} style={{fontWeight: '600', fontFamily: 'Poppins, sans-serif', color: colors.secondary}}>
                                                     83
                                                     </Typography>
                                                 </Stack>
@@ -183,7 +183,7 @@ export default function DashboardHome() {
                                                     <Typography style={{ fontSize: '1rem', fontWeight: 'normal', color: colors.secondary, fontFamily: 'Poppins, sans-serif' }}>
                                                     Low in Stock
                                                     </Typography>
-                                                    <Typography variant="h3" color={colors.accentYellow} style={{fontWeight: '600', fontFamily: 'Poppins, sans-serif', color: '#fff'}}>
+                                                    <Typography variant="h3" color={colors.accentYellow} style={{fontWeight: '600', fontFamily: 'Poppins, sans-serif', color: colors.secondary}}>
                                                     15
                                                     </Typography>
                                                 </Stack>
@@ -198,7 +198,7 @@ export default function DashboardHome() {
                                                     <Typography style={{ fontSize: '1rem', fontWeight: 'normal', color: colors.secondary, fontFamily: 'Poppins, sans-serif' }}>
                                                     Expiring/Expired
                                                     </Typography>
-                                                    <Typography variant="h3" color={colors.accentRed} style={{fontWeight: '600', fontFamily: 'Poppins, sans-serif', color: '#fff'}}>
+                                                    <Typography variant="h3" color={colors.accentRed} style={{fontWeight: '600', fontFamily: 'Poppins, sans-serif', color: colors.secondary}}>
                                                     23
                                                     </Typography>
                                                 </Stack>
@@ -216,7 +216,7 @@ export default function DashboardHome() {
                                                     <Typography  style={{ fontSize: '1rem', fontWeight: 'normal', color: colors.secondary, fontFamily: 'Poppins, sans-serif' }}>
                                                     Daily Sales
                                                     </Typography>
-                                                    <Typography variant="h3" color={colors.accentOlive} style={{fontWeight: '600', fontFamily: 'Poppins, sans-serif', color: '#fff'}}>
+                                                    <Typography variant="h3" color={colors.accentOlive} style={{fontWeight: '600', fontFamily: 'Poppins, sans-serif', color: colors.secondary}}>
                                                     ₱ 3,734.<span style={{fontSize: '2rem'}}>27</span>
                                                     </Typography>
                                                 </Stack>
@@ -231,7 +231,7 @@ export default function DashboardHome() {
                                                     <Typography style={{ fontSize: '1rem', fontWeight: 'normal', color: colors.secondary, fontFamily: 'Poppins, sans-serif' }}>
                                                     Weekly Sales
                                                     </Typography>
-                                                    <Typography variant="h3" color={colors.accentOlive} style={{fontWeight: '600', fontFamily: 'Poppins, sans-serif', color: '#fff'}}>
+                                                    <Typography variant="h3" color={colors.accentOlive} style={{fontWeight: '600', fontFamily: 'Poppins, sans-serif', color: colors.secondary}}>
                                                     ₱ 26,139.<span style={{fontSize: '2rem'}}>88</span>
                                                     </Typography>
                                                 </Stack>

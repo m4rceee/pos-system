@@ -81,8 +81,8 @@ export default function SideBar() {
         navigate('/pos');
     }
 
-    const handleAnalytics = () => {
-        navigate('/analytics');
+    const handleReports = () => {
+        navigate('/reports-home');
     }
 
     return (
@@ -146,28 +146,14 @@ export default function SideBar() {
                             >
                                 Products
                             </MenuItem>
-                            <SubMenu
+                            <MenuItem
                                 style={getMenuItemStyle('item5')}
+                                onClick={handleReports}
                                 className='p-1 menu-item'
                                 icon={<LeaderboardRounded sx={{ marginBottom: '3px', color: colors.primary }} />}
-                                label="Records"
                             >
-                                <MenuItem
-                                    style={getMenuItemStyle('item6')}
-                                    className='p-1 menu-item'
-                                    icon={<ShowChartRounded sx={{ marginBottom: '3px', color: colors.primary }} />}
-                                >
-                                Sales
-                                </MenuItem>
-                                <MenuItem
-                                    style={getMenuItemStyle('item7')}
-                                    onClick={handleAnalytics}
-                                    className='p-1 menu-item'
-                                    icon={<DonutLargeRounded sx={{ marginBottom: '3px', color: colors.primary }} />}
-                                >
-                                Analytics
-                                </MenuItem>
-                            </SubMenu>
+                                Reports
+                            </MenuItem>
                         </>
                     ) : (
                         <>

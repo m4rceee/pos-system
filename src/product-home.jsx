@@ -111,7 +111,7 @@ const colors = {
     if (row.itemName) {
       row.itemCode = row.itemName.slice(0, 3).toUpperCase() + Math.floor(Math.random() * 1000).toString();
     }
-    row.id = String(index + 1).padStart(4, '0');;
+    row.id = String(index + 1).padStart(4, '0');
   });
 
   const NumberInput = React.forwardRef(function CustomNumberInput(props, ref) {
@@ -404,7 +404,6 @@ export default function ProductHome() {
                                                     },
                                                 }}
                                                 pageSizeOptions={[5, 10]}
-                                                checkboxSelection
                                                 sx={{
                                                     fontFamily: 'Poppins, sans-serif',
                                                     color: colors.fontColor,

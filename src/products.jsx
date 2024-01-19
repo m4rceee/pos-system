@@ -19,9 +19,14 @@ import {
     TableContainer,
     TableHead,
     TableRow,
+    Breadcrumbs,
+    Link,
 } from '@mui/material';
 
-import Inventory2RoundedIcon from '@mui/icons-material/Inventory2Rounded';
+import {
+    Inventory2RoundedIcon, 
+    NavigateNextRounded,
+} from '@mui/icons-material';
 
 const colors = {
     primary: '#1D1D2C',
@@ -39,7 +44,7 @@ const colors = {
     accentPink: '#E84B8A', 
   };
 
-export default function Analytics() {
+export default function Products() {
 
     const StyledTableCell = styled(TableCell)({
         fontFamily: 'Poppins, sans-serif',
@@ -86,9 +91,14 @@ export default function Analytics() {
                                     alignItems: 'center',
                                 }}>
                                     <Grid item xs={4} sx={{ alignItems: 'center' }}>
-                                        <Typography sx={{ fontFamily: 'Poppins, sans-serif', fontWeight: '600', fontSize: '1.5rem', color: colors.secondary }}>
-                                            Records
-                                        </Typography>
+                                        <Breadcrumbs separator={<NavigateNextRounded fontSize="small" />} aria-label="breadcrumb">
+                                            <Link color="inherit" underline="hover" href="/reports-home">
+                                                Reports
+                                            </Link>
+                                            <Typography sx={{ fontFamily: 'Poppins, sans-serif', fontWeight: '600', fontSize: '1.5rem', color: colors.secondary }}>
+                                                Products
+                                            </Typography>
+                                        </Breadcrumbs>
                                         <Typography variant='body2' sx={{ fontFamily: 'Poppins, sans-serif', color: colors.secondary, fontWeight: 'light' }}>
                                             <Stack direction="row">
                                                 <Typography component="span" variant='body2' sx={{fontFamily: 'Poppins, sans-serif'}}>

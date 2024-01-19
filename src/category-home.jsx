@@ -238,7 +238,7 @@ export default function CategoryHome() {
                                                     }}
                                                 />
 
-                                                <DialogActions sx={{marginRight: '15px', marginBottom: '10px'}}>
+                                                <DialogActions>
                                                     <Button 
                                                         onClick={handleClose} 
                                                         sx={{
