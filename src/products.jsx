@@ -39,7 +39,7 @@ const colors = {
     accentPink: '#E84B8A', 
   };
 
-export default function Analytics() {
+export default function Products() {
 
     const StyledTableCell = styled(TableCell)({
         fontFamily: 'Poppins, sans-serif',
@@ -87,7 +87,7 @@ export default function Analytics() {
                                 }}>
                                     <Grid item xs={4} sx={{ alignItems: 'center' }}>
                                         <Typography sx={{ fontFamily: 'Poppins, sans-serif', fontWeight: '600', fontSize: '1.5rem', color: colors.secondary }}>
-                                            Records
+                                            Records<span style={{marginLeft: '0.5rem', marginRight: '0.5rem'}}>&raquo;</span>Products
                                         </Typography>
                                         <Typography variant='body2' sx={{ fontFamily: 'Poppins, sans-serif', color: colors.secondary, fontWeight: 'light' }}>
                                             <Stack direction="row">
