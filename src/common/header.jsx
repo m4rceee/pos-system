@@ -94,9 +94,7 @@ export default function Header() {
                         }
                     }}
                     />
-                    <IconButton>
-                        <AccountCircleRounded style={{ cursor: 'pointer', color: colors.secondary, fontSize: '2rem' }} />
-                    </IconButton>
+                    
                     <IconButton onClick={handleLogout}>
                         <LogoutRounded  style={{ color: colors.secondary, fontSize: '2rem' }} />
                     </IconButton>
