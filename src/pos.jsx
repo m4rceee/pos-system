@@ -8,13 +8,14 @@ import { styled } from '@mui/system';
 import "./styles.css";
 import 'typeface-poppins';
 import SideBar from './common/sidebar';
-import Header from './common/header';
+
+import { firestore } from './firebaseConfig';
+import { collection, onSnapshot, doc, getDoc} from '@firebase/firestore';
 
 import { 
     Container,
     Grid,
     Typography,
-    Stack,
     Card,
     CardContent,
     Button,
@@ -31,8 +32,7 @@ import {
     DialogTitle,
     DialogContentText,
 } from '@mui/material';
-
-import { ColorizeSharp, SearchRounded } from '@mui/icons-material';
+import HeaderTitleWidget from './widgets/header-title';
 
 const colors = {
     primary: '#1D1D2C',
@@ -82,6 +82,21 @@ export default function PosPage() {
     // Inside your component
     const totalAmount = calculateTotalAmount();
 
+    const handleCancelBill = () => {
+        setOpen(true);
+    };
+    
+    const handleClose = (confirmed) => {
+        setOpen(false);
+    
+        if (confirmed) {
+            navigate('/pos');
+            window.location.reload();
+        }
+    };
+
+
+
     const StyledTableCell = styled(TableCell)({
         fontFamily: 'Poppins, sans-serif',
         color: colors.secondary,
@@ -93,105 +108,56 @@ export default function PosPage() {
         setValue(newValue);
     };
 
-    const [currentDateTime, setCurrentDateTime] = useState(new Date());
-    
+
+
+
+const [getCategories, setCategories] = useState([]);
+
+useEffect(() => {
+    const getCategoryData = onSnapshot(collection(firestore, 'Product_Category'), (snapshot) => {
+      const categoryArray = snapshot.docs.map((doc) => ({
+        ...doc.data(),
+        id: doc.id
+      }));
+  
+      // Add a custom category "All" to the beginning of the array
+      const allCategory = { id: 'all', categoryName: 'All' };
+      categoryArray.unshift(allCategory);
+  
+      // Sort the categoryArray based on categoryName in ascending order
+      categoryArray.sort((a, b) => a.categoryName.localeCompare(b.categoryName));
+  
+      setCategories(categoryArray);
+  
+      // Extract only the category IDs into a separate array
+      const categoryIdsArray = categoryArray.map(category => category.id);
+  
+      // Now you have the array of all category IDs including "All"
+      console.log('All Category IDs:', categoryIdsArray);
+    });
+  
+    return () => getCategoryData();
+  }, []);
+
+  
+const [getProduct, setProduct] = useState([]);
+
     useEffect(() => {
-        const intervalId = setInterval(() => {
-        setCurrentDateTime(new Date());
-        }, 1000);
-
-        return () => clearInterval(intervalId);
-    }, []); 
-
-    const formatDate = (date) => {
-    const options = { weekday: 'short', day: 'numeric', month: 'long', year: 'numeric' };
-        const formattedDate = date.toLocaleTimeString(undefined, options).replace(/,/g, '');
-
-        const [weekday, month, day, year] = formattedDate.split(' ');
-        return `${weekday} ${day} ${month} ${year}`;
-    };
-        
-    const formatTime = (date) => {
-    const options = { hour: 'numeric', minute: 'numeric', second: 'numeric' };
-        return date.toLocaleTimeString(undefined, options);
-    };
-
-    const [selectedCategory, setSelectedCategory] = useState('All');
-
-    const handleCategoryClick = (category) => {
-        setSelectedCategory(category);
-    };
-    const categories = ['All', 
-                        'Snacks', 
-                        'Beverages', 
-                        'School and Office Supplies',
-                        'Laundry Supplies',
-                        'Personal Care',
-                        'Frozen Goods',
-                        'Rice and Grains',
-                        'Canned Goods'
-                    ];
-    
-    const rows = [
-        { id: '', itemCode: '', itemName: 'Chicharrón (Pork Cracklings)', itemCategory: 'Snacks', itemQuantity: '10', itemPrice: '50.00'},
-        { id: '', itemCode: '', itemName: 'Banana Chips', itemCategory: 'Snacks', itemQuantity: '8', itemPrice: '30.00 '},
-        { id: '', itemCode: '', itemName: 'Polvoron (Powdered Milk Candy)', itemCategory: 'Snacks', itemQuantity: '15', itemPrice: '20.00 '},
-        { id: '', itemCode: '', itemName: 'Buko Juice (Coconut Water)', itemCategory: 'Beverages', itemQuantity: '12', itemPrice: '25.00 '},
-        { id: '', itemCode: '', itemName: 'Pad Paper', itemCategory: 'School and Office Supplies', itemQuantity: '20', itemPrice: '15.00 '},
-        { id: '', itemCode: '', itemName: 'Jansport Backpack', itemCategory: 'School and Office Supplies', itemQuantity: '5', itemPrice: '800.00 '},
-        { id: '', itemCode: '', itemName: 'Zonrox (Bleach)', itemCategory: 'Laundry Supplies', itemQuantity: '6', itemPrice: '40.00 '},
-        { id: '', itemCode: '', itemName: 'Tide Detergent', itemCategory: 'Laundry Supplies', itemQuantity: '4', itemPrice: '50.00 '},
-        { id: '', itemCode: '', itemName: 'Safeguard Soap', itemCategory: 'Personal Care', itemQuantity: '12', itemPrice: '25.00 '},
-        { id: '', itemCode: '', itemName: 'Colgate Toothpaste', itemCategory: 'Personal Care', itemQuantity: '10', itemPrice: '30.00 '},
-        { id: '', itemCode: '', itemName: 'Magnolia Ice Cream', itemCategory: 'Frozen Goods', itemQuantity: '5', itemPrice: '150.00 '},
-        { id: '', itemCode: '', itemName: 'Tender Juicy Hotdog', itemCategory: 'Frozen Goods', itemQuantity: '2', itemPrice: '70.00 '},
-        { id: '', itemCode: '', itemName: 'Jasmin Rice', itemCategory: 'Rice and Grains', itemQuantity: '15', itemPrice: '40.00'},
-        { id: '', itemCode: '', itemName: 'Sinandomeng Rice', itemCategory: 'Rice and Grains', itemQuantity: '10', itemPrice: '35.00'},
-        { id: '', itemCode: '', itemName: 'Century Tuna', itemCategory: 'Canned Goods', itemQuantity: '8', itemPrice: '45.00'},
-        { id: '', itemCode: '', itemName: 'Del Monte Fruit Cocktail', itemCategory: 'Canned Goods', itemQuantity: '6', itemPrice: '60.00'},
-];
-
-const handleCancelBill = () => {
-    setOpen(true);
-};
-
-const handleClose = (confirmed) => {
-    setOpen(false);
-
-    if (confirmed) {
-        navigate('/pos');
-        window.location.reload();
-    }
-};
+        const getProductData = onSnapshot(collection(firestore, 'Products'), (snapshot) => {
+            const productArray = snapshot.docs.map((doc) => ({
+                ...doc.data(), id: doc.id
+            }));
+            setProduct(productArray);
+            console.log(productArray);
+        });
+    return () => getProductData();
+  }, []); 
 
     return(
         <div style={{display: 'flex', marginLeft: '5rem' }}>
                 <SideBar />
-                <Container maxWidth="xl" style={{ paddingLeft: '35px', paddingTop: '20px' }}>
-                    <Grid container style={{display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-                        <Grid item xs={4} sx={{ alignItems: 'center' }}>
-                            <Typography sx={{ fontFamily: 'Poppins, sans-serif', fontWeight: '600', fontSize: '1.5rem', color: colors.secondary }}>
-                                Point-of-Sales
-                            </Typography>
-                            <Typography variant='body2' sx={{ fontFamily: 'Poppins, sans-serif', color: colors.secondary, fontWeight: 'light' }}>
-                                <Stack direction="row">
-                                    <Typography component="div" variant='body2' sx={{fontFamily: 'Poppins, sans-serif'}}>
-                                        {formatDate(currentDateTime)}
-                                    </Typography>
-                                    <Typography component="div" variant='body2' sx={{fontFamily: 'Poppins, sans-serif', marginLeft: '8px', marginRight: '8px'}}>
-                                        ||
-                                    </Typography>
-                                    <Typography component="div" variant='body2' sx={{fontFamily: 'Poppins, sans-serif'}}>
-                                        {formatTime(currentDateTime)}
-                                    </Typography>
-                                </Stack>
-                            </Typography>
-                        </Grid>
-                        <Grid item xs={8} sx={{ alignItems: 'center' }}>
-                            <Header />
-                        </Grid>
-                    </Grid>
-
+                <Container maxWidth="xl" style={{ paddingLeft: '35px', paddingTop: '20px' }}>       
+                    <HeaderTitleWidget label={"Point-of-Sale"}/>
                     <Grid container spacing={1.5} style={{display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
                         <Grid item xs={8} sx={{ alignItems: 'center' }}>
                             <Card className='mt-8' style={{backgroundColor: '#27273b', boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)', height: '82vh', borderRadius: '5px', display: 'flex', flexDirection: 'row'}}>
@@ -217,16 +183,16 @@ const handleClose = (confirmed) => {
                                                         },
                                                     }}
                                                 >
-                                                    {categories.map((category) => (
-                                                        <Tab key={category} label={category} value={category} />
+                                                    {getCategories.map((category) => (
+                                                        <Tab key={category.id} label={category.categoryName} value={category.categoryName} />
                                                     ))}
                                                 </TabList>
                                             </Box>
-                                            {categories.map((category) => (
-                                                <TabPanel key={category} value={category}>
+                                            {getCategories.map((category) => (
+                                                <TabPanel key={category.id} value={category.categoryName}>
                                                     <Grid container spacing={2}>
-                                                        {rows
-                                                        .filter((item) => category === 'All' || item.itemCategory === category)
+                                                        {getProduct
+                                                        .filter((item) => category.categoryName === 'All' || item.itemCategory === category.id)
                                                         .map((item) => (
                                                             <Grid item key={item.id} xs={12} sm={4}>
                                                             <CardActionArea onClick={() => handleItemClick(item)}>
@@ -277,9 +243,10 @@ const handleClose = (confirmed) => {
                                                 <Table>
                                                     <TableHead>
                                                         <TableRow>
-                                                            <StyledTableCell>Description</StyledTableCell>
+                                                            <StyledTableCell>Product Name</StyledTableCell>
                                                             <StyledTableCell align="right">Quantity</StyledTableCell>
                                                             <StyledTableCell align="right">Price</StyledTableCell>
+                                                            <StyledTableCell align="right">Trashcan Icon</StyledTableCell>
                                                         </TableRow>
                                                     </TableHead>
                                                     <TableBody>
@@ -288,6 +255,7 @@ const handleClose = (confirmed) => {
                                                                 <StyledTableCell>{tableItem.itemName}</StyledTableCell>
                                                                 <StyledTableCell align="right">{tableItem.itemQuantity}</StyledTableCell>
                                                                 <StyledTableCell align="right">{tableItem.itemPrice}</StyledTableCell>
+                                                                <StyledTableCell align="right">Icon</StyledTableCell>
                                                             </TableRow>
                                                         ))}
                                                     </TableBody>

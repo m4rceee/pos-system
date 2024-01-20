@@ -4,50 +4,20 @@ import { useState, useEffect } from 'react';
 import "./styles.css";
 import 'typeface-poppins';
 import SideBar from './common/sidebar';
-import Header from './common/header';
-import { DataGrid, GridToolbar } from '@mui/x-data-grid';
-import { useNavigate } from 'react-router-dom';
+import { DataGrid } from '@mui/x-data-grid';
+import HeaderTitleWidget from './widgets/header-title';
+import SmallTitleWidget from './widgets/small-title';
+import ContentTitleWidget from './widgets/content-title'
+
 import { firestore } from './firebaseConfig';
-import { addDoc, collection, onSnapshot, doc, getDoc} from '@firebase/firestore';
+import { addDoc, collection, onSnapshot, doc, getDoc, deleteDoc, updateDoc} from '@firebase/firestore';
 
-import {
-    AddRounded,
-    EditRounded,
-    DeleteRounded,
-    PrintRounded,
-} from "@mui/icons-material";
+import {AddRounded, EditRounded, DeleteRounded, PrintRounded,} from "@mui/icons-material";
+import { Grid, Container, Typography, IconButton, TextField, Dialog, DialogActions, DialogContent, DialogTitle, DialogContentText, Card, CardContent, Select, MenuItem,} from '@mui/material';
+import ButtonWidget from './widgets/button';
+import TextFieldInputWidget from './widgets/textfield-input';
+import TextFieldInputNumberWidget from './widgets/textfield-input-number';
 
-import { 
-    Stack,
-    Button,
-    Grid, 
-    Container, 
-    Typography,
-    IconButton,
-    TextField,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogTitle,
-    DialogContentText,
-    Card,
-    CardContent,
-    Select,
-    MenuItem,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-} from '@mui/material';
-
-import {
-    Unstable_NumberInput as BaseNumberInput,
-    numberInputClasses,
-  } from '@mui/base/Unstable_NumberInput';
-
-import { styled } from '@mui/system';
 
 const colors = {
     primary: '#1D1D2C',
@@ -63,237 +33,237 @@ const colors = {
     accentTeal: '#349C9E',  
     accentOlive: '#A4B82F', 
     accentPink: '#E84B8A', 
-  };
+};
 
-  const columns = [
-    { field: 'itemId', headerName: 'ID', width: 90 },
-    { field: 'itemCode', headerName: 'Item Code', width: 200 },
-    { field: 'itemName', headerName: 'Item Name', width: 300 },
-    { field: 'categoryName', headerName: 'Category', width: 250 },
-    { field: 'itemQuantity', headerName: 'Quantity', width: 100 },
-    { field: 'itemPrice', headerName: 'Price', width: 75 },
-    { 
-        field: 'itemActions', 
-        headerName: 'Actions',
-        width: 150,
-        align: 'center',
-        headerAlign: 'center',
-        description: 'This column has a value getter and is not sortable.',
-        sortable: false,
-        renderCell: (params) => (
-            <>
-                <IconButton>
-                    <EditRounded sx={{color: '#3CBCC3'}}/>
-                </IconButton>
-                <IconButton>
-                    <DeleteRounded sx={{color: '#E40C2B'}}/>
-                </IconButton>
-            </>
-            
-                
-        ),
-    },
-    
-  ];
-  
-  
-
-  const rows = [
-    { id: '', itemCode: '', itemName: 'Chicharrón (Pork Cracklings)', itemCategory: 'Snacks', itemQuantity: '10', itemPrice: '50.00'},
-    { id: '', itemCode: '', itemName: 'Banana Chips', itemCategory: 'Snacks', itemQuantity: '8', itemPrice: '30.00 '},
-    { id: '', itemCode: '', itemName: 'Polvoron (Powdered Milk Candy)', itemCategory: 'Snacks', itemQuantity: '15', itemPrice: '20.00 '},
-    { id: '', itemCode: '', itemName: 'Buko Juice (Coconut Water)', itemCategory: 'Beverages', itemQuantity: '12', itemPrice: '25.00 '},
-    { id: '', itemCode: '', itemName: 'Pad Paper', itemCategory: 'School and Office Supplies', itemQuantity: '20', itemPrice: '15.00 '},
-    { id: '', itemCode: '', itemName: 'Jansport Backpack', itemCategory: 'School and Office Supplies', itemQuantity: '5', itemPrice: '800.00 '},
-    { id: '', itemCode: '', itemName: 'Zonrox (Bleach)', itemCategory: 'Laundry Supplies', itemQuantity: '6', itemPrice: '40.00 '},
-    { id: '', itemCode: '', itemName: 'Tide Detergent', itemCategory: 'Laundry Supplies', itemQuantity: '4', itemPrice: '50.00 '},
-    { id: '', itemCode: '', itemName: 'Safeguard Soap', itemCategory: 'Personal Care', itemQuantity: '12', itemPrice: '25.00 '},
-    { id: '', itemCode: '', itemName: 'Colgate Toothpaste', itemCategory: 'Personal Care', itemQuantity: '10', itemPrice: '30.00 '},
-    { id: '', itemCode: '', itemName: 'Magnolia Ice Cream', itemCategory: 'Frozen Goods', itemQuantity: '5', itemPrice: '150.00 '},
-    { id: '', itemCode: '', itemName: 'Hotdog (for making Filipino-style Spaghetti)', itemCategory: 'Frozen Goods', itemQuantity: '2', itemPrice: '70.00 '},
-    { id: '', itemCode: '', itemName: 'Jasmin Rice', itemCategory: 'Rice and Grains', itemQuantity: '15', itemPrice: '40.00/kg'},
-    { id: '', itemCode: '', itemName: 'Sinandomeng Rice', itemCategory: 'Rice and Grains', itemQuantity: '10', itemPrice: '35.00/kg'},
-    { id: '', itemCode: '', itemName: 'Century Tuna', itemCategory: 'Canned Goods', itemQuantity: '8', itemPrice: '45.00'},
-    { id: '', itemCode: '', itemName: 'Del Monte Fruit Cocktail', itemCategory: 'Canned Goods', itemQuantity: '6', itemPrice: '60.00'},
-];
-
-  rows.forEach((row, index) => {
+  /*rows.forEach((row, index) => {
     if (row.itemName) {
       row.itemCode = row.itemName.slice(0, 3).toUpperCase() + Math.floor(Math.random() * 1000).toString();
     }
     row.id = String(index + 1).padStart(4, '0');
-  });
+  });*/
 
-  const NumberInput = React.forwardRef(function CustomNumberInput(props, ref) {
-    return (
-      <BaseNumberInput
-        slots={{
-          root: StyledInputRoot,
-          input: StyledInputElement,
-          incrementButton: StyledButton,
-          decrementButton: StyledButton,
-        }}
-        slotProps={{
-          incrementButton: {
-            children: '▴',
-          },
-          decrementButton: {
-            children: '▾',
-          },
-        }}
-        {...props}
-        ref={ref}
-      />
-    );
-  });
-
-  
 
 export default function ProductHome() {
 
     const [open, setOpen] = useState(false);
-
-    const handleClickOpen = () => {
-        setOpen(true);
-      };
-    
-    const handleClose = () => {
-        setOpen(false);
-      };
-
-    const [currentDateTime, setCurrentDateTime] = useState(new Date());
-    
-    useEffect(() => {
-        const intervalId = setInterval(() => {
-        setCurrentDateTime(new Date());
-        }, 1000);
-
-        return () => clearInterval(intervalId);
-    }, []); 
-
-    const formatDate = (date) => {
-    const options = { weekday: 'short', day: 'numeric', month: 'long', year: 'numeric' };
-        const formattedDate = date.toLocaleTimeString(undefined, options).replace(/,/g, '');
-        const [weekday, month, day, year] = formattedDate.split(' ');
-        return `${weekday} ${day} ${month} ${year}`;
-    };
-        
-    const formatTime = (date) => {
-    const options = { hour: 'numeric', minute: 'numeric', second: 'numeric' };
-        return date.toLocaleTimeString(undefined, options);
-    };
-    
-    const printProducts = () => {
-        window.print();
-    }
+    const [count, setCount] = useState(0);
 
     const [selectedCategory, setSelectedCategory] = useState('');
+    const handleCategoryChange = (event) => {setSelectedCategory(event.target.value);};
 
-  const handleCategoryChange = (event) => {
-      setSelectedCategory(event.target.value);
-  };
+    const handleClickOpen = () => {setOpen(true);};
+    const handleClose = () => {setOpen(false);};
+    const printProducts = () => {window.print();}
 
 
-  const [count, setCount] = useState(0);
-  const [category, setCategory] = useState([]);
 
+////////////////////////////////////////////////////////////////////////////////////////
+// SHOW PRODUCT CATEGORY FROM THE DATABASE    
+    const [category, setCategory] = useState([]);
+    
     useEffect(() => {
         const getCategoryData = onSnapshot(collection(firestore, 'Product_Category'), (snapshot) => {
-            const categoryArray = snapshot.docs.map((doc) => ({
-                ...doc.data(), id: doc.id
-            }));
-            setCategory(categoryArray);
+        const categoryArray = snapshot.docs.map((doc) => ({
+            ...doc.data(),
+            id: doc.id
+        }));
+
+        // Sort the categoryArray based on categoryName in ascending order
+        categoryArray.sort((a, b) => a.categoryName.localeCompare(b.categoryName));
+
+        setCategory(categoryArray);
         });
-    return () => getCategoryData();
-  }, []); 
 
-  const handleAddProduct = (e) => {
-    e.preventDefault();
-    setCount(count + 1);
-    
-    const itemName = e.target.itemName.value;
-    const itemCode = e.target.itemCode.value;
-    const itemCategory = e.target.itemCategory.value;
-    const itemQuantity = e.target.itemQuantity.value;
-    const itemPrice = e.target.itemPrice.value;
+        return () => getCategoryData();
+    }, []);
 
-    const collectVal = collection(firestore, "Products");
-    addDoc(collectVal, {
-        itemId:count, 
-        itemName, 
-        itemCode,
-        itemCategory,
-        itemQuantity,
-        itemPrice
+
+
+////////////////////////////////////////////////////////////////////////////////////////
+// ADD DATA TO THE DATABASE
+    const handleAddProduct = (e) => {
+        e.preventDefault();
+        setCount(count + 1);
+        
+        const itemName = e.target.itemName.value;
+        const itemCode = e.target.itemCode.value;
+        const itemCategory = e.target.itemCategory.value;
+        const itemQuantity = e.target.itemQuantity.value;
+        const itemPrice = e.target.itemPrice.value;
+
+        const collectVal = collection(firestore, "Products");
+        addDoc(collectVal, {
+            itemId:count, 
+            itemName, 
+            itemCode,
+            itemCategory,
+            itemQuantity,
+            itemPrice
+        });
+
+        setOpen(false); 
+    };
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////
+// EDIT DATA TO THE DATABASE    
+    const [editDialogOpen, setEditDialogOpen] = useState(false);
+    const [selectedProductId, setSelectedProductId] = useState(null);
+    const [editedProductData, setEditedProductData] = useState({
+        itemName: '',
+        itemCode: '',
+        itemCategory: '',
+        itemQuantity: '',
+        itemPrice: '',
     });
-    
-    //console.log("Name: " + itemName + "\nBarcode: " + itemCode + "\nCategory: " + itemCategory + "\nQuantity: " + itemQuantity + "\nPrice: " + itemPrice);
 
-    setOpen(false);
-    
-  };
+    const handleEditDialogOpen = (productId, productData) => {
+        setSelectedProductId(productId);
+        setEditedProductData(productData);
+        setEditDialogOpen(true);
+    };
+
+    const handleEditDialogClose = () => {
+        setSelectedProductId(null);
+        setEditedProductData({
+        itemName: '',
+        itemCode: '',
+        itemCategory: '',
+        itemQuantity: '',
+        itemPrice: '',
+        });
+        setEditDialogOpen(false);
+    };
+
+    const handleUpdateProduct = async () => {
+        if (selectedProductId) {
+        try {
+            const productRef = doc(firestore, 'Products', selectedProductId);
+
+            // Update the document with the edited product data
+            await updateDoc(productRef, editedProductData);
+
+            console.log('Document successfully updated!');
+        } catch (error) {
+            console.error('Error updating document:', error);
+        }
+        }
+
+        // Close the edit dialog after updating or cancellation
+        handleEditDialogClose();
+    };
 
 
-  const [products, setProducts] = useState([]);
-  useEffect(() => {
-    const unsubscribe = onSnapshot(collection(firestore, 'Products'), (snapshot) => {
-      const productArray = snapshot.docs.map((doc) => ({
-        ...doc.data(),
-        id: doc.id
-      }));
 
-      // Fetch category information for each product
-      const fetchCategoryInfo = async () => {
-        const productsWithCategory = await Promise.all(
-          productArray.map(async (product) => {
-            const categoryRef = doc(firestore, 'Product_Category', product.itemCategory);
-            const categorySnapshot = await getDoc(categoryRef);
+////////////////////////////////////////////////////////////////////////////////////////
+// DETELE DATA FROM DATABASE
+    const [confirmationDialogOpen, setConfirmationDialogOpen] = useState(false);
 
-            if (categorySnapshot.exists()) {
-              const categoryData = categorySnapshot.data();
-              return { ...product, categoryName: categoryData.categoryName };     
-            } else {
-              console.log(`Category with ID ${product.itemCategory} not found.`);
-              return product; // Return the product without category information
-            }
-          })
-        );
-        setProducts(productsWithCategory);
+    const handleConfirmationDialogOpen = (productId) => {
+        setConfirmationDialogOpen(true);
+        setSelectedProductId(productId);
       };
-      fetchCategoryInfo();
-    });
-    return () => unsubscribe();
-  }, []);
+    
+      const handleConfirmationDialogClose = () => {
+        setConfirmationDialogOpen(false);
+        setSelectedProductId(null);
+      };
+
+    const handleDeleteProduct = async () => {
+    // Check if there is a selected product ID
+    if (selectedProductId) {
+        try {
+        // Reference to the document in the "Products" collection
+        const productRef = doc(firestore, 'Products', selectedProductId);
+
+        // Delete the document
+        await deleteDoc(productRef);
+
+        console.log('Document successfully deleted!');
+        } catch (error) {
+        console.error('Error deleting document:', error);
+        }
+    }
+
+    handleConfirmationDialogClose();
+    };
 
 
+
+////////////////////////////////////////////////////////////////////////////////////////
+// REPLACING THE CATEGORY.ID BY ITS CATEGORY NAME
+    const [products, setProducts] = useState([]);
+    useEffect(() => {
+        const unsubscribe = onSnapshot(collection(firestore, 'Products'), (snapshot) => {
+        const productArray = snapshot.docs.map((doc) => ({...doc.data(), id: doc.id}));
+
+        // Fetch category information for each product
+        const fetchCategoryInfo = async () => {
+            const productsWithCategory = await Promise.all(
+            productArray.map(async (product) => {
+                const categoryRef = doc(firestore, 'Product_Category', product.itemCategory);
+                const categorySnapshot = await getDoc(categoryRef);
+
+                if (categorySnapshot.exists()) {
+                const categoryData = categorySnapshot.data();
+                return { ...product, categoryName: categoryData.categoryName };     
+                } else {
+                console.log(`Category with ID ${product.itemCategory} not found.`);
+                return product; // Return the product without category information
+                }
+            })
+            );
+            setProducts(productsWithCategory);
+        };
+        fetchCategoryInfo();
+        });
+        return () => unsubscribe();
+    }, []);
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////
+// ATTRIBUTES TO THE DATAGRID TABLE
+    const columns = [
+        { field: 'itemId', headerName: 'ID', width: 90 },
+        { field: 'itemCode', headerName: 'Item Code', width: 200 },
+        { field: 'itemName', headerName: 'Item Name', width: 300 },
+        { field: 'categoryName', headerName: 'Category', width: 250 },
+        { field: 'itemQuantity', headerName: 'Quantity', width: 100 },
+        { field: 'itemPrice', headerName: 'Price', width: 75 },
+        { 
+            field: 'itemActions', 
+            headerName: 'Actions',
+            width: 150,
+            align: 'center',
+            headerAlign: 'center',
+            description: 'This column has a value getter and is not sortable.',
+            sortable: false,
+            renderCell: (params) => (
+                <>
+                    <IconButton onClick={() => handleEditDialogOpen(params.row.id, params.row)}>
+                        <EditRounded sx={{ color: '#3CBCC3' }} />
+                    </IconButton>
+                    <IconButton onClick={() => handleConfirmationDialogOpen(params.row.id)}>
+                        <DeleteRounded sx={{ color: '#E40C2B' }} />
+                    </IconButton>
+                </>        
+            ),
+        },
+    ];
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////
+// START OF CODE
     return(
         <>
             <div style={{display: 'flex', marginLeft: '5rem'}}>
                 <SideBar />
                 <Container maxWidth="xl" style={{ paddingLeft: '35px', paddingTop: '20px', overflowX: 'auto' }}>
-                    <Grid container sx={{display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-                        <Grid item xs={4} sx={{ alignItems: 'center' }}>
-                            <Typography sx={{ fontFamily: 'Poppins, sans-serif', fontWeight: '600', fontSize: '1.5rem', color: colors.secondary }}>
-                            Products
-                            </Typography>
-                            <Typography variant='body2' sx={{ fontFamily: 'Poppins, sans-serif', color: colors.secondary, fontWeight: 'light' }}>
-                                <Stack direction="row">
-                                    <Typography component="span" variant='body2' sx={{fontFamily: 'Poppins, sans-serif'}}>
-                                        {formatDate(currentDateTime)}
-                                    </Typography>
-                                    <Typography component="span" variant='body2' sx={{fontFamily: 'Poppins, sans-serif', marginLeft: '8px', marginRight: '8px'}}>
-                                        ||
-                                    </Typography>
-                                    <Typography component="span" variant='body2' sx={{fontFamily: 'Poppins, sans-serif'}}>
-                                        {formatTime(currentDateTime)}
-                                    </Typography>
-                                </Stack>
-                            </Typography>
-                        </Grid>
-                        <Grid item xs={8} sx={{ alignItems: 'center' }}>
-                            <Header />
-                        </Grid>
-                    </Grid>
+                    <HeaderTitleWidget label={"Products"}/>
+
                         <Card className='mt-8' style={{backgroundColor: '#27273b', boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)', marginBottom: '30px' }}>
                             <CardContent style={{ padding: '20px'}}>
                                 <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
@@ -346,54 +316,20 @@ export default function ProductHome() {
                                             }} 
                                             />
                                         </IconButton>
+                                        
+
+
+{/*
+///////////////////////////////////////////////////////////////////////////////////////
+// ADD PRODUCT POP UP
+*/}                                            
                                         <Dialog open={open} onClose={handleClose} >
                                             <DialogTitle sx={{fontFamily: 'Poppins, sans-serif'}}>Add Item</DialogTitle>
-                                            
                                                 <form onSubmit={(e)=> handleAddProduct(e)}>
-                                                    <DialogContent sx={{width: '500px'}}><DialogContentText sx={{fontFamily: 'Poppins, sans-serif'}}>Item name:</DialogContentText>
-                                                        <TextField
-                                                            name="itemName"
-                                                            id="itemName"
-                                                            fullWidth
-                                                            variant="outlined"
-                                                            sx={{
-                                                                marginTop: '5px',
-                                                                width: '100%',
-                                                                '& .MuiOutlinedInput-root': {
-                                                                '& fieldset': {
-                                                                    border: '1px solid #1F2937',
-                                                                },
-                                                                    '&.Mui-focused fieldset': {
-                                                                    border: '2px solid #1F2937',
-                                                                    },
-                                                                },
-                                                            }}
-                                                        />
-                                                    <DialogContentText sx={{fontFamily: 'Poppins, sans-serif', marginTop: '15px'}}>Item Barcode:</DialogContentText>
-                                                        <TextField
-                                                            name="itemCode"
-                                                            id="itemCode"
-                                                            fullWidth
-                                                            variant="outlined"
-                                                            inputProps={{
-                                                                type: 'number',
-                                                                inputMode: 'numeric',
-                                                                pattern: '[0-9]*',
-                                                              }}
-                                                            sx={{
-                                                                marginTop: '5px',
-                                                                width: '100%',
-                                                                '& .MuiOutlinedInput-root': {
-                                                                '& fieldset': {
-                                                                    border: '1px solid #1F2937',
-                                                                },
-                                                                    '&.Mui-focused fieldset': {
-                                                                    border: '2px solid #1F2937',
-                                                                    },
-                                                                },
-                                                            }}
-                                                        />
-                                                    <DialogContentText sx={{fontFamily: 'Poppins, sans-serif', marginTop: '15px'}}>Item Category:</DialogContentText>
+                                                    <DialogContent sx={{width: '500px'}}>
+                                                        <TextFieldInputWidget title={"Item Name:"} name={"itemName"}/>
+                                                        <TextFieldInputWidget title={"Item Barcode:"} name={"itemCode"}/>
+                                                        <ContentTitleWidget label={"Item Category:"} />
                                                         <Select
                                                             name="itemCategory"
                                                             value={selectedCategory}
@@ -419,89 +355,100 @@ export default function ProductHome() {
                                                                 <MenuItem value={item.id} sx={{fontFamily: 'Poppins, sans-serif'}}>{item.categoryName}</MenuItem>
                                                             ))}
                                                         </Select>
-                                                    <DialogContentText sx={{fontFamily: 'Poppins, sans-serif', marginTop: '15px'}}>Item Quantity:</DialogContentText>
-                                                        <TextField
-                                                            name="itemQuantity"
-                                                            id="itemQuantity"
-                                                            fullWidth
-                                                            variant="outlined"
-                                                            inputProps={{
-                                                                type: 'number',
-                                                                inputMode: 'numeric',
-                                                                pattern: '[0-9]*',
-                                                              }}
-                                                            sx={{
-                                                                marginTop: '5px',
-                                                                width: '100%',
-                                                                '& .MuiOutlinedInput-root': {
-                                                                '& fieldset': {
-                                                                    border: '1px solid #1F2937',
-                                                                },
-                                                                    '&.Mui-focused fieldset': {
-                                                                    border: '2px solid #1F2937',
-                                                                    },
-                                                                },
-                                                            }}
-                                                        />
-                                                    <DialogContentText sx={{fontFamily: 'Poppins, sans-serif', marginTop: '15px'}}>Item Price (per piece):</DialogContentText>
-                                                        <TextField
-                                                            name="itemPrice"
-                                                            id="itemPrice"
-                                                            fullWidth
-                                                            variant="outlined"
-                                                            inputProps={{
-                                                                type: 'number',
-                                                                inputMode: 'numeric',
-                                                                pattern: '[0-9]*',
-                                                              }}
-                                                            sx={{
-                                                                marginTop: '5px',
-                                                                width: '100%',
-                                                                '& .MuiOutlinedInput-root': {
-                                                                '& fieldset': {
-                                                                    border: '1px solid #1F2937',
-                                                                },
-                                                                    '&.Mui-focused fieldset': {
-                                                                    border: '2px solid #1F2937',
-                                                                    },
-                                                                },
-                                                            }}
-                                                        />
+                                                        <TextFieldInputNumberWidget title={"Item Quantity:"} name={"itemQuantity"}/>
+                                                        <TextFieldInputNumberWidget title={"Item Price (per piece):"} name={"itemPrice"}/>
                                                     </DialogContent>
                                                         
                                                 
                                                     <DialogActions sx={{marginRight: '15px', marginBottom: '10px'}}>
-                                                        <Button 
-                                                            onClick={handleClose} 
-                                                            sx={{
-                                                                textTransform: 'none',
-                                                                color: colors.secondary,
-                                                                backgroundColor: '#27273b',
-                                                                fontFamily: 'Poppins, sans-serif',
-                                                                '&:hover': {
-                                                                    backgroundColor: 'none',
-                                                                    color: colors.fontColor,
-                                                                },
-                                                            }}>Cancel</Button>
-
-                                                        <Button  
-                                                            type="submit"
-                                                            sx={{
-                                                                textTransform: 'none',
-                                                                color: colors.secondary,
-                                                                backgroundColor: '#27273b',
-                                                                fontFamily: 'Poppins, sans-serif',
-                                                                '&:hover': {
-                                                                    backgroundColor: 'none',
-                                                                    color: colors.fontColor,
-                                                                },
-                                                            }}>Add</Button>
+                                                        <ButtonWidget onClick={handleClose} label={"Cancel"} />
+                                                        <ButtonWidget type={"submit"} label={"Add"} />
                                                     </DialogActions>
                                                 </form>
                                                 
                                     </Dialog>
+
+
+{/*
+///////////////////////////////////////////////////////////////////////////////////////
+// EDIT PRODUCT POP UP
+*/}  
+                                    <Dialog open={editDialogOpen} onClose={handleEditDialogClose}>
+                                    <SmallTitleWidget label="Edit Item"/>
+                                            <DialogContent sx={{width: '500px'}}>
+                                                <TextFieldInputWidget 
+                                                    title={"Item name:"} 
+                                                    value={editedProductData.itemName} 
+                                                    onChange={(e) => setEditedProductData((prevData) => ({ ...prevData, itemName: e.target.value }))}
+                                                />
+                                                <TextFieldInputWidget 
+                                                    title={"Item Barcode:"} 
+                                                    value={editedProductData.itemCode} 
+                                                    onChange={(e) => setEditedProductData((prevData) => ({ ...prevData, itemCode: e.target.value }))}
+                                                />
+                                                <ContentTitleWidget label={"Item Category:"} />
+                                                <Select
+                                                    fullWidth
+                                                    value={editedProductData.itemCategory}
+                                                    onChange={(e) => setEditedProductData((prevData) => ({ ...prevData, itemCategory: e.target.value }))}
+                                                    variant="outlined"
+                                                    sx={{
+                                                        fontFamily: 'Poppins, sans-serif',
+                                                        marginTop: '5px',
+                                                        width: '100%',
+                                                        '& .MuiOutlinedInput-root': {
+                                                            '& fieldset': {
+                                                                border: '1px solid #1F2937',
+                                                            },
+                                                            '&.Mui-focused fieldset': {
+                                                                border: '2px solid #1F2937',
+                                                            },
+                                                        },
+                                                    }}>
+                                                    <MenuItem value="" disabled sx={{fontFamily: 'Poppins, sans-serif'}}>Select Category</MenuItem>
+                                                    {category.map((item) => (
+                                                        <MenuItem value={item.id} sx={{fontFamily: 'Poppins, sans-serif'}}>{item.categoryName}</MenuItem>
+                                                    ))}
+                                                </Select>
+                                                <TextFieldInputNumberWidget 
+                                                    title={"Item Quantity:"}
+                                                    value={editedProductData.itemQuantity} 
+                                                    onChange={(e) => setEditedProductData((prevData) => ({ ...prevData, itemQuantity: e.target.value }))}
+                                                />
+                                                <TextFieldInputNumberWidget 
+                                                    title={"Item Price (per piece):"}
+                                                    value={editedProductData.itemPrice} 
+                                                    onChange={(e) => setEditedProductData((prevData) => ({ ...prevData, itemPrice: e.target.value }))}
+                                                />
+                                        </DialogContent>
+
+                                            <DialogActions sx={{marginRight: '15px', marginBottom: '10px'}}>
+                                                <ButtonWidget onClick={handleEditDialogClose} label={"Cancel"} />
+                                                <ButtonWidget onClick={handleUpdateProduct} label={"Update"} />
+                                            </DialogActions>
+                                    </Dialog>
+
+
+{/*
+///////////////////////////////////////////////////////////////////////////////////////
+// DELETE PRODUCT POP UP
+*/}
+                                    <Dialog open={confirmationDialogOpen} onClose={handleConfirmationDialogClose}>
+                                        <DialogTitle sx={{fontFamily: 'Poppins, sans-serif'}}>Confirmation</DialogTitle>
+                                            <DialogContent sx={{fontFamily: 'Poppins, sans-serif'}}>Are you sure you want to delete this product?</DialogContent>
+                                        <DialogActions sx={{marginRight: '15px', marginBottom: '10px'}}>
+                                            <ButtonWidget onClick={handleConfirmationDialogClose} label={"Cancel"} />
+                                            <ButtonWidget onClick={handleDeleteProduct} label={"Delete"} />
+                                        </DialogActions>
+                                    </Dialog>
                                     </div>
                                 </div>
+
+
+{/*
+///////////////////////////////////////////////////////////////////////////////////////
+// SHOW ALL THE DATA INFORMATION (ID, ITEM CODE, ITEM NAME, CATEGORY, QUANTITY, PRICE)
+*/}                                
                                 <Grid className='mt-5' container>
                                     <Grid item xs={12}>
                                         <div style={{ height: 'auto', width: '100%' }}>
@@ -510,10 +457,10 @@ export default function ProductHome() {
                                                 columns={columns}
                                                 initialState={{
                                                     pagination: {
-                                                    paginationModel: { page: 0, pageSize: 5 },
+                                                    paginationModel: { page: 0, pageSize: 10 },
                                                     },
                                                 }}
-                                                pageSizeOptions={[5, 10]}
+                                                pageSizeOptions={[10, 50, 100]}
                                                 sx={{
                                                     fontFamily: 'Poppins, sans-serif',
                                                     color: colors.fontColor,
@@ -545,140 +492,3 @@ export default function ProductHome() {
         </>
     );
 }
-
-const blue = {
-    100: '#DAECFF',
-    200: '#80BFFF',
-    400: '#3399FF',
-    500: '#007FFF',
-    600: '#0072E5',
-  };
-  
-  const grey = {
-    50: '#F3F6F9',
-    100: '#E5EAF2',
-    200: '#DAE2ED',
-    300: '#C7D0DD',
-    400: '#B0B8C4',
-    500: '#9DA8B7',
-    600: '#6B7A90',
-    700: '#434D5B',
-    800: '#303740',
-    900: '#1C2025',
-  };
-  
-  const StyledInputRoot = styled('div')(
-    ({ theme }) => `
-    font-family: 'IBM Plex Sans', sans-serif;
-    font-weight: 400;
-    border-radius: 8px;
-    color: ${theme.palette.mode === 'dark' ? grey[300] : grey[900]};
-    background: ${theme.palette.mode === 'dark' ? grey[900] : '#fff'};
-    border: 1px solid ${theme.palette.mode === 'dark' ? grey[700] : grey[200]};
-    box-shadow: 0px 2px 2px ${theme.palette.mode === 'dark' ? grey[900] : grey[50]};
-    display: grid;
-    grid-template-columns: 1fr 19px;
-    grid-template-rows: 1fr 1fr;
-    overflow: hidden;
-    column-gap: 8px;
-    padding: 4px;
-  
-    &.${numberInputClasses.focused} {
-      border-color: ${blue[400]};
-      box-shadow: 0 0 0 3px ${theme.palette.mode === 'dark' ? blue[600] : blue[200]};
-    }
-  
-    &:hover {
-      border-color: ${blue[400]};
-    }
-  
-    // firefox
-    &:focus-visible {
-      outline: 0;
-    }
-  `,
-  );
-  
-  const StyledInputElement = styled('input')(
-    ({ theme }) => `
-    font-size: 0.875rem;
-    font-family: inherit;
-    font-weight: 400;
-    line-height: 1.5;
-    grid-column: 1/2;
-    grid-row: 1/3;
-    color: ${theme.palette.mode === 'dark' ? grey[300] : grey[900]};
-    background: inherit;
-    border: none;
-    border-radius: inherit;
-    padding: 8px 12px;
-    outline: 0;
-  `,
-  );
-  
-  const StyledButton = styled('button')(
-    ({ theme }) => `
-    display: flex;
-    flex-flow: row nowrap;
-    justify-content: center;
-    align-items: center;
-    appearance: none;
-    padding: 0;
-    width: 19px;
-    height: 19px;
-    font-family: system-ui, sans-serif;
-    font-size: 0.875rem;
-    line-height: 1;
-    box-sizing: border-box;
-    background: ${theme.palette.mode === 'dark' ? grey[900] : '#fff'};
-    border: 0;
-    color: ${theme.palette.mode === 'dark' ? grey[300] : grey[900]};
-    transition-property: all;
-    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-    transition-duration: 120ms;
-  
-    &:hover {
-      background: ${theme.palette.mode === 'dark' ? grey[800] : grey[50]};
-      border-color: ${theme.palette.mode === 'dark' ? grey[600] : grey[300]};
-      cursor: pointer;
-    }
-  
-    &.${numberInputClasses.incrementButton} {
-      grid-column: 2/3;
-      grid-row: 1/2;
-      border-top-left-radius: 4px;
-      border-top-right-radius: 4px;
-      border: 1px solid;
-      border-bottom: 0;
-      &:hover {
-        cursor: pointer;
-        background: ${blue[400]};
-        color: ${grey[50]};
-      }
-  
-    border-color: ${theme.palette.mode === 'dark' ? grey[800] : grey[200]};
-    background: ${theme.palette.mode === 'dark' ? grey[900] : grey[50]};
-    color: ${theme.palette.mode === 'dark' ? grey[200] : grey[900]};
-    }
-  
-    &.${numberInputClasses.decrementButton} {
-      grid-column: 2/3;
-      grid-row: 2/3;
-      border-bottom-left-radius: 4px;
-      border-bottom-right-radius: 4px;
-      border: 1px solid;
-      &:hover {
-        cursor: pointer;
-        background: ${blue[400]};
-        color: ${grey[50]};
-      }
-  
-    border-color: ${theme.palette.mode === 'dark' ? grey[800] : grey[200]};
-    background: ${theme.palette.mode === 'dark' ? grey[900] : grey[50]};
-    color: ${theme.palette.mode === 'dark' ? grey[200] : grey[900]};
-    }
-    & .arrow {
-      transform: translateY(-1px);
-    }
-  `,
-  );
