@@ -12,6 +12,8 @@ import SideBar from './common/sidebar';
 import { firestore } from './firebaseConfig';
 import { collection, onSnapshot, doc, getDoc} from '@firebase/firestore';
 
+import { BounceLoader } from 'react-spinners';
+
 import { 
     Container,
     Grid,
@@ -58,6 +60,7 @@ export default function PosPage() {
     const [open, setOpen] = useState(false);
     const [selectedItem, setSelectedItem] = useState(null);
     const [tableItems, setTableItems] = useState([]);
+    const [loading, setLoading] = useState(true); // Add loading state
 
     const handleItemClick = (item) => {
         const existingItemIndex = tableItems.findIndex((tableItem) => tableItem.itemName === item.itemName);
@@ -134,6 +137,7 @@ useEffect(() => {
   
       // Now you have the array of all category IDs including "All"
       console.log('All Category IDs:', categoryIdsArray);
+      setLoading(false);
     });
   
     return () => getCategoryData();
@@ -149,6 +153,7 @@ const [getProduct, setProduct] = useState([]);
             }));
             setProduct(productArray);
             console.log(productArray);
+            setLoading(false);
         });
     return () => getProductData();
   }, []); 
@@ -161,6 +166,18 @@ const [getProduct, setProduct] = useState([]);
                     <Grid container spacing={1.5} style={{display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
                         <Grid item xs={8} sx={{ alignItems: 'center' }}>
                             <Card className='mt-8' style={{backgroundColor: '#27273b', boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)', height: '82vh', borderRadius: '5px', display: 'flex', flexDirection: 'row'}}>
+                                {loading ? (
+                                    // Render loading indicator while loading
+                                    <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', margin: 'auto', width: '50%', color: colors.secondary }}>
+                                        <div style={{marginBottom: '15px'}}>
+                                            <BounceLoader color={colors.secondary} speedMultiplier={2}  />
+                                        </div>
+                                        <div>
+                                            <Typography variant="body1" sx={{fontFamily: 'Poppins, sans-serif'}}> Loading Contents... </Typography>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <>   
                                     <Box sx={{ overflowX: 'auto', width: '100%', typography: 'body1' }}>
                                         <TabContext value={value}>
                                             <Box sx={{ borderBottom: 1, borderColor: 'divider', overflowX: 'auto', position: 'sticky', top: 0, zIndex: 500, backgroundColor: '#13131c', boxShadow: '0 8px 16px rgba(169, 169, 169, 0.6)' }}>
@@ -227,6 +244,10 @@ const [getProduct, setProduct] = useState([]);
                                             ))}
                                         </TabContext>
                                     </Box>
+                                </>
+                                )
+                                }   
+                                 
                             </Card>
                         </Grid>
                         <Grid item xs={4} sx={{ alignItems: 'center' }}>

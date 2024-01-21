@@ -18,6 +18,8 @@ import ButtonWidget from './widgets/button';
 import TextFieldInputWidget from './widgets/textfield-input';
 import TextFieldInputNumberWidget from './widgets/textfield-input-number';
 
+import { BounceLoader } from 'react-spinners';
+
 
 const colors = {
     primary: '#1D1D2C',
@@ -47,6 +49,7 @@ export default function ProductHome() {
 
     const [open, setOpen] = useState(false);
     const [count, setCount] = useState(0);
+    const [loading, setLoading] = useState(true); // Add loading state
 
     const [selectedCategory, setSelectedCategory] = useState('');
     const handleCategoryChange = (event) => {setSelectedCategory(event.target.value);};
@@ -72,6 +75,7 @@ export default function ProductHome() {
         categoryArray.sort((a, b) => a.categoryName.localeCompare(b.categoryName));
 
         setCategory(categoryArray);
+         // Set loading to false when data is loaded
         });
 
         return () => getCategoryData();
@@ -215,6 +219,7 @@ export default function ProductHome() {
             })
             );
             setProducts(productsWithCategory);
+            setLoading(false);
         };
         fetchCategoryInfo();
         });
@@ -266,7 +271,20 @@ export default function ProductHome() {
 
                         <Card className='mt-8' style={{backgroundColor: '#27273b', boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)', marginBottom: '30px' }}>
                             <CardContent style={{ padding: '20px'}}>
-                                <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
+                                {loading ? (
+                                    // Render loading indicator while loading
+                                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', color: colors.secondary }}>
+                                        <div style={{marginBottom: '25px'}}>
+                                            <BounceLoader color={colors.secondary} speedMultiplier={2}  />
+                                        </div>
+                                        <div>
+                                            <Typography variant="body1" sx={{fontFamily: 'Poppins, sans-serif'}}> Loading Products... </Typography>
+                                        </div>
+                                    </div>
+
+                                    ) : (
+                                    <>
+                                    <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
                                     <div>
                                         <Typography variant='h5' sx={{ fontFamily: 'Poppins, sans-serif', fontWeight: '300', color: colors.secondary }}>
                                             Please use the table below to navigate or filter the results.
@@ -485,6 +503,9 @@ export default function ProductHome() {
                                         </div>
                                     </Grid>
                                 </Grid>
+                                </>
+                                    )
+                                }
                             </CardContent>
                         </Card>
                 </Container>

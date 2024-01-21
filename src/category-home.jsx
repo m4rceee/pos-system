@@ -15,6 +15,8 @@ import { Grid, Container, Typography, IconButton, TextField, Dialog, DialogActio
 import ButtonWidget from './widgets/button';
 import TextFieldInputWidget from './widgets/textfield-input';
 
+import { BounceLoader } from 'react-spinners';
+
 
 const colors = {
     primary: '#1D1D2C',
@@ -122,8 +124,13 @@ export default function CategoryHome() {
                         <CardContent style={{ padding: '20px'}}>
                             {loading ? (
                                 // Render loading indicator while loading
-                                <div style={{ textAlign: 'center', color: colors.secondary }}>
-                                    Loading...
+                                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', color: colors.secondary }}>
+                                    <div style={{marginBottom: '25px'}}>
+                                        <BounceLoader color={colors.secondary} speedMultiplier={2}  />
+                                    </div>
+                                    <div>
+                                        <Typography variant="body1" sx={{fontFamily: 'Poppins, sans-serif'}}> Loading Categories... </Typography>
+                                    </div>
                                 </div>
                                 ) : (
                                     <>
