@@ -34,7 +34,10 @@ import {
     DialogTitle,
     DialogContentText,
 } from '@mui/material';
+
 import HeaderTitleWidget from './widgets/header-title';
+import TextFieldInputNumberPaymentWidget from './widgets/textfield-input-number';
+import ButtonWidget from './widgets/button';
 
 const colors = {
     primary: '#1D1D2C',
@@ -60,7 +63,9 @@ export default function PosPage() {
     const [open, setOpen] = useState(false);
     const [selectedItem, setSelectedItem] = useState(null);
     const [tableItems, setTableItems] = useState([]);
-    const [loading, setLoading] = useState(true); // Add loading state
+    const [loading, setLoading] = useState(true);
+    const [openDialog, setOpenDialog] = useState(false);
+    const [paymentAmount, setPaymentAmount] = useState('');
 
     const handleItemClick = (item) => {
         const existingItemIndex = tableItems.findIndex((tableItem) => tableItem.itemName === item.itemName);
@@ -98,8 +103,6 @@ export default function PosPage() {
         }
     };
 
-
-
     const StyledTableCell = styled(TableCell)({
         fontFamily: 'Poppins, sans-serif',
         color: colors.secondary,
@@ -110,9 +113,6 @@ export default function PosPage() {
     const handleChange = (event, newValue) => {
         setValue(newValue);
     };
-
-
-
 
 const [getCategories, setCategories] = useState([]);
 
@@ -157,6 +157,26 @@ const [getProduct, setProduct] = useState([]);
         });
     return () => getProductData();
   }, []); 
+
+  ///////////////////////////////// PAYMENT DIALOG ///////////////////////////////////
+  const handleOpenDialog = (event) => {
+    setOpenDialog(true);
+    console.log('Payment to be paid:', totalAmount)
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+  };
+
+  const handleAmountChange = (event) => {
+    setPaymentAmount(event.target.value);
+  };
+
+  const handlePay = () => {
+    console.log('Payment amount:', paymentAmount);
+
+    handleCloseDialog();
+  };
 
     return(
         <div style={{display: 'flex', marginLeft: '5rem' }}>
@@ -331,7 +351,9 @@ const [getProduct, setProduct] = useState([]);
                                             <Button
                                                 variant="contained"
                                                 fullWidth
-                                                onClick={() => handlePay(totalAmount)}
+                                                onClick={handleOpenDialog}
+                                                value={paymentAmount}
+                                                onChange={handleAmountChange}
                                                 sx={{
                                                 backgroundColor: colors.accentOlive,
                                                 borderTopLeftRadius: '0px',
@@ -345,6 +367,18 @@ const [getProduct, setProduct] = useState([]);
                                             >
                                                 Pay: ₱{totalAmount.toFixed(2)}
                                             </Button>
+                                            <Dialog open={openDialog} onClose={handleCloseDialog} >
+                                                <DialogTitle sx={{fontFamily: 'Poppins, sans-serif'}}>Enter Payment</DialogTitle>
+                                                <DialogContent sx={{width: '500px'}}>
+                                                        <Typography variant="body1" color="inherit" sx={{fontFamily: 'Poppins, sans-serif', marginBottom: '15px'}}>Amount to be paid: {totalAmount.toFixed(2)} </Typography>
+                                                        <TextFieldInputNumberPaymentWidget title={"Enter the amount paid:"} name={"payment"}/>
+                                                        <Typography variant="body1" color="inherit" sx={{fontFamily: 'Poppins, sans-serif', marginTop: '15px'}}>Change: </Typography>
+                                                        <DialogActions sx={{marginTop: '20px', marginRight: '-8px'}}>
+                                                            <ButtonWidget onClick={handleCloseDialog} label={"Cancel"} />
+                                                            <ButtonWidget onClick={handlePay} type={"submit"} label={"Pay"} />
+                                                        </DialogActions>
+                                                </DialogContent>
+                                            </Dialog>
                                         </div>
                                 </CardContent>
                             </Card>

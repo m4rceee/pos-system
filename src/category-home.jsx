@@ -93,17 +93,6 @@ const handleAddCategory = async (e) => {
             categoryTotalCount: 0,
         });
 
-        // Increment categoryTotalAmount when a new category is added
-        const itemCategory = newCategoryId; // Assuming this is the category for the added item
-        const productsInCategoryQuery = query(collection(firestore, 'Products'), where('itemCategory', '==', itemCategory));
-        const productsInCategorySnapshot = await getDocs(productsInCategoryQuery);
-        const newCategoryTotalCount = productsInCategorySnapshot.size;
-
-        // Update the category document with the new categoryTotalAmount
-        await updateDoc(categoryDocRef, {
-            categoryTotalCount: newCategoryTotalCount,
-        });
-
         toast.success('Category added successfully!', {
             position: 'top-right',
             autoClose: 3000,
