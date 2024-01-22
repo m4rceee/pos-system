@@ -8,7 +8,7 @@ import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import HeaderTitleWidget from './widgets/header-title';
 
 import { firestore } from './firebaseConfig';
-import { addDoc, collection, doc, onSnapshot } from '@firebase/firestore';
+import { addDoc, collection, doc, onSnapshot, updateDoc, deleteDoc } from '@firebase/firestore';
 
 import {AddRounded, EditRounded, DeleteRounded,} from "@mui/icons-material";
 import { Grid, Container, Typography, IconButton, TextField, Dialog, DialogActions, DialogContent, DialogTitle, DialogContentText, Card, CardContent,} from '@mui/material';
@@ -83,6 +83,82 @@ export default function CategoryHome() {
 
 
 ////////////////////////////////////////////////////////////////////////////////////////
+// EDIT CATEGORY NAME TO THE DATABSE    
+    const [editDialogOpen, setEditDialogOpen] = useState(false);
+    const [selectedCategoryId, setSelectedCategoryId] = useState(null);
+    const [editedCategoryData, setEditedCategoryData] = useState({
+    categoryName: '',
+    // Add other category properties...
+    });
+
+    const handleEditDialogOpen = (categoryId, categoryData) => {
+    setSelectedCategoryId(categoryId);
+    setEditedCategoryData({ categoryName: categoryData.categoryName });
+    setEditDialogOpen(true);
+    };
+
+    const handleEditDialogClose = () => {
+    setSelectedCategoryId(null);
+    setEditedCategoryData({ categoryName: '' });
+    setEditDialogOpen(false);
+    };
+
+    const handleUpdateCategory = async () => {
+    if (selectedCategoryId) {
+        try {
+        const categoryRef = doc(firestore, 'Product_Category', selectedCategoryId);
+
+        // Update the document with the edited category data (only categoryName)
+        await updateDoc(categoryRef, { categoryName: editedCategoryData.categoryName });
+
+        console.log('Category successfully updated!');
+        } catch (error) {
+        console.error('Error updating category:', error);
+        }
+    }
+
+    // Close the edit dialog after updating or cancellation
+    handleEditDialogClose();
+    }; 
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////
+// DELETE CATEGORY TO THE DATABSE          
+    const [confirmationDialogOpen, setConfirmationDialogOpen] = useState(false);
+
+    const handleConfirmationDialogOpen = (categoryId) => {
+        setConfirmationDialogOpen(true);
+        setSelectedCategoryId(categoryId);
+    };
+
+    const handleConfirmationDialogClose = () => {
+        setConfirmationDialogOpen(false);
+        setSelectedCategoryId(null);
+    };
+
+    const handleDeleteCategory = async () => {
+        // Check if there is a selected category ID
+        if (selectedCategoryId) {
+        try {
+            // Reference to the document in the "Product_Category" collection
+            const categoryRef = doc(firestore, 'Product_Category', selectedCategoryId);
+
+            // Delete the document
+            await deleteDoc(categoryRef);
+
+            console.log('Document successfully deleted!');
+        } catch (error) {
+            console.error('Error deleting document:', error);
+        }
+        }
+
+        handleConfirmationDialogClose();
+    };
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////
 // ATTRIBUTES TO THE DATAGRID TABLE       
     const columns = [
         { field: 'categoryId', headerName: 'ID', width: 120 },
@@ -98,13 +174,13 @@ export default function CategoryHome() {
             sortable: false,
             renderCell: (params) => (
                 <>
-                    <IconButton>
-                        <EditRounded sx={{color: '#3CBCC3'}}/>
+                    <IconButton onClick={() => handleEditDialogOpen(params.row.id, params.row)}>
+                        <EditRounded sx={{ color: '#3CBCC3' }} />
                     </IconButton>
-                    <IconButton>
-                        <DeleteRounded sx={{color: '#E40C2B'}}/>
+                    <IconButton onClick={() => handleConfirmationDialogOpen(params.row.id)}>
+                        <DeleteRounded sx={{ color: '#E40C2B' }} />
                     </IconButton>
-                </>         
+                </>        
             ),
         }, 
     ];
@@ -125,10 +201,10 @@ export default function CategoryHome() {
                             {loading ? (
                                 // Render loading indicator while loading
                                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', color: colors.secondary }}>
-                                    <div style={{marginBottom: '25px'}}>
+                                    <div style={{marginTop: '25px', marginBottom: '15px'}}>
                                         <BounceLoader color={colors.secondary} speedMultiplier={2}  />
                                     </div>
-                                    <div>
+                                    <div style={{marginBottom: '25px'}}>
                                         <Typography variant="body1" sx={{fontFamily: 'Poppins, sans-serif'}}> Loading Categories... </Typography>
                                     </div>
                                 </div>
@@ -167,20 +243,56 @@ export default function CategoryHome() {
 ///////////////////////////////////////////////////////////////////////////////////////
 // ADD CATEGORY POP UP
 */}   
-                                        <Dialog open={open} onClose={handleClose} >
-                                            <DialogTitle sx={{fontFamily: 'Poppins, sans-serif'}}>Add Category</DialogTitle>
-                                            <DialogContent sx={{width: '500px'}}>
-                                                <form onSubmit={(e)=> handleAddCategory(e)}>
-                                                    <TextFieldInputWidget title={"Please enter a category name:"} name={"categoryName"}/>
-                                                    <DialogActions sx={{marginRight: '-8px', marginTop: '20px'}}>
-                                                        <ButtonWidget onClick={handleClose} label={"Cancel"} />
-                                                        <ButtonWidget type={"submit"} label={"Add"} />
-                                                    </DialogActions>
-                                                </form>
-                                            </DialogContent>
-                                        </Dialog>
-                                    </div>
+                                <Dialog open={open} onClose={handleClose} >
+                                    <DialogTitle sx={{fontFamily: 'Poppins, sans-serif'}}>Add Category</DialogTitle>
+                                    <DialogContent sx={{width: '500px'}}>
+                                        <form onSubmit={(e)=> handleAddCategory(e)}>
+                                            <TextFieldInputWidget title={"Please enter a category name:"} name={"categoryName"}/>
+                                            <DialogActions>
+                                                <ButtonWidget onClick={handleClose} label={"Cancel"} />
+                                                <ButtonWidget type={"submit"} label={"Add"} />
+                                            </DialogActions>
+                                        </form>
+                                    </DialogContent>
+                                </Dialog>
+                                    
+
+
+{/*
+///////////////////////////////////////////////////////////////////////////////////////
+// EDIT CATEGORY POP UP
+*/}   
+                                <Dialog open={editDialogOpen} onClose={handleEditDialogClose}>
+                                    <DialogTitle sx={{fontFamily: 'Poppins, sans-serif'}}>Edit Category</DialogTitle>
+                                    <DialogContent sx={{width: '500px'}}>
+                                        <TextFieldInputWidget 
+                                            title={"Category Name:"} 
+                                            value={editedCategoryData.categoryName} 
+                                            onChange={(e) => setEditedCategoryData((prevData) => ({ ...prevData, categoryName: e.target.value }))}
+                                        />
+                                        <DialogActions>
+                                            <ButtonWidget onClick={handleEditDialogClose} label={"Cancel"} />
+                                            <ButtonWidget onClick={handleUpdateCategory} label={"Update"} />
+                                        </DialogActions>
+                                        </DialogContent>
+                                </Dialog>
+
+
+
+{/*
+///////////////////////////////////////////////////////////////////////////////////////
+// DELETE CATEGORY POP UP
+*/}  
+                                <Dialog open={confirmationDialogOpen} onClose={handleConfirmationDialogClose}>
+                                    <DialogTitle sx={{fontFamily: 'Poppins, sans-serif'}}>Confirmation</DialogTitle>
+                                        <DialogContent sx={{fontFamily: 'Poppins, sans-serif'}}>Are you sure you want to delete this category?</DialogContent>
+                                    <DialogActions sx={{marginRight: '15px', marginBottom: '10px'}}>
+                                        <ButtonWidget onClick={handleConfirmationDialogClose} label={"Cancel"} />
+                                        <ButtonWidget onClick={handleDeleteCategory} label={"Delete"} />
+                                    </DialogActions>
+                                </Dialog>
                                 </div>
+                            </div>
 
 
 
