@@ -104,6 +104,7 @@ const handleAddProduct = async (e) => {
         const itemCode = e.target.itemCode.value;
         const itemCategory = e.target.itemCategory.value;
         const itemQuantity = e.target.itemQuantity.value;
+        const itemPreQuantity = e.target.itemQuantity.value;
         const itemPrice = e.target.itemPrice.value;
 
         const collectVal = collection(firestore, "Products");
@@ -115,6 +116,7 @@ const handleAddProduct = async (e) => {
             itemCode,
             itemCategory,
             itemQuantity,
+            itemPreQuantity,
             itemPrice
         });
 
@@ -167,6 +169,7 @@ const handleAddProduct = async (e) => {
         itemCode: '',
         itemCategory: '',
         itemQuantity: '',
+        itemPreQuantity: '',
         itemPrice: '',
     });
 
@@ -183,6 +186,7 @@ const handleAddProduct = async (e) => {
         itemCode: '',
         itemCategory: '',
         itemQuantity: '',
+        itemPreQuantity: '',
         itemPrice: '',
         });
         setEditDialogOpen(false);

@@ -303,7 +303,7 @@ const [getProduct, setProduct] = useState([]);
                                                             <TableRow key={index}>
                                                                 <StyledTableCell>{tableItem.itemName}</StyledTableCell>
                                                                 <StyledTableCell align="right">{tableItem.itemQuantity}</StyledTableCell>
-                                                                <StyledTableCell align="right">{tableItem.itemPrice}</StyledTableCell>
+                                                                <StyledTableCell align="right">₱{tableItem.itemPrice}</StyledTableCell>
                                                                 <StyledTableCell align="right">Icon</StyledTableCell>
                                                             </TableRow>
                                                         ))}
