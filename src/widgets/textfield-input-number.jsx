@@ -11,6 +11,7 @@ const TextFieldInputNumberWidget = ({ title, name, id, value, onChange }) => {
         value = { value }
         onChange = { onChange }
         fullWidth
+        required
         variant="outlined"
         inputProps={{
             type: 'number',

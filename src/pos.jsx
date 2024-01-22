@@ -327,24 +327,6 @@ const [getProduct, setProduct] = useState([]);
                                                         </Button>
                                                     </DialogActions>
                                                 </Dialog>
-                                                <Button
-                                                    variant="contained"
-                                                    fullWidth
-                                                    onClick={() => handlePay(totalAmount)}
-                                                    sx={{
-                                                    padding: '10px',
-                                                    borderTopLeftRadius: '0px',
-                                                    borderTopRightRadius: '0px',
-                                                    borderBottomLeftRadius: '0px', 
-                                                    borderBottomRightRadius: '0px',
-                                                    fontFamily: 'Poppins, sans-serif',
-                                                    '&:hover':  {
-                                                        backgroundColor: 'rgba(0, 0, 0, 0.15)'
-                                                      }
-                                                    }}
-                                                >
-                                                    Discount
-                                                </Button>
                                             </div>
                                             <Button
                                                 variant="contained"

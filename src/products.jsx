@@ -58,8 +58,14 @@ export default function Products() {
 
     const handleProductsPage = (event) => {
         event.preventDefault();
-        console.info('You clicked a Product Report Page.');
+        console.info('You clicked a Product Rankings Page.');
         navigate('/products');
+    }
+
+    const handleProductsReportPage = (event) => {
+        event.preventDefault();
+        console.info('You clicked a Product Report Page.');
+        navigate('/products-report');
     }
 
     const StyledTableCell = styled(TableCell)({
@@ -154,6 +160,7 @@ export default function Products() {
                                         </Typography>
                                         <div sx={{ textAlign: 'center', marginTop: '16px' }}>
                                             <IconButton
+                                                onClick={handleProductsReportPage}    
                                                 sx={{
                                                     backgroundColor: '#13131c',
                                                     borderRadius: '8px',

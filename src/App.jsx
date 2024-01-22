@@ -7,6 +7,7 @@ import ProductHome from './product-home';
 import PosPage from './pos';
 import ReportHome from './reports-home';
 import Products from './products';
+import ProductReport from './products-report';
 
 export default function App() {
   return (
@@ -19,6 +20,7 @@ export default function App() {
         <Route path="/pos" element={<PosPage />} />
         <Route path="/products" element={<Products />} />
         <Route path="/reports-home" element={<ReportHome />} />
+        <Route path="/products-report" element={<ProductReport />} />
       </Routes>
     </Router>
   );

@@ -11,6 +11,7 @@ const TextFieldInputWidget = ({ title, name, id, value, onChange }) => {
         value = { value }
         onChange = { onChange }
         fullWidth
+        required
         variant="outlined"
         sx={{
             marginTop: '5px',

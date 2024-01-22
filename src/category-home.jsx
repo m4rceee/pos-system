@@ -11,11 +11,14 @@ import { firestore } from './firebaseConfig';
 import { addDoc, collection, doc, onSnapshot, updateDoc, deleteDoc } from '@firebase/firestore';
 
 import {AddRounded, EditRounded, DeleteRounded,} from "@mui/icons-material";
-import { Grid, Container, Typography, IconButton, TextField, Dialog, DialogActions, DialogContent, DialogTitle, DialogContentText, Card, CardContent,} from '@mui/material';
+import { Grid, Container, Typography, IconButton, TextField, Dialog, DialogActions, DialogContent, DialogTitle, DialogContentText, Card, CardContent, CircularProgress} from '@mui/material';
 import ButtonWidget from './widgets/button';
 import TextFieldInputWidget from './widgets/textfield-input';
 
 import { BounceLoader } from 'react-spinners';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import "./toast.css";
 
 
 const colors = {
@@ -41,6 +44,9 @@ export default function CategoryHome() {
     const [open, setOpen] = useState(false);
     const [loading, setLoading] = useState(true); // Add loading state
     const [count, setCount] = useState(0);
+    const [addingCategory, setAddingCategory] = useState(false);
+    const [editingCategory, setEditingCategory] = useState(false);
+    const [deletingCategory, setDeletingCategory] = useState(false);
 
     const handleClickOpen = () => {setOpen(true);};
     const handleClose = () => {setOpen(false);};
@@ -64,21 +70,43 @@ export default function CategoryHome() {
 
 ////////////////////////////////////////////////////////////////////////////////////////
 // ADD PRODUCT CATEGORY TO THE DATABSE    
-    const handleAddCategory = (e) => {
-        e.preventDefault();
-        setCount(count + 1);
-        const categoryName = e.target.categoryName.value;
-
-        //const val = doc(firestore, "MelysonProductDB", categoryName);
-        const collectVal = collection(firestore, "Product_Category");
-        addDoc(collectVal, {
-            categoryId:count, 
-            categoryName, 
-            categoryTotalCount:count
-        });
-        
-        setOpen(false);
-      };
+    const handleAddCategory = async (e) => {
+        setAddingCategory(true);
+        try {
+            e.preventDefault();
+            setCount(count + 1);
+            const categoryName = e.target.categoryName.value;
+    
+            //const val = doc(firestore, "MelysonProductDB", categoryName);
+            const collectVal = collection(firestore, "Product_Category");
+            await addDoc(collectVal, {
+                categoryId:count, 
+                categoryName, 
+                categoryTotalCount:count
+            });
+            toast.success('Category added successfully!', {
+                position: 'top-right',
+                autoClose: 3000, // Auto close the notification after 3 seconds
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+              });
+        } catch (error) {
+            toast.error('Error adding category. Please try again.', {
+                position: 'top-right',
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+              });
+              console.error('Error adding category:', error);
+        } finally {
+              setAddingCategory(false);
+              setOpen(false);
+        }
+        };
 
 
 
@@ -104,6 +132,7 @@ export default function CategoryHome() {
     };
 
     const handleUpdateCategory = async () => {
+        setEditingCategory(true);
     if (selectedCategoryId) {
         try {
         const categoryRef = doc(firestore, 'Product_Category', selectedCategoryId);
@@ -111,14 +140,24 @@ export default function CategoryHome() {
         // Update the document with the edited category data (only categoryName)
         await updateDoc(categoryRef, { categoryName: editedCategoryData.categoryName });
 
+        toast.success('Category updated successfully!', {
+            position: 'top-right',
+            autoClose: 3000, // Auto close the notification after 3 seconds
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+          });
+
         console.log('Category successfully updated!');
         } catch (error) {
         console.error('Error updating category:', error);
+        } finally {
+            setEditingCategory(false);
+            handleEditDialogClose();
         }
     }
 
-    // Close the edit dialog after updating or cancellation
-    handleEditDialogClose();
     }; 
 
 
@@ -138,7 +177,8 @@ export default function CategoryHome() {
     };
 
     const handleDeleteCategory = async () => {
-        // Check if there is a selected category ID
+        setDeletingCategory(true);
+
         if (selectedCategoryId) {
         try {
             // Reference to the document in the "Product_Category" collection
@@ -147,13 +187,23 @@ export default function CategoryHome() {
             // Delete the document
             await deleteDoc(categoryRef);
 
+            toast.success('Category deleted successfully!', {
+                position: 'top-right',
+                autoClose: 3000, // Auto close the notification after 3 seconds
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+              });
+
             console.log('Document successfully deleted!');
         } catch (error) {
             console.error('Error deleting document:', error);
+        } finally {
+            setDeletingCategory(false);
+            handleConfirmationDialogClose();
         }
         }
-
-        handleConfirmationDialogClose();
     };
 
 
@@ -191,6 +241,7 @@ export default function CategoryHome() {
 // START OF CODE
     return(
         <>
+            <ToastContainer />
             <div style={{display:'flex', marginLeft: '5rem'}}>
                 <SideBar />
                 <Container maxWidth="xl" style={{ paddingLeft: '35px', paddingTop: '20px' }}>
@@ -250,7 +301,7 @@ export default function CategoryHome() {
                                             <TextFieldInputWidget title={"Please enter a category name:"} name={"categoryName"}/>
                                             <DialogActions sx={{marginTop: '20px', marginRight: '-8px'}}>
                                                 <ButtonWidget onClick={handleClose} label={"Cancel"} />
-                                                <ButtonWidget type={"submit"} label={"Add"} />
+                                                <ButtonWidget type={"submit"} label={addingCategory ? <CircularProgress size={23} color="inherit" /> : "Add"} />
                                             </DialogActions>
                                         </form>
                                     </DialogContent>
@@ -272,7 +323,7 @@ export default function CategoryHome() {
                                         />
                                         <DialogActions sx={{marginTop: '20px', marginRight: '-8px'}}>
                                             <ButtonWidget onClick={handleEditDialogClose} label={"Cancel"} />
-                                            <ButtonWidget onClick={handleUpdateCategory} label={"Update"} />
+                                            <ButtonWidget onClick={handleUpdateCategory} label={editingCategory ? <CircularProgress size={23} color="inherit" /> : "Update"} />
                                         </DialogActions>
                                         </DialogContent>
                                 </Dialog>
@@ -288,7 +339,7 @@ export default function CategoryHome() {
                                         <DialogContent sx={{fontFamily: 'Poppins, sans-serif'}}>Are you sure you want to delete this category?</DialogContent>
                                     <DialogActions sx={{marginRight: '15px', marginBottom: '10px'}}>
                                         <ButtonWidget onClick={handleConfirmationDialogClose} label={"Cancel"} />
-                                        <ButtonWidget onClick={handleDeleteCategory} label={"Delete"} />
+                                        <ButtonWidget onClick={handleDeleteCategory} label={deletingCategory ? <CircularProgress size={23} color="inherit" /> : "Delete"} />
                                     </DialogActions>
                                 </Dialog>
                                 </div>
