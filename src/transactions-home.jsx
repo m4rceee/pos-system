@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import "./styles.css"
 import 'typeface-poppins';
 import { useNavigate } from 'react-router-dom';
@@ -6,6 +6,8 @@ import SideBar from './common/sidebar';
 import Header from './common/header';
 import { styled } from '@mui/system';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
+import ReactToPrint, { PrintContextConsumer } from 'react-to-print';
+import Receipt from './receipt-transactions-home';
 
 import { 
     Grid, 
@@ -24,6 +26,11 @@ import {
     Breadcrumbs,
     Link,
     fabClasses,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+    Button
 } from '@mui/material';
 
 import {
@@ -32,6 +39,8 @@ import {
     PrintRounded,
     SearchRounded,
 } from '@mui/icons-material';
+
+import ButtonWidget from './widgets/button';
 
 const colors = {
     primary: '#1D1D2C',
@@ -50,6 +59,7 @@ const colors = {
   };
 
 export default function TransactionsHome() {
+
 
     const navigate = useNavigate();
 
@@ -90,43 +100,59 @@ export default function TransactionsHome() {
         return date.toLocaleTimeString(undefined, options);
     };
 
+  const [selectedTransaction, setSelectedTransaction] = useState(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const componentRef = useRef();
 
-    /////////////////////////// REMOVE THIS IF CONNECTING NA SA DATABASE ///////////////////////////////////////////
-    const staticRows = [
-        {id: 1, transactionDate: '2024/01/22', transactionId: '48372454309434', grandAmount: 999.00},
-        {id: 1, transactionDate: '2024/01/22', transactionId: '54729545945984', grandAmount: 999.00},
-        // Add more static data as needed
-    ];
+  const handleSearchClick = (transaction) => {
+    setSelectedTransaction(transaction);
+    setIsDialogOpen(true);
+  };
 
-    const columns = [
-        { field: 'transactionDate', headerName: 'Date', width: 250 },
-        { field: 'transactionId', headerName: 'Reference', width: 400 },
-        { field: 'grandAmount', headerName: 'Amount', width: 250 },
-        { 
-            field: 'transactionActions', 
-            headerName: 'Actions',
-            width: 150,
-            align: 'center',
-            headerAlign: 'center',
-            description: 'This column has a value getter and is not sortable.',
-            sortable: false,
-            renderCell: (params) => (
-                <>
-                    <IconButton >
-                        <SearchRounded sx={{ color: colors.primary }} />
-                    </IconButton>
-                    <IconButton >
-                        <PrintRounded sx={{ color: colors.primary }} />
-                    </IconButton>
-                </>        
-            ),
-        }, 
-        
-    ];
+  const handleCloseDialog = () => {
+    setSelectedTransaction(null);
+    setIsDialogOpen(false);
+  };
+
+  const handlePrint = () => {
+    // Call the print method from ReactToPrint
+    componentRef.current.handlePrint();
+  };
+
+  const staticRows = [
+    { id: 1, transactionDate: '2024/01/22', transactionId: '48372454309434', grandAmount: 999.00 },
+    { id: 2, transactionDate: '2024/01/22', transactionId: '54729545945984', grandAmount: 999.00 },
+    // Add more static data as needed
+  ];
+
+  const columns = [
+    { field: 'transactionDate', headerName: 'Date & Time', width: 250 },
+    { field: 'transactionId', headerName: 'Reference', width: 400 },
+    { field: 'grandAmount', headerName: 'Amount', width: 250 },
+    {
+      field: 'transactionActions',
+      headerName: 'Actions',
+      width: 150,
+      align: 'center',
+      headerAlign: 'center',
+      description: 'This column has a value getter and is not sortable.',
+      sortable: false,
+      renderCell: (params) => (
+        <>
+          <IconButton onClick={() => handleSearchClick(params.row)}>
+            <SearchRounded sx={{ color: colors.primary }} />
+          </IconButton>
+          <IconButton>
+            <PrintRounded sx={{ color: colors.primary }} />
+          </IconButton>
+        </>
+      ),
+    },
+  ];
 
     return(
         <>
-<div style={{ display: 'flex', marginLeft: '5rem' }}>
+            <div style={{ display: 'flex', marginLeft: '5rem' }}>
                 <SideBar />
                 <div style={{ marginLeft: '10px', marginRight: '5px', width: '100%'}}>
                     <Container maxWidth="xl" style={{ paddingTop: '20px' }}>
@@ -223,6 +249,25 @@ export default function TransactionsHome() {
                                 </Grid>
                             </CardContent>
                         </Card>
+                        <Dialog open={isDialogOpen} onClose={handleCloseDialog}>
+                            <DialogContent>
+                                <Receipt transactionData={selectedTransaction} ref={componentRef} />
+                            </DialogContent>
+                            <DialogActions>
+                            <ButtonWidget onClick={handleCloseDialog} label={'Cancel'} />
+                            {/* Use ReactToPrint to handle the printing */}
+                            <ReactToPrint
+                                content={() => componentRef.current}
+                            >
+                                <PrintContextConsumer>
+                                {({ handlePrint }) => (
+                                    <ButtonWidget onClick={handlePrint} label={'Print this out!'} />
+                                )}
+                                </PrintContextConsumer>
+                            </ReactToPrint>
+                            
+                            </DialogActions>
+                        </Dialog>
                     </Container>
                 </div>
             </div>
