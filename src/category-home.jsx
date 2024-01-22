@@ -172,7 +172,7 @@ export default function CategoryHome() {
                                             <DialogContent sx={{width: '500px'}}>
                                                 <form onSubmit={(e)=> handleAddCategory(e)}>
                                                     <TextFieldInputWidget title={"Please enter a category name:"} name={"categoryName"}/>
-                                                    <DialogActions>
+                                                    <DialogActions sx={{marginRight: '-8px', marginTop: '20px'}}>
                                                         <ButtonWidget onClick={handleClose} label={"Cancel"} />
                                                         <ButtonWidget type={"submit"} label={"Add"} />
                                                     </DialogActions>
