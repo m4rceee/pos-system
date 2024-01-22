@@ -524,7 +524,10 @@ const handleAddProduct = async (e) => {
                                                 <TextFieldInputNumberWidget 
                                                     title={"Item Quantity:"}
                                                     value={editedProductData.itemQuantity} 
-                                                    onChange={(e) => setEditedProductData((prevData) => ({ ...prevData, itemQuantity: e.target.value }))}
+                                                    onChange={(e) => {
+                                                        setEditedProductData((prevData) => ({ ...prevData, itemQuantity: e.target.value }))
+                                                        setEditedProductData((prevData) => ({ ...prevData, itemPreQuantity: e.target.value }))
+                                                    }}
                                                 />
                                                 <TextFieldInputNumberWidget 
                                                     title={"Item Price (per piece):"}

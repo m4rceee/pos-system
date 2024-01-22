@@ -10,7 +10,7 @@ import 'typeface-poppins';
 import SideBar from './common/sidebar';
 
 import { firestore } from './firebaseConfig';
-import { collection, onSnapshot, doc, getDoc} from '@firebase/firestore';
+import { collection, onSnapshot, doc, getDoc, updateDoc } from '@firebase/firestore';
 
 import { BounceLoader } from 'react-spinners';
 
@@ -66,19 +66,42 @@ export default function PosPage() {
     const [loading, setLoading] = useState(true);
     const [openDialog, setOpenDialog] = useState(false);
     const [paymentAmount, setPaymentAmount] = useState('');
+    const [itemQuantity, setItemQuantity] = useState(0);
 
-    const handleItemClick = (item) => {
+    const handleItemClick = async (item) => {
+        // Reference to the specific product document
+        const productRef = doc(firestore, 'Products', item.id);
         const existingItemIndex = tableItems.findIndex((tableItem) => tableItem.itemName === item.itemName);
-
+    
         if (existingItemIndex !== -1) {
+            // If the item exists, create a copy of the array and update the quantity of the existing item
             const updatedItems = [...tableItems];
             updatedItems[existingItemIndex].itemQuantity += 1;
             setTableItems(updatedItems);
         } else {
+            // If the item does not exist, create a new item with quantity 1 and add it to the array
             const newItem = { ...item, itemQuantity: 1 };
             setTableItems([...tableItems, newItem]);
         }
 
+        try {
+            // Get the current product data
+            const productSnapshot = await getDoc(productRef);
+            const currentQuantity = productSnapshot.data().itemPreQuantity;
+            const currentOldQuantity = productSnapshot.data().itemQuantity;
+    
+            // Ensure that the quantity does not go below 0
+            const newQuantity = Math.max(0, currentQuantity - 1);
+    
+            // Update the product document with the new quantity
+            await updateDoc(productRef, { itemPreQuantity: newQuantity });
+            setItemQuantity(currentOldQuantity);
+    
+            console.log('Product quantity decreased successfully.');
+        } catch (error) {
+            console.error('Error decreasing product quantity:', error.message);
+        }
+    
         setSelectedItem(item);
     };
 
@@ -98,6 +121,9 @@ export default function PosPage() {
         setOpen(false);
     
         if (confirmed) {
+
+
+
             navigate('/pos');
             window.location.reload();
         }
@@ -248,11 +274,11 @@ const [getProduct, setProduct] = useState([]);
                                                                             <Typography 
                                                                                 variant="body2"
                                                                                 sx={{
-                                                                                color: item.itemQuantity <= 10 ? colors.accentOrange : colors.secondary,
-                                                                                fontWeight: item.itemQuantity <= 10 ? '700' : 'normal',
+                                                                                color: item.itemPreQuantity <= 10 ? colors.accentOrange : colors.secondary,
+                                                                                fontWeight: item.itemPreQuantity <= 10 ? '700' : 'normal',
                                                                                 fontFamily: 'Poppins, sans-serif'
                                                                             }} title={item.itemName}>
-                                                                                Qty: {item.itemQuantity}
+                                                                                Qty: {item.itemPreQuantity}
                                                                             </Typography>
                                                                         </div>
                                                                     </CardContent>
