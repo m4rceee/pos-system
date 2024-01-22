@@ -19,6 +19,9 @@ import TextFieldInputWidget from './widgets/textfield-input';
 import TextFieldInputNumberWidget from './widgets/textfield-input-number';
 
 import { BounceLoader } from 'react-spinners';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import "./toast.css";
 
 
 const colors = {
@@ -36,14 +39,6 @@ const colors = {
     accentOlive: '#A4B82F', 
     accentPink: '#E84B8A', 
 };
-
-  /*rows.forEach((row, index) => {
-    if (row.itemName) {
-      row.itemCode = row.itemName.slice(0, 3).toUpperCase() + Math.floor(Math.random() * 1000).toString();
-    }
-    row.id = String(index + 1).padStart(4, '0');
-  });*/
-
 
 export default function ProductHome() {
 
@@ -113,9 +108,28 @@ const handleAddProduct = async (e) => {
         itemQuantity,
         itemPrice
       });
+      
+    // Notify success
+    toast.success('Product added successfully!', {
+        position: 'top-right',
+        autoClose: 3000, // Auto close the notification after 3 seconds
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
   
       console.log('Product added successfully!');
     } catch (error) {
+        // Notify error
+    toast.error('Error adding product. Please try again.', {
+        position: 'top-right',
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
       console.error('Error adding product:', error);
     } finally {
       setAddingProduct(false);
@@ -165,6 +179,15 @@ const handleAddProduct = async (e) => {
             // Update the document with the edited product data
             await updateDoc(productRef, editedProductData);
 
+            toast.success('Product edited successfully!', {
+                position: 'top-right',
+                autoClose: 3000, // Auto close the notification after 3 seconds
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+              });
+
             console.log('Document successfully updated!');
         } catch (error) {
             console.error('Error updating document:', error);
@@ -203,6 +226,14 @@ const handleAddProduct = async (e) => {
 
         // Delete the document
         await deleteDoc(productRef);
+        toast.success('Product deleted successfully!', {
+            position: 'top-right',
+            autoClose: 3000, // Auto close the notification after 3 seconds
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+          });
 
         console.log('Document successfully deleted!');
         } catch (error) {
@@ -222,31 +253,40 @@ const handleAddProduct = async (e) => {
     const [products, setProducts] = useState([]);
     useEffect(() => {
         const unsubscribe = onSnapshot(collection(firestore, 'Products'), (snapshot) => {
-        const productArray = snapshot.docs.map((doc) => ({...doc.data(), id: doc.id}));
-
-        // Fetch category information for each product
-        const fetchCategoryInfo = async () => {
-            const productsWithCategory = await Promise.all(
-            productArray.map(async (product) => {
-                const categoryRef = doc(firestore, 'Product_Category', product.itemCategory);
-                const categorySnapshot = await getDoc(categoryRef);
-
-                if (categorySnapshot.exists()) {
-                const categoryData = categorySnapshot.data();
-                return { ...product, categoryName: categoryData.categoryName };     
-                } else {
-                console.log(`Category with ID ${product.itemCategory} not found.`);
-                return product; // Return the product without category information
-                }
-            })
-            );
-            setProducts(productsWithCategory);
-            setLoading(false);
-        };
-        fetchCategoryInfo();
+            const productArray = snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+    
+            // Fetch category information for each product
+            const fetchCategoryInfo = async () => {
+                const productsWithCategory = await Promise.all(
+                    productArray.map(async (product) => {
+                        // Check if product.itemCategory exists before creating the document reference
+                        if (product.itemCategory) {
+                            const categoryRef = doc(firestore, 'Product_Category', product.itemCategory);
+                            const categorySnapshot = await getDoc(categoryRef);
+    
+                            if (categorySnapshot.exists()) {
+                                const categoryData = categorySnapshot.data();
+                                return { ...product, categoryName: categoryData.categoryName };
+                            } else {
+                                console.log(`Category with ID ${product.itemCategory} not found.`);
+                                return product; // Return the product without category information
+                            }
+                        } else {
+                            // Handle the case where product.itemCategory is undefined or falsy
+                            return product;
+                        }
+                    })
+                );
+                setProducts(productsWithCategory);
+                setLoading(false);
+            };
+    
+            fetchCategoryInfo();
         });
+    
         return () => unsubscribe();
     }, []);
+    
 
 
 
@@ -286,6 +326,7 @@ const handleAddProduct = async (e) => {
 // START OF CODE
     return(
         <>
+            <ToastContainer />
             <div style={{display: 'flex', marginLeft: '5rem'}}>
                 <SideBar />
                 <Container maxWidth="xl" style={{ paddingLeft: '35px', paddingTop: '20px', overflowX: 'auto' }}>

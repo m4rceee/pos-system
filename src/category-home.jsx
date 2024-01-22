@@ -248,7 +248,7 @@ export default function CategoryHome() {
                                     <DialogContent sx={{width: '500px'}}>
                                         <form onSubmit={(e)=> handleAddCategory(e)}>
                                             <TextFieldInputWidget title={"Please enter a category name:"} name={"categoryName"}/>
-                                            <DialogActions>
+                                            <DialogActions sx={{marginTop: '20px', marginRight: '-8px'}}>
                                                 <ButtonWidget onClick={handleClose} label={"Cancel"} />
                                                 <ButtonWidget type={"submit"} label={"Add"} />
                                             </DialogActions>
@@ -270,7 +270,7 @@ export default function CategoryHome() {
                                             value={editedCategoryData.categoryName} 
                                             onChange={(e) => setEditedCategoryData((prevData) => ({ ...prevData, categoryName: e.target.value }))}
                                         />
-                                        <DialogActions>
+                                        <DialogActions sx={{marginTop: '20px', marginRight: '-8px'}}>
                                             <ButtonWidget onClick={handleEditDialogClose} label={"Cancel"} />
                                             <ButtonWidget onClick={handleUpdateCategory} label={"Update"} />
                                         </DialogActions>
