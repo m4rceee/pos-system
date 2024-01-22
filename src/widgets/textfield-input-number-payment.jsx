@@ -1,7 +1,7 @@
 import React from 'react';
 import { Grid, DialogContentText, TextField } from '@mui/material';
 
-const TextFieldInputNumberWidget = ({ title, name, id, value, onChange }) => {
+const TextFieldInputNumberPaymentWidget = ({ title, name, id, value, onChange }) => {
   return (
     <Grid>
       <DialogContentText sx={{fontFamily: 'Poppins, sans-serif', marginTop: '15px'}}>{title}</DialogContentText>
@@ -35,4 +35,4 @@ const TextFieldInputNumberWidget = ({ title, name, id, value, onChange }) => {
   );
 };
 
-export default TextFieldInputNumberWidget;
+export default TextFieldInputNumberPaymentWidget;
