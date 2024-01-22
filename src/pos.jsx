@@ -10,7 +10,7 @@ import 'typeface-poppins';
 import SideBar from './common/sidebar';
 
 import { firestore } from './firebaseConfig';
-import { collection, onSnapshot, doc, getDoc, updateDoc } from '@firebase/firestore';
+import { collection, onSnapshot, doc, getDoc, updateDoc, addDoc } from '@firebase/firestore';
 
 import { BounceLoader } from 'react-spinners';
 import { Container, Grid, Typography, Card, CardContent, Button, CardActionArea, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Dialog, DialogActions, DialogContent, DialogTitle, DialogContentText, } from '@mui/material';
@@ -47,6 +47,16 @@ export default function PosPage() {
     const [openDialog, setOpenDialog] = useState(false);
     const [paymentAmount, setPaymentAmount] = useState('');
     const [changeAmount, setChangeAmount] = useState(0);
+    const [currentDate, setCurrentDate] = useState(new Date());
+
+    useEffect(() => {
+        const intervalId = setInterval(() => {
+        setCurrentDate(new Date());
+        }, 1000); // Update the date every second
+
+        // Clear the interval when the component unmounts
+        return () => clearInterval(intervalId);
+    }, []);
 
     const handleItemClick = async (item) => {
         // Reference to the specific product document
@@ -74,7 +84,6 @@ export default function PosPage() {
     
             // Update the product document with the new quantity
             await updateDoc(productRef, { itemPreQuantity: newQuantity });
-            setItemQuantity(currentOldQuantity);
     
             console.log('Product quantity decreased successfully.');
         } catch (error) {
@@ -166,8 +175,6 @@ const [getProduct, setProduct] = useState([]);
   ///////////////////////////////// PAYMENT DIALOG ///////////////////////////////////
   const handleOpenDialog = (event) => {
     setOpenDialog(true);
-    console.log('Payment to be paid:', totalAmount)
-    console.log('Products in the table:', tableItems);
   };
 
   const handleCloseDialog = () => {
@@ -187,15 +194,35 @@ const [getProduct, setProduct] = useState([]);
     setChangeAmount(change);
   };
 
-  const handlePay = () => {
+
+  const generateRandomNumber = () => {
+    const randomNumber = Math.floor(100000000000 + Math.random() * 900000000000);
+    return randomNumber.toString();
+};
+
+  const handleAddTransaction = async (e) => {
+    e.preventDefault();
+    console.log('Payment to be paid:', totalAmount)
+    console.log('Products in the table:', tableItems);
     console.log('Payment amount:', paymentAmount);
 
+    const transactionVal = collection(firestore, "Transactions");
+    const newTransactionRef = addDoc(transactionVal, {
+        referenceId: generateRandomNumber(),
+        dateTransaction: currentDate.toLocaleString(),
+        productBreakdown: tableItems,
+        totalAmount: totalAmount
+    });
+
+    //console.log("referenceId: " + generateRandomNumber() + "\ndateTransaction: " + currentDate.toLocaleString() + "\nproductBreakdown: " + tableItems + "\ntotalAmount: " + totalAmount);
 
 
-
-
-    handleCloseDialog();
+    setOpenDialog(false);
+    navigate('/pos');
+    window.location.reload();
   };
+
+  
 
     return(
         <div style={{display: 'flex', marginLeft: '5rem' }}>
@@ -389,13 +416,15 @@ const [getProduct, setProduct] = useState([]);
                                             <Dialog open={openDialog} onClose={handleCloseDialog} >
                                                 <DialogTitle sx={{fontFamily: 'Poppins, sans-serif'}}>Enter Payment</DialogTitle>
                                                 <DialogContent sx={{width: '500px'}}>
+                                                    <form onSubmit={(e)=> handleAddTransaction(e)}>
                                                         <Typography variant="body1" color="inherit" sx={{fontFamily: 'Poppins, sans-serif', marginBottom: '15px'}}>Amount to be paid: {totalAmount.toFixed(2)} </Typography>
                                                         <TextFieldInputNumberPaymentWidget title={"Enter the amount paid:"} name={"payment"} onChange={handleAmountChange}/>
                                                         <Typography variant="body1" color="inherit" sx={{fontFamily: 'Poppins, sans-serif', marginTop: '15px'}}>Change: ₱{changeAmount.toFixed(2)} </Typography>
                                                         <DialogActions sx={{marginTop: '20px', marginRight: '-8px'}}>
                                                             <ButtonWidget onClick={handleCloseDialog} label={"Cancel"} />
-                                                            <ButtonWidget onClick={handlePay} type={"submit"} label={"Pay"} />
+                                                            <ButtonWidget type={"submit"} label={"Pay"} />
                                                         </DialogActions>
+                                                    </form>
                                                 </DialogContent>
                                             </Dialog>
                                         </div>

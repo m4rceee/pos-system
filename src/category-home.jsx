@@ -87,7 +87,7 @@ const handleAddCategory = async (e) => {
         const categoryName = e.target.categoryName.value;
 
         const collectVal = collection(firestore, "Product_Category");
-       const categoryDocRef = await addDoc(collectVal, {
+        const categoryDocRef = await addDoc(collectVal, {
             categoryId: newCategoryId,
             categoryName,
             categoryTotalCount: 0,
