@@ -162,6 +162,7 @@ const [getProduct, setProduct] = useState([]);
   const handleOpenDialog = (event) => {
     setOpenDialog(true);
     console.log('Payment to be paid:', totalAmount)
+    console.log('Products in the table:', tableItems);
   };
 
   const handleCloseDialog = () => {
