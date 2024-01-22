@@ -13,7 +13,7 @@ import { firestore } from './firebaseConfig';
 import { addDoc, collection, onSnapshot, doc, getDoc, deleteDoc, updateDoc} from '@firebase/firestore';
 
 import {AddRounded, EditRounded, DeleteRounded, PrintRounded,} from "@mui/icons-material";
-import { Grid, Container, Typography, IconButton, TextField, Dialog, DialogActions, DialogContent, DialogTitle, DialogContentText, Card, CardContent, Select, MenuItem,} from '@mui/material';
+import { Grid, Container, Typography, IconButton, TextField, Dialog, DialogActions, DialogContent, DialogTitle, DialogContentText, Card, CardContent, Select, MenuItem, CircularProgress} from '@mui/material';
 import ButtonWidget from './widgets/button';
 import TextFieldInputWidget from './widgets/textfield-input';
 import TextFieldInputNumberWidget from './widgets/textfield-input-number';
@@ -49,7 +49,12 @@ export default function ProductHome() {
 
     const [open, setOpen] = useState(false);
     const [count, setCount] = useState(0);
-    const [loading, setLoading] = useState(true); // Add loading state
+    const [loading, setLoading] = useState(true);
+
+    // Add loading states for editing and deleting
+    const [editingProduct, setEditingProduct] = useState(false);
+    const [deletingProduct, setDeletingProduct] = useState(false);
+    const [addingProduct, setAddingProduct] = useState(false);
 
     const [selectedCategory, setSelectedCategory] = useState('');
     const handleCategoryChange = (event) => {setSelectedCategory(event.target.value);};
@@ -85,28 +90,38 @@ export default function ProductHome() {
 
 ////////////////////////////////////////////////////////////////////////////////////////
 // ADD DATA TO THE DATABASE
-    const handleAddProduct = (e) => {
-        e.preventDefault();
-        setCount(count + 1);
-        
-        const itemName = e.target.itemName.value;
-        const itemCode = e.target.itemCode.value;
-        const itemCategory = e.target.itemCategory.value;
-        const itemQuantity = e.target.itemQuantity.value;
-        const itemPrice = e.target.itemPrice.value;
-
-        const collectVal = collection(firestore, "Products");
-        addDoc(collectVal, {
-            itemId:count, 
-            itemName, 
-            itemCode,
-            itemCategory,
-            itemQuantity,
-            itemPrice
-        });
-
-        setOpen(false); 
-    };
+const handleAddProduct = async (e) => {
+    setAddingProduct(true);
+    try {
+    e.preventDefault();
+      setCount(count + 1);
+  
+      const itemName = e.target.itemName.value;
+      const itemCode = e.target.itemCode.value;
+      const itemCategory = e.target.itemCategory.value;
+      const itemQuantity = e.target.itemQuantity.value;
+      const itemPrice = e.target.itemPrice.value;
+  
+      const collectVal = collection(firestore, "Products");
+  
+      // Use async/await to properly handle asynchronous addDoc operation
+      await addDoc(collectVal, {
+        itemId: count,
+        itemName,
+        itemCode,
+        itemCategory,
+        itemQuantity,
+        itemPrice
+      });
+  
+      console.log('Product added successfully!');
+    } catch (error) {
+      console.error('Error adding product:', error);
+    } finally {
+      setAddingProduct(false);
+      setOpen(false);
+    }
+  };
 
 
 
@@ -141,6 +156,8 @@ export default function ProductHome() {
     };
 
     const handleUpdateProduct = async () => {
+        setEditingProduct(true);
+
         if (selectedProductId) {
         try {
             const productRef = doc(firestore, 'Products', selectedProductId);
@@ -151,13 +168,14 @@ export default function ProductHome() {
             console.log('Document successfully updated!');
         } catch (error) {
             console.error('Error updating document:', error);
+        } finally {
+            // Set loading state to false after the operation completes
+            setEditingProduct(false);
+            // Close the edit dialog after updating or cancellation
+            handleEditDialogClose();
         }
         }
-
-        // Close the edit dialog after updating or cancellation
-        handleEditDialogClose();
     };
-
 
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -175,6 +193,8 @@ export default function ProductHome() {
       };
 
     const handleDeleteProduct = async () => {
+        setDeletingProduct(true);
+
     // Check if there is a selected product ID
     if (selectedProductId) {
         try {
@@ -187,10 +207,12 @@ export default function ProductHome() {
         console.log('Document successfully deleted!');
         } catch (error) {
         console.error('Error deleting document:', error);
+        } finally {
+            // Set loading state to false after the operation completes
+            setDeletingProduct(false);
+            handleConfirmationDialogClose();
         }
     }
-
-    handleConfirmationDialogClose();
     };
 
 
@@ -380,7 +402,8 @@ export default function ProductHome() {
                                                 
                                                     <DialogActions sx={{marginRight: '15px', marginBottom: '10px'}}>
                                                         <ButtonWidget onClick={handleClose} label={"Cancel"} />
-                                                        <ButtonWidget type={"submit"} label={"Add"} />
+                                                        <ButtonWidget type={"submit"} label={addingProduct ? <CircularProgress size={23} color="inherit" /> : "Add"} />
+
                                                     </DialogActions>
                                                 </form>
                                                 
@@ -442,7 +465,7 @@ export default function ProductHome() {
 
                                             <DialogActions sx={{marginRight: '15px', marginBottom: '10px'}}>
                                                 <ButtonWidget onClick={handleEditDialogClose} label={"Cancel"} />
-                                                <ButtonWidget onClick={handleUpdateProduct} label={"Update"} />
+                                                <ButtonWidget onClick={handleUpdateProduct} label={editingProduct ? <CircularProgress size={23} color="inherit" /> : "Update"} disabled={editingProduct} />
                                             </DialogActions>
                                     </Dialog>
 
@@ -456,7 +479,7 @@ export default function ProductHome() {
                                             <DialogContent sx={{fontFamily: 'Poppins, sans-serif'}}>Are you sure you want to delete this product?</DialogContent>
                                         <DialogActions sx={{marginRight: '15px', marginBottom: '10px'}}>
                                             <ButtonWidget onClick={handleConfirmationDialogClose} label={"Cancel"} />
-                                            <ButtonWidget onClick={handleDeleteProduct} label={"Delete"} />
+                                            <ButtonWidget onClick={handleDeleteProduct} label={deletingProduct ? <CircularProgress size={23} color="inherit" /> : "Delete"} disabled={deletingProduct} />
                                         </DialogActions>
                                     </Dialog>
                                     </div>

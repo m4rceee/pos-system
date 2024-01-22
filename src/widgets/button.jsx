@@ -21,14 +21,14 @@ const ButtonWidget = ({ onClick, label, type }) => {
   return (
     <Button 
         type = {type}
-        onClick = {onClick} 
+        onClick = {onClick}
         sx={{
             textTransform: 'none',
             color: colors.secondary,
             backgroundColor: '#27273b',
             fontFamily: 'Poppins, sans-serif',
             '&:hover': {
-                backgroundColor: 'none',
+                backgroundColor: 'transparent',
                 color: colors.fontColor,
             },
         }}>{label}
