@@ -29,6 +29,8 @@ import {
 import {
     Inventory2Rounded,
     NavigateNextRounded,
+    PrintRounded,
+    SearchRounded,
 } from '@mui/icons-material';
 
 const colors = {
@@ -100,6 +102,25 @@ export default function TransactionsHome() {
         { field: 'transactionDate', headerName: 'Date', width: 250 },
         { field: 'transactionId', headerName: 'Reference', width: 400 },
         { field: 'grandAmount', headerName: 'Amount', width: 250 },
+        { 
+            field: 'transactionActions', 
+            headerName: 'Actions',
+            width: 150,
+            align: 'center',
+            headerAlign: 'center',
+            description: 'This column has a value getter and is not sortable.',
+            sortable: false,
+            renderCell: (params) => (
+                <>
+                    <IconButton >
+                        <SearchRounded sx={{ color: colors.primary }} />
+                    </IconButton>
+                    <IconButton >
+                        <PrintRounded sx={{ color: colors.primary }} />
+                    </IconButton>
+                </>        
+            ),
+        }, 
         
     ];
 
