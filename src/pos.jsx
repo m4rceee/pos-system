@@ -13,27 +13,7 @@ import { firestore } from './firebaseConfig';
 import { collection, onSnapshot, doc, getDoc, updateDoc } from '@firebase/firestore';
 
 import { BounceLoader } from 'react-spinners';
-
-import { 
-    Container,
-    Grid,
-    Typography,
-    Card,
-    CardContent,
-    Button,
-    CardActionArea,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogTitle,
-    DialogContentText,
-} from '@mui/material';
+import { Container, Grid, Typography, Card, CardContent, Button, CardActionArea, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Dialog, DialogActions, DialogContent, DialogTitle, DialogContentText, } from '@mui/material';
 
 import HeaderTitleWidget from './widgets/header-title';
 import TextFieldInputNumberPaymentWidget from './widgets/textfield-input-number';
@@ -66,7 +46,6 @@ export default function PosPage() {
     const [loading, setLoading] = useState(true);
     const [openDialog, setOpenDialog] = useState(false);
     const [paymentAmount, setPaymentAmount] = useState('');
-    const [itemQuantity, setItemQuantity] = useState(0);
 
     const handleItemClick = async (item) => {
         // Reference to the specific product document
@@ -88,14 +67,12 @@ export default function PosPage() {
             // Get the current product data
             const productSnapshot = await getDoc(productRef);
             const currentQuantity = productSnapshot.data().itemPreQuantity;
-            const currentOldQuantity = productSnapshot.data().itemQuantity;
     
             // Ensure that the quantity does not go below 0
             const newQuantity = Math.max(0, currentQuantity - 1);
     
             // Update the product document with the new quantity
             await updateDoc(productRef, { itemPreQuantity: newQuantity });
-            setItemQuantity(currentOldQuantity);
     
             console.log('Product quantity decreased successfully.');
         } catch (error) {
