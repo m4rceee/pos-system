@@ -8,7 +8,7 @@ import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import HeaderTitleWidget from './widgets/header-title';
 
 import { firestore } from './firebaseConfig';
-import { addDoc, collection, doc, onSnapshot, updateDoc, deleteDoc } from '@firebase/firestore';
+import { limit, query, orderBy, addDoc, getDoc, getDocs, collection, doc, onSnapshot, updateDoc, deleteDoc } from '@firebase/firestore';
 
 import {AddRounded, EditRounded, DeleteRounded,} from "@mui/icons-material";
 import { Grid, Container, Typography, IconButton, TextField, Dialog, DialogActions, DialogContent, DialogTitle, DialogContentText, Card, CardContent, CircularProgress} from '@mui/material';
@@ -70,43 +70,63 @@ export default function CategoryHome() {
 
 ////////////////////////////////////////////////////////////////////////////////////////
 // ADD PRODUCT CATEGORY TO THE DATABSE    
-    const handleAddCategory = async (e) => {
-        setAddingCategory(true);
-        try {
-            e.preventDefault();
-            setCount(count + 1);
-            const categoryName = e.target.categoryName.value;
-    
-            //const val = doc(firestore, "MelysonProductDB", categoryName);
-            const collectVal = collection(firestore, "Product_Category");
-            await addDoc(collectVal, {
-                categoryId:count, 
-                categoryName, 
-                categoryTotalCount:count
-            });
-            toast.success('Category added successfully!', {
-                position: 'top-right',
-                autoClose: 3000, // Auto close the notification after 3 seconds
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-              });
-        } catch (error) {
-            toast.error('Error adding category. Please try again.', {
-                position: 'top-right',
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-              });
-              console.error('Error adding category:', error);
-        } finally {
-              setAddingCategory(false);
-              setOpen(false);
-        }
-        };
+const handleAddCategory = async (e) => {
+    setAddingCategory(true);
+    try {
+        e.preventDefault();
+
+        // Query to get the latest category ID
+        const latestCategoryQuery = query(collection(firestore, 'Product_Category'), orderBy('categoryId', 'desc'), limit(1));
+        const latestCategorySnapshot = await getDocs(latestCategoryQuery);
+        const latestCategoryId = latestCategorySnapshot.docs[0]?.data().categoryId || 'C0000';
+
+        // Increment the latest category ID
+        const newNumericPart = parseInt(latestCategoryId.slice(1), 10) + 1;
+        const newCategoryId = `C${String(newNumericPart).padStart(4, '0')}`;
+
+        const categoryName = e.target.categoryName.value;
+
+        const collectVal = collection(firestore, "Product_Category");
+       const categoryDocRef = await addDoc(collectVal, {
+            categoryId: newCategoryId,
+            categoryName,
+            categoryTotalCount: 0,
+        });
+
+        // Increment categoryTotalAmount when a new category is added
+        const itemCategory = newCategoryId; // Assuming this is the category for the added item
+        const productsInCategoryQuery = query(collection(firestore, 'Products'), where('itemCategory', '==', itemCategory));
+        const productsInCategorySnapshot = await getDocs(productsInCategoryQuery);
+        const newCategoryTotalCount = productsInCategorySnapshot.size;
+
+        // Update the category document with the new categoryTotalAmount
+        await updateDoc(categoryDocRef, {
+            categoryTotalCount: newCategoryTotalCount,
+        });
+
+        toast.success('Category added successfully!', {
+            position: 'top-right',
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+        });
+    } catch (error) {
+        toast.error('Error adding category. Please try again.', {
+            position: 'top-right',
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+        });
+        console.error('Error adding category:', error);
+    } finally {
+        setAddingCategory(false);
+        setOpen(false);
+    }
+};
 
 
 
@@ -178,31 +198,42 @@ export default function CategoryHome() {
 
     const handleDeleteCategory = async () => {
         setDeletingCategory(true);
-
+    
         if (selectedCategoryId) {
-        try {
-            // Reference to the document in the "Product_Category" collection
-            const categoryRef = doc(firestore, 'Product_Category', selectedCategoryId);
-
-            // Delete the document
-            await deleteDoc(categoryRef);
-
-            toast.success('Category deleted successfully!', {
-                position: 'top-right',
-                autoClose: 3000, // Auto close the notification after 3 seconds
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-              });
-
-            console.log('Document successfully deleted!');
-        } catch (error) {
-            console.error('Error deleting document:', error);
-        } finally {
-            setDeletingCategory(false);
-            handleConfirmationDialogClose();
-        }
+            try {
+                // Reference to the document in the "Product_Category" collection
+                const categoryRef = doc(firestore, 'Product_Category', selectedCategoryId);
+    
+                // Get the current category ID before deleting
+                const categorySnapshot = await getDoc(categoryRef);
+                const currentCategoryId = categorySnapshot.data().categoryId;
+    
+                // Delete the document
+                await deleteDoc(categoryRef);
+    
+                toast.success('Category deleted successfully!', {
+                    position: 'top-right',
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                });
+    
+                console.log('Document successfully deleted!');
+                
+                // Update the count based on the latest category ID
+                setCount((prevCount) => prevCount - 1);
+    
+                // Optionally, you may set a state variable for the latestCategoryId
+                // latestCategoryIdStateVar(currentCategoryId);
+    
+            } catch (error) {
+                console.error('Error deleting document:', error);
+            } finally {
+                setDeletingCategory(false);
+                handleConfirmationDialogClose();
+            }
         }
     };
 

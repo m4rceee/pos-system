@@ -162,7 +162,7 @@ export default function TransactionsHome() {
                             <CardContent style={{ padding: '20px'}}>
                                 <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
                                     <Typography variant='h5' sx={{ fontFamily: 'Poppins, sans-serif', fontWeight: '300', color: colors.secondary }}>
-                                        Please review the product report below.
+                                        Please review the transactions report below.
                                     </Typography>
                                 </div>
                                 <Grid container spacing={2} style={{ paddingTop: '15px', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>

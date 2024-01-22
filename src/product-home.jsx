@@ -10,7 +10,7 @@ import SmallTitleWidget from './widgets/small-title';
 import ContentTitleWidget from './widgets/content-title'
 
 import { firestore } from './firebaseConfig';
-import { addDoc, collection, onSnapshot, doc, getDoc, deleteDoc, updateDoc} from '@firebase/firestore';
+import { where, limit, query, orderBy, addDoc, getDoc, getDocs, collection, doc, onSnapshot, updateDoc, deleteDoc } from '@firebase/firestore';
 
 import {AddRounded, EditRounded, DeleteRounded, PrintRounded,} from "@mui/icons-material";
 import { Grid, Container, Typography, IconButton, TextField, Dialog, DialogActions, DialogContent, DialogTitle, DialogContentText, Card, CardContent, Select, MenuItem, CircularProgress} from '@mui/material';
@@ -88,54 +88,73 @@ export default function ProductHome() {
 const handleAddProduct = async (e) => {
     setAddingProduct(true);
     try {
-    e.preventDefault();
-      setCount(count + 1);
-  
-      const itemName = e.target.itemName.value;
-      const itemCode = e.target.itemCode.value;
-      const itemCategory = e.target.itemCategory.value;
-      const itemQuantity = e.target.itemQuantity.value;
-      const itemPrice = e.target.itemPrice.value;
-  
-      const collectVal = collection(firestore, "Products");
-  
-      // Use async/await to properly handle asynchronous addDoc operation
-      await addDoc(collectVal, {
-        itemId: count,
-        itemName,
-        itemCode,
-        itemCategory,
-        itemQuantity,
-        itemPrice
-      });
-      
-    // Notify success
-    toast.success('Product added successfully!', {
-        position: 'top-right',
-        autoClose: 3000, // Auto close the notification after 3 seconds
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-      });
-  
-      console.log('Product added successfully!');
+        e.preventDefault();
+        setCount(count + 1);
+
+        // Query to get the latest item ID
+        const latestItemQuery = query(collection(firestore, 'Products'), orderBy('itemId', 'desc'), limit(1));
+        const latestItemSnapshot = await getDocs(latestItemQuery);
+        const latestItemId = latestItemSnapshot.docs[0]?.data().itemId || 'P0000';
+
+        // Increment the latest item ID
+        const newNumericPart = parseInt(latestItemId.slice(1), 10) + 1;
+        const newItemId = `P${String(newNumericPart).padStart(4, '0')}`;
+
+        const itemName = e.target.itemName.value;
+        const itemCode = e.target.itemCode.value;
+        const itemCategory = e.target.itemCategory.value;
+        const itemQuantity = e.target.itemQuantity.value;
+        const itemPrice = e.target.itemPrice.value;
+
+        const collectVal = collection(firestore, "Products");
+
+        // Use async/await to properly handle asynchronous addDoc operation
+        await addDoc(collectVal, {
+            itemId: newItemId,
+            itemName,
+            itemCode,
+            itemCategory,
+            itemQuantity,
+            itemPrice
+        });
+
+        // Notify success
+        toast.success('Product added successfully!', {
+            position: 'top-right',
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+        });
+
+        // Update the categoryTotalCount for the relevant category
+        const categoryRef = doc(firestore, 'Product_Category', itemCategory);
+        const categorySnapshot = await getDoc(categoryRef);
+        if (categorySnapshot.exists()) {
+            const currentCategoryTotalCount = categorySnapshot.data().categoryTotalCount || 0;
+            await updateDoc(categoryRef, {
+                categoryTotalCount: currentCategoryTotalCount + 1,
+            });
+        }
+
+        console.log('Product added successfully!');
     } catch (error) {
         // Notify error
-    toast.error('Error adding product. Please try again.', {
-        position: 'top-right',
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-      });
-      console.error('Error adding product:', error);
+        toast.error('Error adding product. Please try again.', {
+            position: 'top-right',
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+        });
+        console.error('Error adding product:', error);
     } finally {
-      setAddingProduct(false);
-      setOpen(false);
+        setAddingProduct(false);
+        setOpen(false);
     }
-  };
+};
 
 
 
@@ -224,6 +243,10 @@ const handleAddProduct = async (e) => {
         // Reference to the document in the "Products" collection
         const productRef = doc(firestore, 'Products', selectedProductId);
 
+        // Get the current item ID before deleting
+        const productSnapshot = await getDoc(productRef);
+        const currentItemId = productSnapshot.data().itemId;
+
         // Delete the document
         await deleteDoc(productRef);
         toast.success('Product deleted successfully!', {
@@ -236,6 +259,8 @@ const handleAddProduct = async (e) => {
           });
 
         console.log('Document successfully deleted!');
+        setCount((prevCount) => prevCount - 1)
+
         } catch (error) {
         console.error('Error deleting document:', error);
         } finally {
