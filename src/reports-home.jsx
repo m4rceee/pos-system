@@ -67,6 +67,10 @@ export default function ReportHome() {
     const handleProductsPage = () => {
         navigate('/products');
     }
+
+    const handleTransactionsPage = () => {
+        navigate('/transactions-home');
+    }
     
     return(
         <>
@@ -135,6 +139,7 @@ export default function ReportHome() {
                                                 <div style={{marginTop: '35px', width: '100%', display: 'flex', justifyContent: 'flex-end'}}>
                                                     <div>
                                                         <IconButton
+                                                            onClick={handleTransactionsPage}
                                                             sx={{
                                                                 background: 'transparent',
                                                             }}
