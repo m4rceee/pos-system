@@ -91,15 +91,14 @@ export default function TransactionsHome() {
 
     /////////////////////////// REMOVE THIS IF CONNECTING NA SA DATABASE ///////////////////////////////////////////
     const staticRows = [
-        {id: 1, transactionDate: '2024/01/22', transactionId: '48372454309434', saleNumber: 1, grandAmount: 999.00},
-        {id: 1, transactionDate: '2024/01/22', transactionId: '54729545945984', saleNumber: 2, grandAmount: 999.00},
+        {id: 1, transactionDate: '2024/01/22', transactionId: '48372454309434', grandAmount: 999.00},
+        {id: 1, transactionDate: '2024/01/22', transactionId: '54729545945984', grandAmount: 999.00},
         // Add more static data as needed
     ];
 
     const columns = [
         { field: 'transactionDate', headerName: 'Date', width: 250 },
         { field: 'transactionId', headerName: 'Reference', width: 400 },
-        { field: 'saleNumber', headerName: 'Sale No.', width: 200 },
         { field: 'grandAmount', headerName: 'Amount', width: 250 },
         
     ];
