@@ -66,7 +66,6 @@ export default function PosPage() {
     const [loading, setLoading] = useState(true);
     const [openDialog, setOpenDialog] = useState(false);
     const [paymentAmount, setPaymentAmount] = useState('');
-    const [changeAmount, setChangeAmount] = useState(0);
 
     const handleItemClick = (item) => {
         const existingItemIndex = tableItems.findIndex((tableItem) => tableItem.itemName === item.itemName);
@@ -137,7 +136,7 @@ useEffect(() => {
       const categoryIdsArray = categoryArray.map(category => category.id);
   
       // Now you have the array of all category IDs including "All"
-      console.log('All Category IDs:', categoryIdsArray);
+      //console.log('All Category IDs:', categoryIdsArray);
       setLoading(false);
     });
   
@@ -153,7 +152,7 @@ const [getProduct, setProduct] = useState([]);
                 ...doc.data(), id: doc.id
             }));
             setProduct(productArray);
-            console.log(productArray);
+            //console.log(productArray);
             setLoading(false);
         });
     return () => getProductData();
@@ -171,19 +170,13 @@ const [getProduct, setProduct] = useState([]);
   };
 
   const handleAmountChange = (event) => {
-    const inputValue = event.target.value;
-    setPaymentAmount(inputValue);
-
-    // Assuming totalAmount is calculated somewhere in your component
-    const totalAmount = calculateTotalAmount(); // Make sure to define calculateTotalAmount function
-
-    // Calculate the change
-    const change = parseFloat(inputValue) - totalAmount;
-    setChangeAmount(change);
+    setPaymentAmount(event.target.value);
   };
 
   const handlePay = () => {
     console.log('Payment amount:', paymentAmount);
+
+    handleCloseDialog();
   };
 
     return(
@@ -379,8 +372,8 @@ const [getProduct, setProduct] = useState([]);
                                                 <DialogTitle sx={{fontFamily: 'Poppins, sans-serif'}}>Enter Payment</DialogTitle>
                                                 <DialogContent sx={{width: '500px'}}>
                                                         <Typography variant="body1" color="inherit" sx={{fontFamily: 'Poppins, sans-serif', marginBottom: '15px'}}>Amount to be paid: {totalAmount.toFixed(2)} </Typography>
-                                                        <TextFieldInputNumberPaymentWidget title={"Enter the amount paid:"} name={"payment"} onChange={handleAmountChange}/>
-                                                        <Typography variant="body1" color="inherit" sx={{fontFamily: 'Poppins, sans-serif', marginTop: '15px'}}>Change: ₱{changeAmount.toFixed(2)} </Typography>
+                                                        <TextFieldInputNumberPaymentWidget title={"Enter the amount paid:"} name={"payment"}/>
+                                                        <Typography variant="body1" color="inherit" sx={{fontFamily: 'Poppins, sans-serif', marginTop: '15px'}}>Change: </Typography>
                                                         <DialogActions sx={{marginTop: '20px', marginRight: '-8px'}}>
                                                             <ButtonWidget onClick={handleCloseDialog} label={"Cancel"} />
                                                             <ButtonWidget onClick={handlePay} type={"submit"} label={"Pay"} />
