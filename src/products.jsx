@@ -126,52 +126,32 @@ export default function Products() {
   useEffect(() => {
     const fetchData = async () => {
         try {
-            // Fetch data from the transactions collection
-            const transactionsSnapshot = await getDocs(collection(firestore, 'Transactions'));
-            const transactions = transactionsSnapshot.docs.map(doc => doc.data());
+            // Fetch data from the products collection
+            const productsSnapshot = await getDocs(collection(firestore, 'Products'));
+            const products = productsSnapshot.docs.map(doc => doc.data());
 
-            console.log('Fetched transactions:', transactions);
+            console.log('Fetched products:', products);
 
             // Count total units sold for each product
             const productSalesMap = new Map();
 
-            transactions.forEach(transaction => {
-                // Convert string to Date object
-                const dateTransaction = new Date(transaction.dateTransaction);
+            products.forEach(product => {
+                const { itemName, unitsSold } = product;
 
-                const month = dateTransaction.getMonth(); // Extracting the month
-
-                transaction.productBreakdown.forEach(product => {
-                    const { itemName, itemQuantity } = product;
-
-                    const key = `${itemName}-${month}`; // Creating a unique key based on itemName and month
-
-                    if (productSalesMap.has(key)) {
-                        // Increment the count for the existing product in that month
-                        productSalesMap.set(key, productSalesMap.get(key) + itemQuantity);
-                    } else {
-                        // Initialize the count for a new product in that month
-                        productSalesMap.set(key, itemQuantity);
-                    }
-                });
+                productSalesMap.set(itemName, unitsSold || 0);
             });
 
             // Convert map to an array of objects for easier sorting
-            const productsArray = Array.from(productSalesMap, ([key, totalUnitsSold]) => {
-                const [itemName, month] = key.split('-');
+            const productsArray = Array.from(productSalesMap, ([itemName, totalUnitsSold]) => {
                 return {
                     itemName,
-                    month: parseInt(month),
                     totalUnitsSold
                 };
             });
 
-            // Sort products by month and then by total units sold in descending order
+            // Sort products by total units sold in descending order
             productsArray.sort((a, b) => {
-                if (a.month !== b.month) {
-                    return a.month - b.month; // Sort by month
-                }
-                return b.totalUnitsSold - a.totalUnitsSold; // Then sort by total units sold
+                return b.totalUnitsSold - a.totalUnitsSold; // Sort by total units sold
             });
 
             console.log('Products array after sorting:', productsArray);

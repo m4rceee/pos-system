@@ -4,7 +4,8 @@ import 'typeface-poppins';
 import { useNavigate } from 'react-router-dom';
 import SideBar from './common/sidebar';
 import Header from './common/header';
-import { DataGrid, } from '@mui/x-data-grid';
+import { styled } from '@mui/system';
+import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import { firestore } from './firebaseConfig';
 import { getDocs, collection } from 'firebase/firestore';
 
@@ -30,7 +31,38 @@ const colors = {
 export default function ProductReport() {
 
     const navigate = useNavigate();
-    const [mergedProductBreakdown, setMergedProductBreakdown] = useState([]);
+    const [productReportData, setProductReportData] = useState([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+          try {
+            const productsCollection = collection(firestore, 'Products');
+            const productsSnapshot = await getDocs(productsCollection);
+            const productDataFromDb = productsSnapshot.docs.map(doc => doc.data());
+    
+            // Transform the data to match the structure of your columns
+            const transformedProductData = productDataFromDb.map((data, index) => {
+
+                const totalAmountFloat = parseFloat(data.totalAmount) || 0;
+                const totalAmountWithCurrency = `₱${totalAmountFloat.toFixed(2)}`;
+
+              return {
+                id: index + 1,
+                itemId: data.itemId, // Replace with the actual field name from your Firestore document
+                itemName: data.itemName, // Replace with the actual field name from your Firestore document
+                unitsSold: data.unitsSold || 0, // Replace with the actual field name from your Firestore document
+                totalAmount: totalAmountWithCurrency || 0, // Replace with the actual field name from your Firestore document
+              };
+            });
+    
+            setProductReportData(transformedProductData);
+          } catch (error) {
+            console.error('Error fetching product data:', error.message);
+          }
+        };
+    
+        fetchData();
+      }, []);
 
     const handleReportsHomePage = (event) => {
         event.preventDefault();
@@ -69,48 +101,19 @@ export default function ProductReport() {
         return date.toLocaleTimeString(undefined, options);
     };
 
-    
 
-    useEffect(() => {
-        const fetchProductBreakdown = async () => {
-        try {
-            const querySnapshot = await getDocs(collection(firestore, 'Transactions'));
-            const breakdownData = querySnapshot.docs.map(doc => doc.data().productBreakdown).flat();
-
-            // Use an object to aggregate data by itemId
-            const aggregatedData = breakdownData.reduce((acc, item) => {
-            const itemId = item.itemId;
-
-            if (!acc[itemId]) {
-                acc[itemId] = { ...item, totalQuantity: 0, totalPrice: 0 };
-            }
-
-            acc[itemId].totalQuantity += parseInt(item.itemQuantity, 10);
-            acc[itemId].totalPrice += parseInt(item.itemPrice, 10) * parseInt(item.itemQuantity, 10);
-
-            return acc;
-            }, {});
-
-            // Convert the aggregated object back to an array
-            const mergedArray = Object.values(aggregatedData);
-
-            // Sort the array in ascending order based on totalPrice
-            const sortedArray = mergedArray.sort((a, b) => b.totalPrice - a.totalPrice);
-
-            setMergedProductBreakdown(sortedArray);
-        } catch (error) {
-            console.error('Error fetching and merging product breakdown:', error.message);
-        }
-        };
-
-        fetchProductBreakdown();
-    }, []);
+    /////////////////////////// REMOVE THIS IF CONNECTING NA SA DATABASE ///////////////////////////////////////////
+    const staticRows = [
+        {id: 1, productId: 1, productName: 'Product 1', productSold: 10, productIncome: 999.00},
+        {id: 2, productId: 2, productName: 'Product 2', productSold: 15, productIncome: 999.00},
+        // Add more static data as needed
+    ];
 
     const columns = [
         { field: 'itemId', headerName: 'Product ID', width: 200 },
         { field: 'itemName', headerName: 'Product Name', width: 350 },
-        { field: 'totalQuantity', headerName: 'Sold', width: 200 },
-        { field: 'totalPrice', headerName: 'Income', width: 200 },
+        { field: 'unitsSold', headerName: 'Sold', width: 200 },
+        { field: 'totalAmount', headerName: 'Income', width: 200 },
         
     ];
 
@@ -179,7 +182,7 @@ export default function ProductReport() {
                                     <Grid item xs={12}>
                                         <div style={{ height: 'auto', width: '100%' }}>
                                             <DataGrid
-                                                rows={mergedProductBreakdown}
+                                                rows={productReportData}
                                                 columns={columns}
                                                 initialState={{
                                                 pagination: {

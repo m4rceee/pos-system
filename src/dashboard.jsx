@@ -55,14 +55,6 @@ const xLabels = [
   'May',
 ];
 
-const data = [
-    { id: 0, value: 44, label: 'Item 1', color: '#E40C2B' },
-    { id: 1, value: 41, label: 'Item 2', color: '#3CBCC3' },
-    { id: 2, value: 25, label: 'Item 3', color: '#EBA63F' },
-    { id: 3, value: 15, label: 'Item 4', color: '#438945' },
-    { id: 4, value: 5, label: 'Item 5', color: '#7E22A7' },
-  ];
-
   const colors = {
     primary: '#1D1D2C',
     secondary: '#F7F4E9',
@@ -86,6 +78,7 @@ export default function DashboardHome() {
    const [transactionCount, setTransactionCount] = useState(0);
    const [lowInStockCount, setLowInStockCount] = useState(0);
    const [loading, setLoading] = useState(true);
+   const [productChartData, setProductChartData] = useState([]);
     
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -128,6 +121,41 @@ export default function DashboardHome() {
 
             // All data fetched, set loading to false
             setLoading(false);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            // Handle error if needed
+            setLoading(false);
+        }
+    };
+
+    fetchData();
+}, []);
+
+useEffect(() => {
+    const fetchData = async () => {
+        try {
+            // Fetch data from the products collection
+            const productsSnapshot = await getDocs(collection(firestore, 'Products'));
+            const productsData = productsSnapshot.docs.map(doc => doc.data());
+
+            console.log('Fetched products data:', productsData);
+
+            const getRandomColor = () => {
+                const colorKeys = Object.keys(colors);
+                const randomColorKey = colorKeys[Math.floor(Math.random() * colorKeys.length)];
+                return colors[randomColorKey];
+            };
+            
+            // Prepare data for the charts
+            const productChartData = productsData.map(product => ({
+                value: product.unitsSold || 0,
+                label: product.itemName,
+                color: getRandomColor(), // Function to generate random color
+            }));
+
+            setProductChartData(productChartData);
+
+            // Other data fetching and loading handling...
         } catch (error) {
             console.error('Error fetching data:', error);
             // Handle error if needed
@@ -311,7 +339,7 @@ export default function DashboardHome() {
                                                 <PieChart
                                                     series={[
                                                         {
-                                                        data: data,
+                                                        data: productChartData,
                                                         innerRadius: 50,
                                                         outerRadius: 100,
                                                         paddingAngle: 5,

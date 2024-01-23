@@ -118,7 +118,9 @@ const handleAddProduct = async (e) => {
             itemCategory,
             itemQuantity,
             itemPreQuantity,
-            itemPrice
+            itemPrice,
+            unitsSold: 0,
+            totalAmount: 0
         });
 
         // Notify success
@@ -251,9 +253,20 @@ const handleAddProduct = async (e) => {
         // Get the current item ID before deleting
         const productSnapshot = await getDoc(productRef);
         const currentItemId = productSnapshot.data().itemId;
+        const itemCategory = productSnapshot.data().itemCategory;
 
-        // Delete the document
+        const categoryRef = doc(firestore, 'Product_Category', itemCategory);
+        const categorySnapshot = await getDoc(categoryRef);
+        if (categorySnapshot.exists()) {
+            const currentCategoryTotalCount = categorySnapshot.data().categoryTotalCount || 0;
+            await updateDoc(categoryRef, {
+                categoryTotalCount: currentCategoryTotalCount - 1,
+            });
+        }
+        
+
         await deleteDoc(productRef);
+
         toast.success('Product deleted successfully!', {
             position: 'top-right',
             autoClose: 3000, // Auto close the notification after 3 seconds
