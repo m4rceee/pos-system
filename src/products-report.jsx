@@ -56,42 +56,34 @@ export default function ProductReport() {
 
     useEffect(() => {
         const fetchData = async () => {
-            try {
-                const productReportCollection = collection(firestore, 'Transactions');
-                const productReportSnapshot = await getDocs(productReportCollection);
-                const productReportDataFromDb = productReportSnapshot.docs.map(doc => doc.data());
+          try {
+            const productsCollection = collection(firestore, 'Products');
+            const productsSnapshot = await getDocs(productsCollection);
+            const productDataFromDb = productsSnapshot.docs.map(doc => doc.data());
     
-                console.log('Fetched product report data:', productReportDataFromDb);
+            // Transform the data to match the structure of your columns
+            const transformedProductData = productDataFromDb.map((data, index) => {
+
+                const totalAmountFloat = parseFloat(data.totalAmount) || 0;
+                const totalAmountWithCurrency = `₱${totalAmountFloat.toFixed(2)}`;
+
+              return {
+                id: index + 1,
+                itemId: data.itemId, // Replace with the actual field name from your Firestore document
+                itemName: data.itemName, // Replace with the actual field name from your Firestore document
+                unitsSold: data.unitsSold || 0, // Replace with the actual field name from your Firestore document
+                totalAmount: totalAmountWithCurrency || 0, // Replace with the actual field name from your Firestore document
+              };
+            });
     
-                // Transform the data to match the structure of your columns
-                const transformedProductReportData = productReportDataFromDb.map((data, index) => {
-                    const totalUnitsSold = data.productBreakdown.reduce((total, product) => {
-                        // Calculate the total units sold for each product in the transaction
-                        return total + product.itemQuantity;
-                    }, 0);
-    
-                    const totalSales = data.productBreakdown.reduce((total, product) => {
-                        // Calculate the total sales for each product in the transaction
-                        return total + (product.itemPrice * product.itemQuantity);
-                    }, 0);
-    
-                    return {
-                        id: index + 1,
-                        productId: data.itemId,
-                        productName: data.itemName,
-                        productSold: totalUnitsSold, // Calculate total units sold from itemQuantity
-                        productIncome: totalSales, // Calculate total sales from itemPrice and itemQuantity
-                    };
-                });
-    
-                setProductReportData(transformedProductReportData);
-            } catch (error) {
-                console.error('Error fetching product report data:', error.message);
-            }
+            setProductReportData(transformedProductData);
+          } catch (error) {
+            console.error('Error fetching product data:', error.message);
+          }
         };
     
         fetchData();
-    }, []);
+      }, []);
 
     const handleReportsHomePage = (event) => {
         event.preventDefault();
@@ -131,18 +123,11 @@ export default function ProductReport() {
     };
 
 
-    /////////////////////////// REMOVE THIS IF CONNECTING NA SA DATABASE ///////////////////////////////////////////
-    const staticRows = [
-        {id: 1, productId: 1, productName: 'Product 1', productSold: 10, productIncome: 999.00},
-        {id: 2, productId: 2, productName: 'Product 2', productSold: 15, productIncome: 999.00},
-        // Add more static data as needed
-    ];
-
     const columns = [
-        { field: 'productId', headerName: 'Product ID', width: 200 },
-        { field: 'productName', headerName: 'Product Name', width: 350 },
-        { field: 'productSold', headerName: 'Sold', width: 200 },
-        { field: 'productIncome', headerName: 'Income', width: 200 },
+        { field: 'itemId', headerName: 'Product ID', width: 200 },
+        { field: 'itemName', headerName: 'Product Name', width: 350 },
+        { field: 'unitsSold', headerName: 'Sold', width: 200 },
+        { field: 'totalAmount', headerName: 'Income', width: 200 },
         
     ];
 
@@ -211,7 +196,7 @@ export default function ProductReport() {
                                     <Grid item xs={12}>
                                         <div style={{ height: 'auto', width: '100%' }}>
                                             <DataGrid
-                                                rows={staticRows}
+                                                rows={productReportData}
                                                 columns={columns}
                                                 initialState={{
                                                 pagination: {
