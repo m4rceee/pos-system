@@ -312,7 +312,9 @@ const [getProduct, setProduct] = useState([]);
         referenceId: generateRandomNumber(),
         dateTransaction: currentDate.toLocaleString(),
         productBreakdown: tableItems,
-        totalAmount: totalAmount
+        totalAmount: totalAmount,
+        totalCash: paymentAmount,
+        totalChange: changeAmount
     });
 
     setOpenDialog(false);

@@ -61,7 +61,7 @@ const Receipt = React.forwardRef(({ transactionData }, ref) => {
               <tr key={index}>
                 <td>{product.itemQuantity}</td>
                 <td>{product.itemName} @{product.itemPrice}</td>
-                <td style={styles.tableAmount}>₱{product.itemQuantity * product.itemPrice}</td>
+                <td style={styles.tableAmount}>₱{parseInt(product.itemQuantity * product.itemPrice).toFixed(2)}</td>
               </tr>
             ))}
           </tbody>
@@ -71,11 +71,23 @@ const Receipt = React.forwardRef(({ transactionData }, ref) => {
           
           {transactionData && (
               <div className='receiptDetails'>
+                <table className='receiptTable transaction'>
+                  <tr>
+                    <td><p>Amount Due:</p></td>
+                    <td><p>₱{transactionData.totalAmount.toFixed(2)}</p></td>
+                  </tr>
+                  <tr>
+                    <td><p>Cash:</p></td>
+                    <td><p>₱{parseInt(transactionData.totalCash, 10).toFixed(2)}</p></td>
+                  </tr>
+                  <tr>
+                    <td><p>Change:</p></td>
+                    <td><p>₱{transactionData.totalChange.toFixed(2)}</p></td>
+                  </tr>
+                </table>
+                  <span className='receiptDivider'></span>
                   <p>Transaction Date: {transactionData.dateTransaction}</p>
                   <p>Reference ID: {transactionData.referenceId}</p>
-                  <p>Total Amount: ₱{transactionData.totalAmount.toFixed(2)}</p>
-                  <p>Cash: ₱{transactionData.totalAmount.toFixed(2)}</p>
-                  <p>Change: ₱{transactionData.totalAmount.toFixed(2)}</p>
               </div>
           )}
       </div>
