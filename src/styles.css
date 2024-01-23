@@ -17,12 +17,17 @@ body {
     margin-top: 20px;
 }
 
+.receiptContainer {
+    margin: 40px auto !important;
+    padding: 0 10px;
+}
+
 .receiptTable {
     width: 100%;
 }
 
 .receiptTable td {
-    font-size: 14px;
+    font-size: 17px;
 }
 
 .receiptDivider {
