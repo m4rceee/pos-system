@@ -5,6 +5,9 @@ import SideBar from './common/sidebar';
 import Header from './common/header';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 
+import { firestore } from './firebaseConfig';
+import { where, limit, query, orderBy, addDoc, getDoc, getDocs, collection, doc, onSnapshot, updateDoc, deleteDoc } from '@firebase/firestore';
+
 import { BarChart } from '@mui/x-charts/BarChart';
 import { PieChart } from '@mui/x-charts/PieChart';
 import { LineChart } from '@mui/x-charts/LineChart';
@@ -27,6 +30,8 @@ import {
     DateRangeRounded,
     CalendarMonthRounded,
 } from '@mui/icons-material';
+
+import { ClipLoader } from 'react-spinners';
 
 const customTheme = createTheme({
     typography: {
@@ -77,6 +82,10 @@ const data = [
 export default function DashboardHome() {
 
    const [currentDateTime, setCurrentDateTime] = useState(new Date());
+   const [productCount, setProductCount] = useState(0);
+   const [transactionCount, setTransactionCount] = useState(0);
+   const [lowInStockCount, setLowInStockCount] = useState(0);
+   const [loading, setLoading] = useState(true);
     
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -100,6 +109,34 @@ export default function DashboardHome() {
   const options = { hour: 'numeric', minute: 'numeric', second: 'numeric' };
     return date.toLocaleTimeString(undefined, options);
   };
+
+  useEffect(() => {
+    const fetchData = async () => {
+        try {
+            // Product Count
+            const productQuerySnapshot = await getDocs(collection(firestore, 'Products'));
+            setProductCount(productQuerySnapshot.size);
+
+            // Transaction Count
+            const transactionQuerySnapshot = await getDocs(collection(firestore, 'Transactions'));
+            setTransactionCount(transactionQuerySnapshot.size);
+
+            // Low In Stock Count
+            const lowInStockQuerySnapshot = await getDocs(collection(firestore, 'Products'));
+            const lowInStockItems = lowInStockQuerySnapshot.docs.filter(doc => doc.data().itemQuantity <= 10);
+            setLowInStockCount(lowInStockItems.length);
+
+            // All data fetched, set loading to false
+            setLoading(false);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            // Handle error if needed
+            setLoading(false);
+        }
+    };
+
+    fetchData();
+}, []);
 
     return(
     
@@ -145,7 +182,7 @@ export default function DashboardHome() {
                                 Overview
                                 </Typography>
                                 <Grid container spacing={2} style={{ paddingTop: '5px', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-                                    <Grid item xs={3} >
+                                    <Grid item xs={4} >
                                         <Card style={{ background: '#13131c', boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)' }}>
                                             <CardContent style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
                                                 <ShoppingBagRounded sx={{ fontSize: '3.5rem', color: '#515178' }} />
@@ -153,14 +190,19 @@ export default function DashboardHome() {
                                                     <Typography  style={{ fontSize: '1rem', fontWeight: 'normal', color: colors.secondary, fontFamily: 'Poppins, sans-serif' }}>
                                                     Products
                                                     </Typography>
-                                                    <Typography variant="h3" style={{fontWeight: '600', fontFamily: 'Poppins, sans-serif', color: colors.secondary}}>
-                                                    247
+                                                    {loading ? (
+                                                        <ClipLoader color={colors.accentCyan} size={45} />
+                                                    ) : (
+                                                    <Typography variant="h3" color={colors.accentCyan} style={{fontWeight: '600', fontFamily: 'Poppins, sans-serif'}}>
+                                                        {productCount}
                                                     </Typography>
+                                                    )
+                                                    }
                                                 </Stack>
                                             </CardContent>
                                         </Card>
                                     </Grid>
-                                    <Grid item xs={3}>
+                                    <Grid item xs={4}>
                                         <Card style={{ background: '#13131c', boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)' }}>
                                             <CardContent style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
                                                 <ReceiptRounded sx={{ fontSize: '3.5rem', color: '#515178' }} />
@@ -168,14 +210,20 @@ export default function DashboardHome() {
                                                     <Typography style={{ fontSize: '1rem', fontWeight: 'normal', color: colors.secondary, fontFamily: 'Poppins, sans-serif' }}>
                                                     Transactions
                                                     </Typography>
-                                                    <Typography variant="h3" color={colors.accentOlive} style={{fontWeight: '600', fontFamily: 'Poppins, sans-serif', color: colors.secondary}}>
-                                                    83
+                                                    {loading ? (
+                                                        <ClipLoader color={colors.accentOlive} size={45} />
+                                                    ) : (
+                                                    <Typography variant="h3" color={colors.accentOlive} style={{fontWeight: '600', fontFamily: 'Poppins, sans-serif'}}>
+                                                        {transactionCount}
                                                     </Typography>
+                                                    )
+                                                    }
+                                                    
                                                 </Stack>
                                             </CardContent>
                                         </Card>
                                     </Grid>
-                                    <Grid item xs={3}>
+                                    <Grid item xs={4}>
                                         <Card style={{ background: '#13131c', boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)' }}>
                                             <CardContent style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
                                                 <ProductionQuantityLimitsRounded sx={{ fontSize: '3.5rem', color: '#515178' }} />
@@ -183,24 +231,14 @@ export default function DashboardHome() {
                                                     <Typography style={{ fontSize: '1rem', fontWeight: 'normal', color: colors.secondary, fontFamily: 'Poppins, sans-serif' }}>
                                                     Low in Stock
                                                     </Typography>
-                                                    <Typography variant="h3" color={colors.accentYellow} style={{fontWeight: '600', fontFamily: 'Poppins, sans-serif', color: colors.secondary}}>
-                                                    15
-                                                    </Typography>
-                                                </Stack>
-                                            </CardContent>
-                                        </Card>
-                                    </Grid>
-                                    <Grid item xs={3}>
-                                        <Card style={{ background: '#13131c', boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)' }}>
-                                            <CardContent style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-                                                <WarningAmberRounded sx={{ fontSize: '3.5rem', color: '#515178' }} />
-                                                <Stack sx={{ paddingLeft: '15px', flex: 1 }}>
-                                                    <Typography style={{ fontSize: '1rem', fontWeight: 'normal', color: colors.secondary, fontFamily: 'Poppins, sans-serif' }}>
-                                                    Expiring/Expired
-                                                    </Typography>
-                                                    <Typography variant="h3" color={colors.accentRed} style={{fontWeight: '600', fontFamily: 'Poppins, sans-serif', color: colors.secondary}}>
-                                                    23
-                                                    </Typography>
+                                                    {loading ? (
+                                                        <ClipLoader color={colors.accentYellow} size={45} />
+                                                    ) : (
+                                                        <Typography variant="h3" color={colors.accentYellow} style={{fontWeight: '600', fontFamily: 'Poppins, sans-serif'}}>
+                                                        {lowInStockCount}
+                                                        </Typography>
+                                                    )
+                                                }
                                                 </Stack>
                                             </CardContent>
                                         </Card>
