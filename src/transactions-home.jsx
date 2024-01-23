@@ -8,6 +8,7 @@ import { styled } from '@mui/system';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import ReactToPrint, { PrintContextConsumer } from 'react-to-print';
 import Receipt from './receipt-transactions-home';
+import logo3 from './svg pics/3.svg';
 
 import { firestore } from './firebaseConfig';
 import { limit, query, orderBy, addDoc, getDoc, getDocs, collection, doc, onSnapshot, updateDoc, deleteDoc } from '@firebase/firestore';
@@ -142,9 +143,130 @@ export default function TransactionsHome() {
   };
 
   const handlePrint = () => {
-    // Call the print method from ReactToPrint
-    componentRef.current.handlePrint();
-  };
+    const transactionData = selectedTransaction;
+
+        if (transactionData) {
+            // Create a new window for printing
+            const printWindow = window.open('', '_blank');
+
+            // Write the HTML content to the new window
+            printWindow.document.write(`
+                <!DOCTYPE html>
+                <html lang="en">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <link rel="stylesheet" href="styles.css">
+                    <style>
+                        body {
+                            font-family: Arial, sans-serif;
+                            margin: 0;
+                            padding: 0;
+                        }
+                        .container {
+                            width: auto;
+                            margin: auto;
+                            box-sizing: border-box;
+                            text-align: center;
+                        }
+                        .header {
+                            text-align: center;
+                            font-size: 14px;
+                            font-weight: bold;
+                            margin-bottom: 8px;
+                        }
+                        .offReceipt {
+                            text-align: center;
+                            font-size: 12px;
+                            font-weight: bold;
+                        }
+                        .content {
+                            font-size: 9px;
+                        }
+                        .receiptTable {
+                            width: 100%;
+                        }
+                        .tableQty {
+                            width: 10%;
+                        }
+                        .tableDesc {
+                            width: 65%;
+                        }
+                        .tableAmount {
+                            width: 25%;
+                            text-align: right;
+                        }
+                        .receiptDivider {
+                            display: block;
+                            border-bottom: 1px solid #000;
+                            margin: 5px 0;
+                        }
+                        .last {
+                            margin-bottom: 0;
+                        }
+                        .receiptDetails {
+                            font-size: 12px;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="container">
+                        <div class="header">Melyson Enterprise</div>
+                        <p class="offReceipt">OFFICIAL RECEIPT</p>
+                        <span class="receiptDivider"></span>
+
+                        <table class="receiptTable">
+                            <tbody>
+                                <tr>
+                                    <td class="tableQty">Qty</td>
+                                    <td class="tableDesc">Description</td>
+                                    <td class="tableAmount">Amount PHP</td>
+                                </tr>
+                                <tr><td colspan="3"><span class="receiptDivider"></span></td></tr>
+                                <!-- Use map to create <table> based on the length of productBreakdown -->
+                                ${transactionData.productBreakdown.map((product, index) => `
+                                    <tr>
+                                        <td>${product.itemQuantity}</td>
+                                        <td>${product.itemName} @${product.itemPrice}</td>
+                                        <td class="tableAmount">₱${(product.itemQuantity * product.itemPrice).toFixed(2)}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+
+                        <span class="receiptDivider last"></span>
+
+                        <div class="receiptDetails">
+                            <table class="receiptTable transaction">
+                                <tr>
+                                    <td><p>Amount Due:</p></td>
+                                    <td><p>₱${transactionData.totalAmount.toFixed(2)}</p></td>
+                                </tr>
+                                <tr>
+                                    <td><p>Cash:</p></td>
+                                    <td><p>₱${parseInt(transactionData.totalCash, 10).toFixed(2)}</p></td>
+                                </tr>
+                                <tr>
+                                    <td><p>Change:</p></td>
+                                    <td><p>₱${transactionData.totalChange.toFixed(2)}</p></td>
+                                </tr>
+                            </table>
+                            <span class="receiptDivider"></span>
+                            <p>Transaction Date: ${transactionData.dateTransaction}</p>
+                            <p>Reference ID: ${transactionData.referenceId}</p>
+                        </div>
+                    </div>
+                </body>
+                </html>
+            `);
+
+            // Close the document stream
+            printWindow.document.close();
+
+            // Trigger the print dialog
+            printWindow.print();
+        }
+    };
 
   const columns = [
     { field: 'dateTransaction', headerName: 'Date & Time', width: 250 },
@@ -287,17 +409,7 @@ export default function TransactionsHome() {
                             </DialogContent>
                             <DialogActions>
                             <ButtonWidget onClick={handleCloseDialog} label={'Cancel'} />
-                            {/* Use ReactToPrint to handle the printing */}
-                            <ReactToPrint
-                                content={() => componentRef.current}
-                            >
-                                <PrintContextConsumer>
-                                {({ handlePrint }) => (
-                                    <ButtonWidget onClick={handlePrint} label={'Print this out!'} />
-                                )}
-                                </PrintContextConsumer>
-                            </ReactToPrint>
-                            
+                            <ButtonWidget onClick={handlePrint} label={'Print this out!'} />
                             </DialogActions>
                         </Dialog>
                     </Container>
