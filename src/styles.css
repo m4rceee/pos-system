@@ -16,3 +16,24 @@ body {
     color: red;
     margin-top: 20px;
 }
+
+.receiptTable {
+    width: 100%;
+}
+
+.receiptTable td {
+    font-size: 14px;
+}
+
+.receiptDivider {
+    width: 100%;
+    height: 1px;
+    display: block;
+    background-color: black;
+    margin: 5px 0;
+}
+
+.receiptDivider.last {
+    margin-top: 30px;
+    margin-bottom: 10px;
+}
