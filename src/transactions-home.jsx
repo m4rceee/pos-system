@@ -294,7 +294,6 @@ export default function TransactionsHome() {
         <>
             <div style={{ display: 'flex', marginLeft: '5rem' }}>
                 <SideBar />
-                <div style={{ marginLeft: '10px', marginRight: '5px', width: '100%'}}>
                     <Container maxWidth="xl" style={{ paddingTop: '20px' }}>
                         <Grid 
                             container 
@@ -345,6 +344,7 @@ export default function TransactionsHome() {
                                     </Grid>
                         </Grid>
                         <Card className='mt-8' style={{backgroundColor: '#27273b', height: '82vh', boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)'}}>
+                            <CardContent style={{ padding: '20px'}}>
                             {loading ? (
                                 // Render loading indicator while loading
                                 <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', margin: 'auto', width: '50%', color: colors.secondary }}>
@@ -356,7 +356,7 @@ export default function TransactionsHome() {
                                     </div>
                                 </div>
                             ) : (
-                            <CardContent style={{ padding: '20px'}}>
+                                <>
                                 <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
                                     <Typography variant='h5' sx={{ fontFamily: 'Poppins, sans-serif', fontWeight: '300', color: colors.secondary }}>
                                         Please review the transactions report below.
@@ -398,23 +398,22 @@ export default function TransactionsHome() {
                                         </div>
                                     </Grid>
                                 </Grid>
-                            </CardContent>
+                                <Dialog open={isDialogOpen} onClose={handleCloseDialog}>
+                                    <DialogContent>
+                                        <Receipt transactionData={selectedTransaction} ref={componentRef} />
+                                    </DialogContent>
+                                    <DialogActions>
+                                        <ButtonWidget onClick={handleCloseDialog} label={'Cancel'} />
+                                        <ButtonWidget onClick={handlePrint} label={'Print this out!'} />
+                                    </DialogActions>
+                                </Dialog>
+                            </>
                             )
                         }
-                            
+                        </CardContent> 
                         </Card>
-                        <Dialog open={isDialogOpen} onClose={handleCloseDialog}>
-                            <DialogContent>
-                                <Receipt transactionData={selectedTransaction} ref={componentRef} />
-                            </DialogContent>
-                            <DialogActions>
-                            <ButtonWidget onClick={handleCloseDialog} label={'Cancel'} />
-                            <ButtonWidget onClick={handlePrint} label={'Print this out!'} />
-                            </DialogActions>
-                        </Dialog>
                     </Container>
                 </div>
-            </div>
         </>
     ); 
 }
