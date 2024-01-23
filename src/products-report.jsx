@@ -4,32 +4,12 @@ import 'typeface-poppins';
 import { useNavigate } from 'react-router-dom';
 import SideBar from './common/sidebar';
 import Header from './common/header';
-import { styled } from '@mui/system';
-import { DataGrid, GridToolbar } from '@mui/x-data-grid';
+import { DataGrid, } from '@mui/x-data-grid';
+import { firestore } from './firebaseConfig';
+import { getDocs, collection } from 'firebase/firestore';
 
-import { 
-    Grid, 
-    Container, 
-    Typography,
-    Stack,
-    Card,
-    CardContent,
-    IconButton,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-    Breadcrumbs,
-    Link,
-    fabClasses,
-} from '@mui/material';
-
-import {
-    Inventory2Rounded,
-    NavigateNextRounded,
-} from '@mui/icons-material';
+import { Grid, Container, Typography, Stack, Card, CardContent, Breadcrumbs, Link,} from '@mui/material';
+import {NavigateNextRounded,} from '@mui/icons-material';
 
 const colors = {
     primary: '#1D1D2C',
@@ -50,6 +30,7 @@ const colors = {
 export default function ProductReport() {
 
     const navigate = useNavigate();
+    const [mergedProductBreakdown, setMergedProductBreakdown] = useState([]);
 
     const handleReportsHomePage = (event) => {
         event.preventDefault();
@@ -88,19 +69,48 @@ export default function ProductReport() {
         return date.toLocaleTimeString(undefined, options);
     };
 
+    
 
-    /////////////////////////// REMOVE THIS IF CONNECTING NA SA DATABASE ///////////////////////////////////////////
-    const staticRows = [
-        {id: 1, productId: 1, productName: 'Product 1', productSold: 10, productIncome: 999.00},
-        {id: 2, productId: 2, productName: 'Product 2', productSold: 15, productIncome: 999.00},
-        // Add more static data as needed
-    ];
+    useEffect(() => {
+        const fetchProductBreakdown = async () => {
+        try {
+            const querySnapshot = await getDocs(collection(firestore, 'Transactions'));
+            const breakdownData = querySnapshot.docs.map(doc => doc.data().productBreakdown).flat();
+
+            // Use an object to aggregate data by itemId
+            const aggregatedData = breakdownData.reduce((acc, item) => {
+            const itemId = item.itemId;
+
+            if (!acc[itemId]) {
+                acc[itemId] = { ...item, totalQuantity: 0, totalPrice: 0 };
+            }
+
+            acc[itemId].totalQuantity += parseInt(item.itemQuantity, 10);
+            acc[itemId].totalPrice += parseInt(item.itemPrice, 10) * parseInt(item.itemQuantity, 10);
+
+            return acc;
+            }, {});
+
+            // Convert the aggregated object back to an array
+            const mergedArray = Object.values(aggregatedData);
+
+            // Sort the array in ascending order based on totalPrice
+            const sortedArray = mergedArray.sort((a, b) => b.totalPrice - a.totalPrice);
+
+            setMergedProductBreakdown(sortedArray);
+        } catch (error) {
+            console.error('Error fetching and merging product breakdown:', error.message);
+        }
+        };
+
+        fetchProductBreakdown();
+    }, []);
 
     const columns = [
-        { field: 'productId', headerName: 'Product ID', width: 200 },
-        { field: 'productName', headerName: 'Product Name', width: 350 },
-        { field: 'productSold', headerName: 'Sold', width: 200 },
-        { field: 'productIncome', headerName: 'Income', width: 200 },
+        { field: 'itemId', headerName: 'Product ID', width: 200 },
+        { field: 'itemName', headerName: 'Product Name', width: 350 },
+        { field: 'totalQuantity', headerName: 'Sold', width: 200 },
+        { field: 'totalPrice', headerName: 'Income', width: 200 },
         
     ];
 
@@ -169,7 +179,7 @@ export default function ProductReport() {
                                     <Grid item xs={12}>
                                         <div style={{ height: 'auto', width: '100%' }}>
                                             <DataGrid
-                                                rows={staticRows}
+                                                rows={mergedProductBreakdown}
                                                 columns={columns}
                                                 initialState={{
                                                 pagination: {
