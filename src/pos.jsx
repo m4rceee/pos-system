@@ -275,10 +275,129 @@ const [getProduct, setProduct] = useState([]);
   };
 
 
-  const generateRandomNumber = () => {
-    const randomNumber = Math.floor(100000000000 + Math.random() * 900000000000);
-    return randomNumber.toString();
+  const generatePaymentReferenceId = () => {
+    const timestamp = Date.now().toString(); // Current timestamp
+    const randomDigits = Math.floor(100000 + Math.random() * 900000); // 6-digit random number
+
+    const referenceId = timestamp + randomDigits;
+    return referenceId;
 };
+
+const generateReceiptHTML = (transaction) => {
+    const { referenceId, dateTransaction, productBreakdown, totalAmount, totalCash, totalChange } = transaction;
+
+    const itemsHTML = productBreakdown.map(item => `<li>${item.itemName}: ${item.itemQuantity} x $${item.itemPrice} = $${item.itemQuantity * item.itemPrice}</li>`).join('');
+
+    return `
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="styles.css">
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                margin: 0;
+                padding: 0;
+            }
+            .container {
+                width: auto;
+                margin: auto;
+                box-sizing: border-box;
+            }
+            .header {
+                text-align: center;
+                font-size: 14px;
+                font-weight: bold;
+                margin-bottom: 8px;
+            }
+            .offReceipt {
+                text-align: center;
+                font-size: 12px;
+                font-weight: bold;
+            }
+            .content {
+                font-size: 9px;
+            }
+            .receiptTable {
+                width: 100%;
+            }
+            .tableQty {
+                width: 10%;
+            }
+            .tableDesc {
+                width: 65%;
+            }
+            .tableAmount {
+                width: 25%;
+                text-align: right;
+            }
+            .receiptDivider {
+                display: block;
+                border-bottom: 1px solid #000;
+                margin: 5px 0;
+            }
+            .last {
+                margin-bottom: 0;
+            }
+            .receiptDetails {
+                font-size: 12px;
+            }
+        </style>
+    </head>
+    <body>
+                    <div class="container">
+                        <div class="header">Melyson Enterprise</div>
+                        <p class="offReceipt">OFFICIAL RECEIPT</p>
+                        <span class="receiptDivider"></span>
+
+                        <table class="receiptTable">
+                            <tbody>
+                                <tr>
+                                    <td class="tableQty">Qty</td>
+                                    <td class="tableDesc">Description</td>
+                                    <td class="tableAmount">Amount PHP</td>
+                                </tr>
+                                <tr><td colspan="3"><span class="receiptDivider"></span></td></tr>
+                                <!-- Use map to create <table> based on the length of productBreakdown -->
+                                ${productBreakdown.map(item => `
+                                    <tr>
+                                        <td>${item.itemQuantity}</td>
+                                        <td>${item.itemName} @${item.itemPrice}</td>
+                                        <td class="tableAmount">₱${(item.itemQuantity * item.itemPrice).toFixed(2)}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+
+                        <span class="receiptDivider last"></span>
+
+                        <div class="receiptDetails">
+                            <table class="receiptTable transaction">
+                                <tr>
+                                    <td><p>Amount Due:</p></td>
+                                    <td><p>₱${totalAmount.toFixed(2)}</p></td>
+                                </tr>
+                                <tr>
+                                    <td><p>Cash:</p></td>
+                                    <td><p>₱${parseInt(totalCash, 10).toFixed(2)}</p></td>
+                                </tr>
+                                <tr>
+                                    <td><p>Change:</p></td>
+                                    <td><p>₱${totalChange.toFixed(2)}</p></td>
+                                </tr>
+                            </table>
+                            <span class="receiptDivider"></span>
+                            <p>Transaction Date: ${dateTransaction}</p>
+                            <p>Reference ID: ${referenceId}</p>
+                        </div>
+                    </div>
+                </body>
+                </html>
+    `;
+};
+
 
   const handleAddTransaction = async (e) => {
     e.preventDefault();
@@ -301,7 +420,6 @@ const [getProduct, setProduct] = useState([]);
             // Update the product document with the new quantity
             await updateDoc(productRef, { itemQuantity: newQuantity, itemPreQuantity: newQuantity });
 
-        //console.log(`Product ${item.itemName} quantity updated successfully.`);
         } catch (error) {
             console.error(`Error updating product ${item.itemName} quantity:`, error.message);
         }
@@ -309,13 +427,37 @@ const [getProduct, setProduct] = useState([]);
 
     const transactionVal = collection(firestore, "Transactions");
     const newTransactionRef = addDoc(transactionVal, {
-        referenceId: generateRandomNumber(),
+        referenceId: generatePaymentReferenceId(),
         dateTransaction: currentDate.toLocaleString(),
         productBreakdown: tableItems,
         totalAmount: totalAmount,
         totalCash: paymentAmount,
         totalChange: changeAmount
     });
+
+    const transactionData = {
+        referenceId: generatePaymentReferenceId(),
+        dateTransaction: currentDate.toLocaleString(),
+        productBreakdown: tableItems,
+        totalAmount: totalAmount,
+        totalCash: paymentAmount,
+        totalChange: changeAmount
+    };
+
+    const receiptHTML = generateReceiptHTML(transactionData);
+
+    // Open a new window or create an iframe
+    const printWindow = window.open('', '_blank');
+    printWindow.document.write(receiptHTML);
+    printWindow.document.close();
+
+    // Initiate the print process
+    printWindow.print();
+
+    // Close the window or remove the iframe after printing
+    printWindow.onafterprint = function () {
+        printWindow.close();
+    };
 
     setOpenDialog(false);
     navigate('/pos');
