@@ -109,9 +109,6 @@ export default function PosPage() {
         setOpen(false);
     
         if (confirmed) {
-
-
-
             navigate('/pos');
             window.location.reload();
         }

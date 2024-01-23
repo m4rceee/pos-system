@@ -31,9 +31,9 @@ const Receipt = React.forwardRef(({ transactionData }, ref) => {
         <div style={styles.header}>Melyson Enterprise</div>
         {transactionData && (
           <>
-            <div style={styles.content}>Transaction Date: {transactionData.transactionDate}</div>
-            <div style={styles.content}>Transaction ID: {transactionData.transactionId}</div>
-            <div style={styles.content}>Grand Amount: {transactionData.grandAmount}</div>
+            <div style={styles.content}>Transaction Date: {transactionData.dateTransaction}</div>
+            <div style={styles.content}>Transaction ID: {transactionData.referenceId}</div>
+            <div style={styles.content}>Grand Amount: {transactionData.totalAmount}</div>
           </>
         )}
       </div>

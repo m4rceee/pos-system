@@ -9,6 +9,9 @@ import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import ReactToPrint, { PrintContextConsumer } from 'react-to-print';
 import Receipt from './receipt-transactions-home';
 
+import { firestore } from './firebaseConfig';
+import { limit, query, orderBy, addDoc, getDoc, getDocs, collection, doc, onSnapshot, updateDoc, deleteDoc } from '@firebase/firestore';
+
 import { 
     Grid, 
     Container, 
@@ -41,6 +44,7 @@ import {
 } from '@mui/icons-material';
 
 import ButtonWidget from './widgets/button';
+import { BounceLoader } from 'react-spinners';
 
 const colors = {
     primary: '#1D1D2C',
@@ -62,6 +66,25 @@ export default function TransactionsHome() {
 
 
     const navigate = useNavigate();
+    const [loading, setLoading] = useState(true);
+
+////////////////////////////////////////////////////////////////////////////////////////
+// GET PRODUCT CATEGORY FROM THE DATABSE   
+    const [transaction, setTransaction] = useState([]);
+    useEffect(() => {
+        const getTransactionData = onSnapshot(collection(firestore, 'Transactions'), (snapshot) => {
+            const transactionArray = snapshot.docs.map((doc) => ({
+                ...doc.data(), id: doc.id
+            }));
+
+            transactionArray.sort((a, b) => b.dateTransaction.localeCompare(a.dateTransaction));
+
+            setTransaction(transactionArray);
+            setLoading(false); // Set loading to false when data is loaded
+        });
+    return () => getTransactionData();
+    }, []); 
+
 
     const handleReportsHomePage = (event) => {
         event.preventDefault();
@@ -119,16 +142,10 @@ export default function TransactionsHome() {
     componentRef.current.handlePrint();
   };
 
-  const staticRows = [
-    { id: 1, transactionDate: '2024/01/22', transactionId: '48372454309434', grandAmount: 999.00 },
-    { id: 2, transactionDate: '2024/01/22', transactionId: '54729545945984', grandAmount: 999.00 },
-    // Add more static data as needed
-  ];
-
   const columns = [
-    { field: 'transactionDate', headerName: 'Date & Time', width: 250 },
-    { field: 'transactionId', headerName: 'Reference', width: 400 },
-    { field: 'grandAmount', headerName: 'Amount', width: 250 },
+    { field: 'dateTransaction', headerName: 'Date & Time', width: 250 },
+    { field: 'referenceId', headerName: 'Reference', width: 400 },
+    { field: 'totalAmount', headerName: 'Amount', width: 250 },
     {
       field: 'transactionActions',
       headerName: 'Actions',
@@ -140,9 +157,6 @@ export default function TransactionsHome() {
       renderCell: (params) => (
         <>
           <IconButton onClick={() => handleSearchClick(params.row)}>
-            <SearchRounded sx={{ color: colors.primary }} />
-          </IconButton>
-          <IconButton>
             <PrintRounded sx={{ color: colors.primary }} />
           </IconButton>
         </>
@@ -205,6 +219,17 @@ export default function TransactionsHome() {
                                     </Grid>
                         </Grid>
                         <Card className='mt-8' style={{backgroundColor: '#27273b', height: '82vh', boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)'}}>
+                            {loading ? (
+                                // Render loading indicator while loading
+                                <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', margin: 'auto', width: '50%', color: colors.secondary }}>
+                                    <div style={{marginTop: '30px', marginBottom: '15px'}}>
+                                        <BounceLoader color={colors.secondary} speedMultiplier={2}  />
+                                    </div>
+                                    <div>
+                                        <Typography variant="body1" sx={{fontFamily: 'Poppins, sans-serif'}}> Loading Transactions... </Typography>
+                                    </div>
+                                </div>
+                            ) : (
                             <CardContent style={{ padding: '20px'}}>
                                 <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
                                     <Typography variant='h5' sx={{ fontFamily: 'Poppins, sans-serif', fontWeight: '300', color: colors.secondary }}>
@@ -215,7 +240,7 @@ export default function TransactionsHome() {
                                     <Grid item xs={12}>
                                         <div style={{ height: 'auto', width: '100%' }}>
                                             <DataGrid
-                                                rows={staticRows}
+                                                rows={transaction}
                                                 columns={columns}
                                                 initialState={{
                                                 pagination: {
@@ -248,6 +273,9 @@ export default function TransactionsHome() {
                                     </Grid>
                                 </Grid>
                             </CardContent>
+                            )
+                        }
+                            
                         </Card>
                         <Dialog open={isDialogOpen} onClose={handleCloseDialog}>
                             <DialogContent>
