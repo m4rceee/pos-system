@@ -43,7 +43,7 @@ const styles = {
 
 const Receipt = React.forwardRef(({ transactionData }, ref) => {
   return (
-      <div className='receiptContainer' style={styles.container} ref={ref}>
+      <div style={styles.container} ref={ref}>
           <div style={styles.header}>Melyson Enterprise</div>
           <p style={styles.offReceipt}>OFFICIAL RECEIPT</p>
           <span className='receiptDivider'></span>
@@ -70,13 +70,13 @@ const Receipt = React.forwardRef(({ transactionData }, ref) => {
         <span className='receiptDivider last'></span>
           
           {transactionData && (
-              <div className='receiptDetails'>
-                  <p>Transaction Date: {transactionData.dateTransaction}</p>
-                  <p>Reference ID: {transactionData.referenceId}</p>
-                  <p>Total Amount: ₱{transactionData.totalAmount.toFixed(2)}</p>
-                  <p>Cash: ₱{transactionData.totalAmount.toFixed(2)}</p>
-                  <p>Change: ₱{transactionData.totalAmount.toFixed(2)}</p>
-              </div>
+              <>
+                  <p style={styles.content}>Transaction Date: {transactionData.dateTransaction}</p>
+                  <p style={styles.content}>Reference ID: {transactionData.referenceId}</p>
+                  <p style={styles.content}>Total Amount: ₱{transactionData.totalAmount.toFixed(2)}</p>
+                  <p style={styles.content}>Cash: ₱{transactionData.totalAmount.toFixed(2)}</p>
+                  <p style={styles.content}>Change: ₱{transactionData.totalAmount.toFixed(2)}</p>
+              </>
           )}
       </div>
   );
