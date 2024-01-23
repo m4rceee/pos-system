@@ -384,28 +384,6 @@ const handleAddProduct = async (e) => {
                                     </div>
                                     <div sx={{ textAlign: 'center', marginTop: '16px' }}>
                                         <IconButton 
-                                            onClick={printProducts}
-                                            sx={{
-                                                backgroundColor: '#13131c',
-                                                borderRadius: '8px',
-                                                padding: '8px',
-                                                '&:hover': {
-                                                    backgroundColor: colors.secondary,
-                                                },
-                                                marginRight: '5px',
-                                            }}>
-                                            <PrintRounded
-                                                sx={{ 
-                                                color: colors.secondary, 
-                                                fontSize: '2rem', 
-                                                transition: 'transform 0.2s',
-                                                ':hover': {
-                                                    color: colors.fontColor,
-                                                }
-                                            }} 
-                                            />
-                                        </IconButton>
-                                        <IconButton 
                                             onClick={handleClickOpen}
                                             sx={{
                                                 backgroundColor: '#13131c',

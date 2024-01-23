@@ -48,6 +48,7 @@ export default function PosPage() {
     const [paymentAmount, setPaymentAmount] = useState('');
     const [changeAmount, setChangeAmount] = useState(0);
     const [currentDate, setCurrentDate] = useState(new Date());
+    const [processingClick, setProcessingClick] = useState(false);
 
     useEffect(() => {
         const intervalId = setInterval(() => {
@@ -59,35 +60,56 @@ export default function PosPage() {
     }, []);
 
     const handleItemClick = async (item) => {
+        if (processingClick) {
+            console.log('Click in progress, please wait.');
+            return;
+        }
         // Reference to the specific product document
         const productRef = doc(firestore, 'Products', item.id);
         const existingItemIndex = tableItems.findIndex((tableItem) => tableItem.itemName === item.itemName);
-    
-        if (existingItemIndex !== -1) {
-            // If the item exists, create a copy of the array and update the quantity of the existing item
-            const updatedItems = [...tableItems];
-            updatedItems[existingItemIndex].itemQuantity += 1;
-            setTableItems(updatedItems);
-        } else {
-            // If the item does not exist, create a new item with quantity 1 and add it to the array
-            const newItem = { ...item, itemQuantity: 1 };
-            setTableItems([...tableItems, newItem]);
+        const updatedItems = [...tableItems];
+        const quantity = item.itemPreQuantity;
+
+        setProcessingClick(true);
+
+        if(quantity > 0){
+            if (existingItemIndex !== -1) {
+                // If the item exists
+                updatedItems[existingItemIndex].itemQuantity += 1;
+                setTableItems(updatedItems);
+                
+            } else {
+                // If the item does not exist, create a new item with quantity 1 and add it to the array
+                const newItem = { ...item, itemQuantity: 1 };
+                setTableItems([...tableItems, newItem]);
+            }
+        }else {
+            console.log('Product quantity is already at the minimum!');
         }
+     
 
         try {
             // Get the current product data
             const productSnapshot = await getDoc(productRef);
             const currentQuantity = productSnapshot.data().itemPreQuantity;
-    
+
             // Ensure that the quantity does not go below 0
             const newQuantity = Math.max(0, currentQuantity - 1);
-    
-            // Update the product document with the new quantity
-            await updateDoc(productRef, { itemPreQuantity: newQuantity });
-    
-            console.log('Product quantity decreased successfully.');
+
+            // Add a condition to check if the new quantity is greater than 0 before updating the product document
+            if (newQuantity > 0) {
+                // Update the product document with the new quantity
+                await updateDoc(productRef, { itemPreQuantity: newQuantity });
+                console.log('Product quantity decreased successfully.');
+            } else {
+                // Display a notification when itemQuantity is equal to 0
+                setNotification('Your product quantity is 0');
+                console.log('Product quantity is already at the minimum.');
+            }
         } catch (error) {
             console.error('Error decreasing product quantity:', error.message);
+        } finally {
+            setProcessingClick(false);
         }
     
         setSelectedItem(item);
@@ -105,10 +127,38 @@ export default function PosPage() {
         setOpen(true);
     };
     
-    const handleClose = (confirmed) => {
+
+    // CANCEL BUTTON
+    const handleClose = async (confirmed) => {
         setOpen(false);
-    
-        if (confirmed) {
+
+        if (confirmed)  {
+
+            for (let i = 0; i < tableItems.length; i++) {
+                const item = tableItems[i];
+            
+                // Reference to the specific product document
+                const productRef = doc(firestore, 'Products', item.id);
+            
+                try {
+                  // Get the current product data
+                  const productSnapshot = await getDoc(productRef);
+                  const currentQuantity = productSnapshot.data().itemQuantity;
+            
+                  // Ensure that the quantity does not go below 0
+                  const newQuantity = currentQuantity;
+            
+                  // Update the product document with the new quantity
+                  await updateDoc(productRef, { itemPreQuantity: newQuantity });
+            
+                  console.log(`Product ${item.itemName} quantity updated successfully.`);
+                } catch (error) {
+                  console.error(`Error updating product ${item.itemName} quantity:`, error.message);
+                }
+              }
+
+
+
             navigate('/pos');
             window.location.reload();
         }
@@ -203,6 +253,27 @@ const [getProduct, setProduct] = useState([]);
     console.log('Products in the table:', tableItems);
     console.log('Payment amount:', paymentAmount);
 
+    for (let i = 0; i < tableItems.length; i++) {
+        const item = tableItems[i];
+        const productRef = doc(firestore, 'Products', item.id);
+
+        try {
+            // Get the current product data
+            const productSnapshot = await getDoc(productRef);
+            const currentQuantity = productSnapshot.data().itemQuantity;
+
+            // Ensure that the quantity does not go below 0
+            const newQuantity = Math.max(0, currentQuantity - item.itemQuantity);
+
+            // Update the product document with the new quantity
+            await updateDoc(productRef, { itemQuantity: newQuantity, itemPreQuantity: newQuantity });
+
+        //console.log(`Product ${item.itemName} quantity updated successfully.`);
+        } catch (error) {
+            console.error(`Error updating product ${item.itemName} quantity:`, error.message);
+        }
+    }
+
     const transactionVal = collection(firestore, "Transactions");
     const newTransactionRef = addDoc(transactionVal, {
         referenceId: generateRandomNumber(),
@@ -210,9 +281,6 @@ const [getProduct, setProduct] = useState([]);
         productBreakdown: tableItems,
         totalAmount: totalAmount
     });
-
-    //console.log("referenceId: " + generateRandomNumber() + "\ndateTransaction: " + currentDate.toLocaleString() + "\nproductBreakdown: " + tableItems + "\ntotalAmount: " + totalAmount);
-
 
     setOpenDialog(false);
     navigate('/pos');
