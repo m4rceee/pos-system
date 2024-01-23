@@ -101,21 +101,13 @@ export default function ProductReport() {
         return date.toLocaleTimeString(undefined, options);
     };
 
-
-    /////////////////////////// REMOVE THIS IF CONNECTING NA SA DATABASE ///////////////////////////////////////////
-    const staticRows = [
-        {id: 1, productId: 1, productName: 'Product 1', productSold: 10, productIncome: 999.00},
-        {id: 2, productId: 2, productName: 'Product 2', productSold: 15, productIncome: 999.00},
-        // Add more static data as needed
-    ];
-
     const columns = [
         { field: 'itemId', headerName: 'Product ID', width: 200 },
         { field: 'itemName', headerName: 'Product Name', width: 350 },
         { field: 'unitsSold', headerName: 'Sold', width: 200 },
         { field: 'totalAmount', headerName: 'Income', width: 200 },
-        
     ];
+
 
     return(
         <>
