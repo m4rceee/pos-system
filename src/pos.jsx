@@ -427,8 +427,12 @@ const generateReceiptHTML = (transaction) => {
             // Ensure that the quantity does not go below 0
             const newQuantity = Math.max(0, currentQuantity - item.itemQuantity);
 
+            // Update unitsSold and totalAmount fields
+            const unitsSold = productSnapshot.data().unitsSold + item.itemQuantity;
+            const totalAmount = productSnapshot.data().totalAmount + (item.itemQuantity * item.itemPrice);
+
             // Update the product document with the new quantity
-            await updateDoc(productRef, { itemQuantity: newQuantity, itemPreQuantity: newQuantity });
+            await updateDoc(productRef, { itemQuantity: newQuantity, itemPreQuantity: newQuantity, unitsSold, totalAmount });
 
         } catch (error) {
             console.error(`Error updating product ${item.itemName} quantity:`, error.message);

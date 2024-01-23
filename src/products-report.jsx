@@ -6,6 +6,8 @@ import SideBar from './common/sidebar';
 import Header from './common/header';
 import { styled } from '@mui/system';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
+import { firestore } from './firebaseConfig';
+import { getDocs, collection } from 'firebase/firestore';
 
 import { 
     Grid, 
@@ -50,6 +52,46 @@ const colors = {
 export default function ProductReport() {
 
     const navigate = useNavigate();
+    const [productReportData, setProductReportData] = useState([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const productReportCollection = collection(firestore, 'Transactions');
+                const productReportSnapshot = await getDocs(productReportCollection);
+                const productReportDataFromDb = productReportSnapshot.docs.map(doc => doc.data());
+    
+                console.log('Fetched product report data:', productReportDataFromDb);
+    
+                // Transform the data to match the structure of your columns
+                const transformedProductReportData = productReportDataFromDb.map((data, index) => {
+                    const totalUnitsSold = data.productBreakdown.reduce((total, product) => {
+                        // Calculate the total units sold for each product in the transaction
+                        return total + product.itemQuantity;
+                    }, 0);
+    
+                    const totalSales = data.productBreakdown.reduce((total, product) => {
+                        // Calculate the total sales for each product in the transaction
+                        return total + (product.itemPrice * product.itemQuantity);
+                    }, 0);
+    
+                    return {
+                        id: index + 1,
+                        productId: data.itemId,
+                        productName: data.itemName,
+                        productSold: totalUnitsSold, // Calculate total units sold from itemQuantity
+                        productIncome: totalSales, // Calculate total sales from itemPrice and itemQuantity
+                    };
+                });
+    
+                setProductReportData(transformedProductReportData);
+            } catch (error) {
+                console.error('Error fetching product report data:', error.message);
+            }
+        };
+    
+        fetchData();
+    }, []);
 
     const handleReportsHomePage = (event) => {
         event.preventDefault();
