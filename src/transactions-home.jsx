@@ -70,20 +70,24 @@ export default function TransactionsHome() {
 
 ////////////////////////////////////////////////////////////////////////////////////////
 // GET PRODUCT CATEGORY FROM THE DATABSE   
-    const [transaction, setTransaction] = useState([]);
+    const [transaction, setTransactions] = useState([]);
+
     useEffect(() => {
         const getTransactionData = onSnapshot(collection(firestore, 'Transactions'), (snapshot) => {
             const transactionArray = snapshot.docs.map((doc) => ({
-                ...doc.data(), id: doc.id
+                ...doc.data(),
+                id: doc.id,
             }));
-
-            transactionArray.sort((a, b) => b.dateTransaction.localeCompare(a.dateTransaction));
-
-            setTransaction(transactionArray);
+    
+            // Assuming dateTransaction is a string
+            transactionArray.sort((a, b) => new Date(b.dateTransaction) - new Date(a.dateTransaction));
+    
+            setTransactions(transactionArray);
             setLoading(false); // Set loading to false when data is loaded
         });
-    return () => getTransactionData();
-    }, []); 
+    
+        return () => getTransactionData();
+    }, []);
 
 
     const handleReportsHomePage = (event) => {

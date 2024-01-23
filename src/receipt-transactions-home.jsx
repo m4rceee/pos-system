@@ -21,23 +21,30 @@ const styles = {
 };
 
 const Receipt = React.forwardRef(({ transactionData }, ref) => {
-    return (
+  return (
       <div style={styles.container} ref={ref}>
-        <div style={styles.header}>Transaction Details</div>
-        <div style={styles.header}>Melyson Enterprise</div>
-        <div style={styles.header}>Melyson Enterprise</div>
-        <div style={styles.header}>Melyson Enterprise</div>
-        <div style={styles.header}>Melyson Enterprise</div>
-        <div style={styles.header}>Melyson Enterprise</div>
-        {transactionData && (
-          <>
-            <div style={styles.content}>Transaction Date: {transactionData.dateTransaction}</div>
-            <div style={styles.content}>Transaction ID: {transactionData.referenceId}</div>
-            <div style={styles.content}>Grand Amount: {transactionData.totalAmount}</div>
-          </>
-        )}
+          <div style={styles.header}>Transaction Details</div>
+          
+          {/* Use map to create <div> elements based on the length of transactionData */}
+          <table>
+          {transactionData && (          
+                <tr>
+                  <td>{transactionData.itemQuantity}</td>
+                  <td>{transactionData.itemName}</td>
+                  <td>{transactionData.itemPrice}</td>
+                </tr> 
+          )}
+          </table>
+          
+          {transactionData && (
+              <>
+                  <div style={styles.content}>Transaction Date: {transactionData.dateTransaction}</div>
+                  <div style={styles.content}>Transaction ID: {transactionData.referenceId}</div>
+                  <div style={styles.content}>Grand Amount: {transactionData.totalAmount}</div>
+              </>
+          )}
       </div>
-    );
-  });
+  );
+});
 
 export default Receipt;
