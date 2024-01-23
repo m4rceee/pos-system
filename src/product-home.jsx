@@ -17,6 +17,7 @@ import { Grid, Container, Typography, IconButton, TextField, Dialog, DialogActio
 import ButtonWidget from './widgets/button';
 import TextFieldInputWidget from './widgets/textfield-input';
 import TextFieldInputNumberWidget from './widgets/textfield-input-number';
+import TextFieldInputBarcodeWidget from './widgets/textfield-input-barcode';
 
 import { BounceLoader } from 'react-spinners';
 import { ToastContainer, toast } from 'react-toastify';
@@ -416,7 +417,7 @@ const handleAddProduct = async (e) => {
                                                 <form onSubmit={(e)=> handleAddProduct(e)}>
                                                     <DialogContent sx={{width: '500px'}}>
                                                         <TextFieldInputWidget title={"Item Name:"} name={"itemName"}/>
-                                                        <TextFieldInputWidget title={"Item Barcode:"} name={"itemCode"}/>
+                                                        <TextFieldInputBarcodeWidget title={"Item Barcode:"} name={"itemCode"}/>
                                                         <ContentTitleWidget label={"Item Category:"} />
                                                         <Select
                                                             name="itemCategory"
