@@ -43,7 +43,7 @@ const styles = {
 
 const Receipt = React.forwardRef(({ transactionData }, ref) => {
   return (
-      <div className='receiptContainer' style={styles.container} ref={ref}>
+      <div style={styles.container} ref={ref}>
           <div style={styles.header}>Melyson Enterprise</div>
           <p style={styles.offReceipt}>OFFICIAL RECEIPT</p>
           <span className='receiptDivider'></span>
