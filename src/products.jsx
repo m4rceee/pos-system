@@ -5,6 +5,8 @@ import { useNavigate } from 'react-router-dom';
 import SideBar from './common/sidebar';
 import Header from './common/header';
 import { styled } from '@mui/system';
+import { firestore } from './firebaseConfig';
+import { getDocs, collection } from 'firebase/firestore';
 
 import { 
     Grid, 
@@ -49,6 +51,10 @@ const colors = {
 export default function Products() {
 
     const navigate = useNavigate();
+    const [currentMonth, setCurrentMonth] = useState('');
+    const [prevMonth, setPrevMonth] = useState('');
+    const [productData, setProductData] = useState([]);
+    const [prevMonthProductData, setPrevMonthProductData] = useState([]);
 
     const handleReportsHomePage = (event) => {
         event.preventDefault();
@@ -68,10 +74,15 @@ export default function Products() {
         navigate('/products-report');
     }
 
-    const StyledTableCell = styled(TableCell)({
-        fontFamily: 'Poppins, sans-serif',
-        color: colors.secondary,
-      });
+    const StyledTableCell = (props) => (
+        <TableCell
+          sx={{
+            fontFamily: 'Poppins, sans-serif',
+            color: colors.secondary,
+          }}
+          {...props}
+        />
+      );
 
     const [currentDateTime, setCurrentDateTime] = useState(new Date());
     
@@ -97,6 +108,140 @@ export default function Products() {
   const options = { hour: 'numeric', minute: 'numeric', second: 'numeric' };
     return date.toLocaleTimeString(undefined, options);
   };
+
+  useEffect(() => {
+    const currentDate = new Date();
+
+    const prevDate = new Date(currentDate);
+    prevDate.setMonth(prevDate.getMonth() - 1);
+
+    const monthOptions = { month: 'long', year: 'numeric' };
+    const formattedCurrentMonth = currentDate.toLocaleDateString('en-US', monthOptions);
+    const formattedPrevMonth = prevDate.toLocaleDateString('en-US', monthOptions);
+
+    setCurrentMonth(formattedCurrentMonth);
+    setPrevMonth(formattedPrevMonth);
+  }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+        try {
+            // Fetch data from the transactions collection
+            const transactionsSnapshot = await getDocs(collection(firestore, 'Transactions'));
+            const transactions = transactionsSnapshot.docs.map(doc => doc.data());
+
+            console.log('Fetched transactions:', transactions);
+
+            // Count total units sold for each product
+            const productSalesMap = new Map();
+
+            transactions.forEach(transaction => {
+                // Convert string to Date object
+                const dateTransaction = new Date(transaction.dateTransaction);
+
+                const month = dateTransaction.getMonth(); // Extracting the month
+
+                transaction.productBreakdown.forEach(product => {
+                    const { itemName, itemQuantity } = product;
+
+                    const key = `${itemName}-${month}`; // Creating a unique key based on itemName and month
+
+                    if (productSalesMap.has(key)) {
+                        // Increment the count for the existing product in that month
+                        productSalesMap.set(key, productSalesMap.get(key) + itemQuantity);
+                    } else {
+                        // Initialize the count for a new product in that month
+                        productSalesMap.set(key, itemQuantity);
+                    }
+                });
+            });
+
+            // Convert map to an array of objects for easier sorting
+            const productsArray = Array.from(productSalesMap, ([key, totalUnitsSold]) => {
+                const [itemName, month] = key.split('-');
+                return {
+                    itemName,
+                    month: parseInt(month),
+                    totalUnitsSold
+                };
+            });
+
+            // Sort products by month and then by total units sold in descending order
+            productsArray.sort((a, b) => {
+                if (a.month !== b.month) {
+                    return a.month - b.month; // Sort by month
+                }
+                return b.totalUnitsSold - a.totalUnitsSold; // Then sort by total units sold
+            });
+
+            console.log('Products array after sorting:', productsArray);
+
+            setProductData(productsArray);
+        } catch (error) {
+            console.error('Error fetching data:', error.message);
+        }
+    };
+
+    fetchData();
+}, []);
+
+useEffect(() => {
+    const fetchDataForPreviousMonth = async () => {
+        try {
+            const currentDate = new Date();
+            const prevDate = new Date(currentDate);
+            prevDate.setMonth(prevDate.getMonth() - 1);
+
+            // Fetch data from the transactions collection for the previous month
+            const prevMonthTransactionsSnapshot = await getDocs(collection(firestore, 'Transactions'));
+            const prevMonthTransactions = prevMonthTransactionsSnapshot.docs.map(doc => doc.data());
+
+            // Filter transactions for the previous month
+            const filteredPrevMonthTransactions = prevMonthTransactions.filter(transaction => {
+                const dateTransaction = new Date(transaction.dateTransaction);
+                return dateTransaction.getMonth() === prevDate.getMonth();
+            });
+
+            console.log('Fetched transactions for previous month:', filteredPrevMonthTransactions);
+
+            // Count total units sold for each product for the previous month
+            const productSalesMap = new Map();
+
+            filteredPrevMonthTransactions.forEach(transaction => {
+                transaction.productBreakdown.forEach(product => {
+                    const { itemName, itemQuantity } = product;
+
+                    const key = `${itemName}`;
+
+                    if (productSalesMap.has(key)) {
+                        // Increment the count for the existing product
+                        productSalesMap.set(key, productSalesMap.get(key) + itemQuantity);
+                    } else {
+                        // Initialize the count for a new product
+                        productSalesMap.set(key, itemQuantity);
+                    }
+                });
+            });
+
+            // Convert map to an array of objects for easier sorting
+            const productsArray = Array.from(productSalesMap, ([key, totalUnitsSold]) => ({
+                itemName: key,
+                totalUnitsSold
+            }));
+
+            // Sort products by total units sold in descending order
+            productsArray.sort((a, b) => b.totalUnitsSold - a.totalUnitsSold);
+
+            console.log('Products array for previous month after sorting:', productsArray);
+
+            setPrevMonthProductData(productsArray);
+        } catch (error) {
+            console.error('Error fetching data for previous month:', error.message);
+        }
+    };
+
+    fetchDataForPreviousMonth();
+}, []);
 
     return (
         <>
@@ -191,10 +336,10 @@ export default function Products() {
                                                     This Month
                                                 </Typography>
                                                 <Typography variant="body1" gutterBottom style={{ fontFamily: 'Poppins, sans-serif', color: colors.secondary }}>
-                                                    January 2024
+                                                    {currentMonth}
                                                 </Typography>
                                                 <TableContainer style={{ marginTop: '15px', maxHeight: '50vh', overflowY: 'auto' }}>
-                                                    <Table>
+                                                <Table>
                                                         <TableHead>
                                                             <TableRow>
                                                                 <StyledTableCell>Rank</StyledTableCell>
@@ -203,51 +348,27 @@ export default function Products() {
                                                             </TableRow>
                                                         </TableHead>
                                                         <TableBody>
-                                                                <TableRow>
+                                                            {productData.map((product, index) => (
+                                                                <TableRow key={index}>
                                                                     <TableCell>
-                                                                        <div style={{ border: '2px solid #EBA63F', borderRadius: '50%', width: '30px', height: '30px', display: 'flex', justifyContent: 'center', alignItems: 'center', color: colors.secondary }}>
-                                                                            <span style={{ color: colors.accentYellow, fontFamily: 'Poppins, sans-serif', fontSize: '16px', fontWeight: 'bold' }}>1</span>
-                                                                        </div>
+                                                                    <div style={{
+                                                                        border: `2px solid ${index === 0 ? colors.accentYellow : colors.secondary}`,
+                                                                        borderRadius: '50%',
+                                                                        width: '30px',
+                                                                        height: '30px',
+                                                                        display: 'flex',
+                                                                        justifyContent: 'center',
+                                                                        alignItems: 'center',
+                                                                        color: index === 0 ? colors.accentYellow : colors.secondary,
+                                                                        backgroundColor: 'transparent'
+                                                                    }}>
+                                                                        <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: '16px', fontWeight: 'bold' }}>{index + 1}</span>
+                                                                    </div>
                                                                     </TableCell>
-                                                                    <StyledTableCell sx={{color: colors.accentYellow, fontWeight: 'bold'}}>sample</StyledTableCell>
-                                                                    <StyledTableCell align="right">sample</StyledTableCell>
+                                                                    <StyledTableCell sx={{ color: index === 0 ? colors.accentYellow : colors.secondary, fontWeight: 'bold' }}>{product.itemName}</StyledTableCell>
+                                                                    <StyledTableCell align="right">{product.totalUnitsSold}</StyledTableCell>
                                                                 </TableRow>
-                                                                <TableRow>
-                                                                    <TableCell>
-                                                                        <div style={{ border: '2px solid white', borderRadius: '50%', width: '30px', height: '30px', display: 'flex', justifyContent: 'center', alignItems: 'center', color: colors.secondary }}>
-                                                                            <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: '16px', fontWeight: 'bold' }}>2</span>
-                                                                        </div>
-                                                                    </TableCell>
-                                                                    <StyledTableCell>sample</StyledTableCell>
-                                                                    <StyledTableCell align="right">sample</StyledTableCell>
-                                                                </TableRow>
-                                                                <TableRow>
-                                                                    <TableCell>
-                                                                        <div style={{ border: '2px solid white', borderRadius: '50%', width: '30px', height: '30px', display: 'flex', justifyContent: 'center', alignItems: 'center', color: colors.secondary }}>
-                                                                            <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: '16px', fontWeight: 'bold' }}>3</span>
-                                                                        </div>
-                                                                    </TableCell>
-                                                                    <StyledTableCell>sample</StyledTableCell>
-                                                                    <StyledTableCell align="right">sample</StyledTableCell>
-                                                                </TableRow>
-                                                                <TableRow>
-                                                                    <TableCell>
-                                                                        <div style={{ width: '30px', height: '30px', display: 'flex', justifyContent: 'center', alignItems: 'center', color: colors.secondary }}>
-                                                                            <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: '16px', fontWeight: 'bold' }}>4</span>
-                                                                        </div>
-                                                                    </TableCell>
-                                                                    <StyledTableCell>sample</StyledTableCell>
-                                                                    <StyledTableCell align="right">sample</StyledTableCell>
-                                                                </TableRow>
-                                                                <TableRow>
-                                                                    <TableCell>
-                                                                        <div style={{ width: '30px', height: '30px', display: 'flex', justifyContent: 'center', alignItems: 'center', color: colors.secondary }}>
-                                                                            <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: '16px', fontWeight: 'bold' }}>5</span>
-                                                                        </div>
-                                                                    </TableCell>
-                                                                    <StyledTableCell>sample</StyledTableCell>
-                                                                    <StyledTableCell align="right">sample</StyledTableCell>
-                                                                </TableRow>
+                                                            ))}
                                                         </TableBody>
                                                     </Table>
                                                 </TableContainer>
@@ -261,65 +382,51 @@ export default function Products() {
                                                     Past Month
                                                 </Typography>
                                                 <Typography variant="body1" gutterBottom style={{ fontFamily: 'Poppins, sans-serif', color: colors.secondary }}>
-                                                    December 2023
+                                                    {prevMonth}
                                                 </Typography>
                                                 <TableContainer style={{ marginTop: '15px', maxHeight: '50vh', overflowY: 'auto' }}>
-                                                    <Table>
-                                                        <TableHead>
+                                                <Table>
+                                                    <TableHead>
+                                                        <TableRow>
+                                                            <StyledTableCell>Rank</StyledTableCell>
+                                                            <StyledTableCell>Product Name</StyledTableCell>
+                                                            <StyledTableCell align="right">Units Sold</StyledTableCell>
+                                                        </TableRow>
+                                                    </TableHead>
+                                                    <TableBody>
+                                                        {prevMonthProductData.length > 0 ? (
+                                                            // Render rows if there is data for the previous month
+                                                            prevMonthProductData.map((product, index) => (
+                                                                <TableRow key={index}>
+                                                                    <TableCell>
+                                                                        <div style={{
+                                                                            border: `2px solid ${index === 0 ? colors.accentYellow : colors.secondary}`,
+                                                                            borderRadius: '50%',
+                                                                            width: '30px',
+                                                                            height: '30px',
+                                                                            display: 'flex',
+                                                                            justifyContent: 'center',
+                                                                            alignItems: 'center',
+                                                                            color: index === 0 ? colors.accentYellow : colors.secondary,
+                                                                            backgroundColor: 'transparent'
+                                                                        }}>
+                                                                            <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: '16px', fontWeight: 'bold' }}>{index + 1}</span>
+                                                                        </div>
+                                                                    </TableCell>
+                                                                    <StyledTableCell sx={{ color: index === 0 ? colors.accentYellow : colors.secondary, fontWeight: 'bold' }}>{product.itemName}</StyledTableCell>
+                                                                    <StyledTableCell align="right">{product.totalUnitsSold}</StyledTableCell>
+                                                                </TableRow>
+                                                            ))
+                                                        ) : (
+                                                            // Display a message if no data is available for the previous month
                                                             <TableRow>
-                                                                <StyledTableCell>Rank</StyledTableCell>
-                                                                <StyledTableCell>Product Name</StyledTableCell>
-                                                                <StyledTableCell align="right">Units Sold</StyledTableCell>
+                                                                <TableCell colSpan={3} style={{ textAlign: 'center', color: colors.secondary }}>
+                                                                    No data available for the previous month
+                                                                </TableCell>
                                                             </TableRow>
-                                                        </TableHead>
-                                                        <TableBody>
-                                                                <TableRow>
-                                                                    <TableCell>
-                                                                        <div style={{ border: '2px solid #EBA63F', borderRadius: '50%', width: '30px', height: '30px', display: 'flex', justifyContent: 'center', alignItems: 'center', color: colors.secondary }}>
-                                                                            <span style={{ color: colors.accentYellow, fontFamily: 'Poppins, sans-serif', fontSize: '16px', fontWeight: 'bold' }}>1</span>
-                                                                        </div>
-                                                                    </TableCell>
-                                                                    <StyledTableCell sx={{color: colors.accentYellow, fontWeight: 'bold'}}>sample</StyledTableCell>
-                                                                    <StyledTableCell align="right">sample</StyledTableCell>
-                                                                </TableRow>
-                                                                <TableRow>
-                                                                    <TableCell>
-                                                                        <div style={{ border: '2px solid white', borderRadius: '50%', width: '30px', height: '30px', display: 'flex', justifyContent: 'center', alignItems: 'center', color: colors.secondary }}>
-                                                                            <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: '16px', fontWeight: 'bold' }}>2</span>
-                                                                        </div>
-                                                                    </TableCell>
-                                                                    <StyledTableCell>sample</StyledTableCell>
-                                                                    <StyledTableCell align="right">sample</StyledTableCell>
-                                                                </TableRow>
-                                                                <TableRow>
-                                                                    <TableCell>
-                                                                        <div style={{ border: '2px solid white', borderRadius: '50%', width: '30px', height: '30px', display: 'flex', justifyContent: 'center', alignItems: 'center', color: colors.secondary }}>
-                                                                            <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: '16px', fontWeight: 'bold' }}>3</span>
-                                                                        </div>
-                                                                    </TableCell>
-                                                                    <StyledTableCell>sample</StyledTableCell>
-                                                                    <StyledTableCell align="right">sample</StyledTableCell>
-                                                                </TableRow>
-                                                                <TableRow>
-                                                                    <TableCell>
-                                                                        <div style={{ width: '30px', height: '30px', display: 'flex', justifyContent: 'center', alignItems: 'center', color: colors.secondary }}>
-                                                                            <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: '16px', fontWeight: 'bold' }}>4</span>
-                                                                        </div>
-                                                                    </TableCell>
-                                                                    <StyledTableCell>sample</StyledTableCell>
-                                                                    <StyledTableCell align="right">sample</StyledTableCell>
-                                                                </TableRow>
-                                                                <TableRow>
-                                                                    <TableCell>
-                                                                        <div style={{ width: '30px', height: '30px', display: 'flex', justifyContent: 'center', alignItems: 'center', color: colors.secondary }}>
-                                                                            <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: '16px', fontWeight: 'bold' }}>5</span>
-                                                                        </div>
-                                                                    </TableCell>
-                                                                    <StyledTableCell>sample</StyledTableCell>
-                                                                    <StyledTableCell align="right">sample</StyledTableCell>
-                                                                </TableRow>
-                                                        </TableBody>
-                                                    </Table>
+                                                        )}
+                                                    </TableBody>
+                                                </Table>
                                                 </TableContainer>
                                             </CardContent>
                                         </Card>

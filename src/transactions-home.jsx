@@ -97,10 +97,10 @@ export default function TransactionsHome() {
         navigate('/reports-home');
     }
 
-    const handleProductsPage = (event) => {
+    const handleTransactionsPage = (event) => {
         event.preventDefault();
-        console.info('You clicked a Product Rankings Page.');
-        navigate('/products');
+        console.info('You clicked a Transactions Report Page.');
+        navigate('/transactions-home');
     }
 
     const [currentDateTime, setCurrentDateTime] = useState(new Date());
@@ -319,10 +319,10 @@ export default function TransactionsHome() {
                                             <Link
                                                 underline="hover"
                                                 key="2"
-                                                onClick={handleProductsPage}
+                                                onClick={handleTransactionsPage}
                                                 sx={{fontFamily: 'Poppins, sans-serif', fontWeight: '600', fontSize: '1.5rem', color: colors.secondary, cursor: 'pointer' }}
                                                 >
-                                                Products
+                                                Transactions
                                             </Link>
                                         </Breadcrumbs>
                                         <Typography variant='body2' sx={{ fontFamily: 'Poppins, sans-serif', color: colors.secondary, fontWeight: 'light' }}>
