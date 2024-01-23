@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {Box, Tab} from '@mui/material';
+import {Box, IconButton, Tab} from '@mui/material';
 import {TabContext, TabList, TabPanel} from '@mui/lab';
 import { styled } from '@mui/system';
 
@@ -14,6 +14,7 @@ import { collection, onSnapshot, doc, getDoc, updateDoc, addDoc } from '@firebas
 
 import { BounceLoader } from 'react-spinners';
 import { Container, Grid, Typography, Card, CardContent, Button, CardActionArea, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Dialog, DialogActions, DialogContent, DialogTitle, DialogContentText, } from '@mui/material';
+import { DeleteRounded } from '@mui/icons-material';
 
 import HeaderTitleWidget from './widgets/header-title';
 import TextFieldInputNumberPaymentWidget from './widgets/textfield-input-number';
@@ -49,6 +50,38 @@ export default function PosPage() {
     const [changeAmount, setChangeAmount] = useState(0);
     const [currentDate, setCurrentDate] = useState(new Date());
     const [processingClick, setProcessingClick] = useState(false);
+
+    const handleDeleteItem = async (index) => {
+        const deletedItem = tableItems[index];
+    
+        // Create a copy of the current state
+        const updatedTableItems = [...tableItems];
+    
+        // Remove the item at the specified index
+        updatedTableItems.splice(index, 1);
+    
+        // Update the state with the new array
+        setTableItems(updatedTableItems);
+    
+        try {
+            // Reference to the specific product document
+            const productRef = doc(firestore, 'Products', deletedItem.id);
+    
+            // Get the current product data
+        const productSnapshot = await getDoc(productRef);
+        const initialQuantity = productSnapshot.data().itemPreQuantity;
+
+        // Calculate the new quantity by adding back the deleted item's quantity
+        const newQuantity = initialQuantity + deletedItem.itemQuantity;
+
+        // Update the product document with the new quantity
+        await updateDoc(productRef, { itemQuantity: newQuantity, itemPreQuantity: newQuantity });
+    
+            console.log(`Product ${deletedItem.itemName} quantity restored successfully.`);
+        } catch (error) {
+            console.error(`Error restoring product ${deletedItem.itemName} quantity:`, error.message);
+        }
+    };
 
     useEffect(() => {
         const intervalId = setInterval(() => {
@@ -398,7 +431,7 @@ const [getProduct, setProduct] = useState([]);
                                                             <StyledTableCell>Product Name</StyledTableCell>
                                                             <StyledTableCell align="right">Quantity</StyledTableCell>
                                                             <StyledTableCell align="right">Price</StyledTableCell>
-                                                            <StyledTableCell align="right">Trashcan Icon</StyledTableCell>
+                                                            <StyledTableCell align="right"><DeleteRounded sx={{marginRight: '5px', fontSize: '1.3rem'}}/></StyledTableCell>
                                                         </TableRow>
                                                     </TableHead>
                                                     <TableBody>
@@ -407,7 +440,11 @@ const [getProduct, setProduct] = useState([]);
                                                                 <StyledTableCell>{tableItem.itemName}</StyledTableCell>
                                                                 <StyledTableCell align="right">{tableItem.itemQuantity}</StyledTableCell>
                                                                 <StyledTableCell align="right">₱{tableItem.itemPrice}</StyledTableCell>
-                                                                <StyledTableCell align="right">Icon</StyledTableCell>
+                                                                <StyledTableCell align="right">
+                                                                    <IconButton onClick={() => handleDeleteItem(index)}>
+                                                                        <DeleteRounded sx={{fontSize: '1.3rem', color:colors.secondary}}/>
+                                                                    </IconButton>
+                                                                </StyledTableCell>
                                                             </TableRow>
                                                         ))}
                                                     </TableBody>
