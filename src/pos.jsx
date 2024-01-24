@@ -13,7 +13,7 @@ import { firestore } from './firebaseConfig';
 import { collection, onSnapshot, doc, getDoc, updateDoc, addDoc } from '@firebase/firestore';
 
 import { BounceLoader } from 'react-spinners';
-import { Container, Grid, Typography, Card, CardContent, Button, CardActionArea, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Dialog, DialogActions, DialogContent, DialogTitle, DialogContentText, } from '@mui/material';
+import { Container, Grid, Typography, Card, CardContent, Button, CardActionArea, CircularProgress, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Dialog, DialogActions, DialogContent, DialogTitle, DialogContentText, } from '@mui/material';
 import { DeleteRounded } from '@mui/icons-material';
 
 import HeaderTitleWidget from './widgets/header-title';
@@ -50,6 +50,8 @@ export default function PosPage() {
     const [changeAmount, setChangeAmount] = useState(0);
     const [currentDate, setCurrentDate] = useState(new Date());
     const [processingClick, setProcessingClick] = useState(false);
+    const [isButtonDisabled, setButtonDisabled] = useState(false);
+    const [addingProduct, setAddingProduct] = useState(false);
 
     const handleDeleteItem = async (index) => {
         const deletedItem = tableItems[index];
@@ -269,9 +271,22 @@ const [getProduct, setProduct] = useState([]);
     // Assuming totalAmount is calculated somewhere in your component
     const totalAmount = calculateTotalAmount(); // Make sure to define calculateTotalAmount function
 
-    // Calculate the change
-    const change = parseFloat(inputValue) - totalAmount;
-    setChangeAmount(change);
+    if(inputValue == ""){
+        setChangeAmount(0);
+    }else{
+        // Calculate the change
+        const change = parseFloat(inputValue) - totalAmount;
+        setChangeAmount(change);
+    }
+
+    
+
+    if(inputValue < totalAmount){
+        setButtonDisabled(true);
+    }else {
+        setButtonDisabled(false);
+    }
+
   };
 
 
@@ -414,6 +429,8 @@ const generateReceiptHTML = (transaction) => {
     console.log('Payment to be paid:', totalAmount)
     console.log('Products in the table:', tableItems);
     console.log('Payment amount:', paymentAmount);
+
+    setAddingProduct(true);
 
     for (let i = 0; i < tableItems.length; i++) {
         const item = tableItems[i];
@@ -610,14 +627,14 @@ const generateReceiptHTML = (transaction) => {
                                             </TableContainer>
                                         </div>
                                         <div>
-                                            <div style={{ margin: '15px', display: 'flex',  justifyContent: 'space-between'}}>
+                                            {/*<div style={{ margin: '15px', display: 'flex',  justifyContent: 'space-between'}}>
                                                 <Typography variant='h6' sx={{ color: colors.secondary, fontFamily: 'Poppins, sans-derif'}}>
                                                     Discount: 
                                                 </Typography>
                                                 <Typography variant='h6' sx={{ color: colors.secondary, fontFamily: 'Poppins, sans-derif'}}>
                                                     ₱ 0.00 
                                                 </Typography>
-                                            </div>
+                                            </div>*/}
                                             <div style={{display: 'flex', width: '100%'}}>
                                                 <Button
                                                     variant="contained"
@@ -682,7 +699,7 @@ const generateReceiptHTML = (transaction) => {
                                                         <Typography variant="body1" color="inherit" sx={{fontFamily: 'Poppins, sans-serif', marginTop: '15px'}}>Change: ₱{changeAmount.toFixed(2)} </Typography>
                                                         <DialogActions sx={{marginTop: '20px', marginRight: '-8px'}}>
                                                             <ButtonWidget onClick={handleCloseDialog} label={"Cancel"} />
-                                                            <ButtonWidget type={"submit"} label={"Pay"} />
+                                                            <ButtonWidget type={"submit"} label={addingProduct ? <CircularProgress size={23} color="inherit" /> : "Pay"} disabled={isButtonDisabled} />
                                                         </DialogActions>
                                                     </form>
                                                 </DialogContent>

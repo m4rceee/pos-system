@@ -17,9 +17,10 @@ const colors = {
     accentPink: '#E84B8A', 
 };
 
-const ButtonWidget = ({ onClick, label, type }) => {
+const ButtonWidget = ({ onClick, label, type, disabled }) => {
   return (
     <Button 
+        disabled={disabled}
         type = {type}
         onClick = {onClick}
         sx={{
