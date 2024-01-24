@@ -228,6 +228,16 @@ const handleAddCategory = async (e) => {
 
 
 
+    const handleSearch = async (e) => {
+        e.preventDefault();
+        const searchCategory = e.target.searchCategory.value;
+
+        console.log(searchCategory);
+  
+    };
+
+
+
 ////////////////////////////////////////////////////////////////////////////////////////
 // ATTRIBUTES TO THE DATAGRID TABLE       
     const columns = [
@@ -365,6 +375,12 @@ const handleAddCategory = async (e) => {
                                 </div>
                             </div>
 
+                            <div>
+                            <form onSubmit={(e)=> handleSearch(e)}>
+                            <TextFieldInputWidget title={"Search Category:"} name={"searchCategory"} />
+                            <ButtonWidget type={"submit"} label={addingCategory ? <CircularProgress size={23} color="inherit" /> : "Search"} />
+                            </form>
+                            </div>
 
 
 {/*

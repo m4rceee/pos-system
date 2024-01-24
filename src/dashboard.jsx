@@ -7,6 +7,7 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 
 import { firestore } from './firebaseConfig';
 import { where, limit, query, orderBy, addDoc, getDoc, getDocs, collection, doc, onSnapshot, updateDoc, deleteDoc } from '@firebase/firestore';
+import { format, isSameDay, parseISO } from 'date-fns';
 
 import { BarChart } from '@mui/x-charts/BarChart';
 import { PieChart } from '@mui/x-charts/PieChart';
@@ -166,6 +167,38 @@ useEffect(() => {
     fetchData();
 }, []);
 
+
+const [transactions, setTransactions] = useState([]);
+  const [totalPriceSum, setTotalPriceSum] = useState(0);
+
+  useEffect(() => {
+    const getTransactionData = onSnapshot(collection(firestore, 'Transactions'), (snapshot) => {
+      const transactionArray = snapshot.docs.map((doc) => ({
+        ...doc.data(),
+        id: doc.id,
+      }));
+
+      // Assuming dateTransaction is a string
+      transactionArray.sort((a, b) => new Date(b.dateTransaction) - new Date(a.dateTransaction));
+
+      setTransactions(transactionArray);
+      setLoading(false); // Set loading to false when data is loaded
+
+      // Calculate the sum of itemPrice for the current day
+      const targetDate = new Date(); // You can replace this with the specific date you're interested in
+      const totalPriceSum = transactionArray
+        .filter((transaction) => isSameDay(new Date(transaction.dateTransaction), targetDate))
+        .reduce((sum, transaction) => {
+          // Assuming itemPrice is a number
+          return sum + parseFloat(transaction.productBreakdown.reduce((itemSum, item) => itemSum + parseFloat(item.itemPrice * item.itemQuantity), 0));
+        }, 0);
+
+      setTotalPriceSum(totalPriceSum);
+    });
+
+    return () => getTransactionData();
+  }, []);
+
     return(
     
         <>
@@ -282,9 +315,14 @@ useEffect(() => {
                                                     <Typography  style={{ fontSize: '1rem', fontWeight: 'normal', color: colors.secondary, fontFamily: 'Poppins, sans-serif' }}>
                                                     Daily Sales
                                                     </Typography>
-                                                    <Typography variant="h3" color={colors.accentOlive} style={{fontWeight: '600', fontFamily: 'Poppins, sans-serif', color: colors.secondary}}>
-                                                    ₱ 3,734.<span style={{fontSize: '2rem'}}>27</span>
-                                                    </Typography>
+                                                    {loading ? (
+                                                        <ClipLoader color={colors.accentYellow} size={45} />
+                                                    ) : (
+                                                        <Typography variant="h3" color={colors.accentOlive} style={{fontWeight: '600', fontFamily: 'Poppins, sans-serif', color: colors.secondary}}>
+                                                            ₱{totalPriceSum.toFixed(2)}
+                                                        </Typography>
+                                                    )
+                                                }
                                                 </Stack>
                                             </CardContent>
                                         </Card>
@@ -297,9 +335,15 @@ useEffect(() => {
                                                     <Typography style={{ fontSize: '1rem', fontWeight: 'normal', color: colors.secondary, fontFamily: 'Poppins, sans-serif' }}>
                                                     Weekly Sales
                                                     </Typography>
-                                                    <Typography variant="h3" color={colors.accentOlive} style={{fontWeight: '600', fontFamily: 'Poppins, sans-serif', color: colors.secondary}}>
-                                                    ₱ 26,139.<span style={{fontSize: '2rem'}}>88</span>
-                                                    </Typography>
+                                                    {loading ? (
+                                                        <ClipLoader color={colors.accentYellow} size={45} />
+                                                    ) : (
+                                                        <Typography variant="h3" color={colors.accentOlive} style={{fontWeight: '600', fontFamily: 'Poppins, sans-serif', color: colors.secondary}}>
+                                                            ₱{totalPriceSum.toFixed(2)}
+                                                        </Typography>
+                                                    )
+                                                }
+                                                    
                                                 </Stack>
                                             </CardContent>
                                         </Card>

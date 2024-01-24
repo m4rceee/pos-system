@@ -187,20 +187,6 @@ export default function Login() {
                                 },
                                 },
                           }}/>
-                            <Typography 
-                              variant='body1'
-                              sx={{
-                                marginTop: '15px', 
-                                fontFamily: 'Poppins, sans-serif', 
-                                cursor: 'pointer',
-                                '&:hover': {
-                                  textDecoration: 'underline',
-                                },
-                              }}
-                              onClick={handleForgotPasswordClick}
-                              >
-                              Forgot Password?
-                            </Typography>
                   </FormControl>
 
                   {showPrompt && (
