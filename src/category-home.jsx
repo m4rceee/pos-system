@@ -8,7 +8,7 @@ import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import HeaderTitleWidget from './widgets/header-title';
 
 import { firestore } from './firebaseConfig';
-import { limit, query, orderBy, addDoc, getDoc, getDocs, collection, doc, onSnapshot, updateDoc, deleteDoc } from '@firebase/firestore';
+import { limit, query, orderBy, addDoc, getDoc, getDocs, collection, doc, onSnapshot, updateDoc, deleteDoc, where } from '@firebase/firestore';
 
 import {AddRounded, EditRounded, DeleteRounded,} from "@mui/icons-material";
 import { Grid, Container, Typography, IconButton, TextField, Dialog, DialogActions, DialogContent, DialogTitle, DialogContentText, Card, CardContent, CircularProgress} from '@mui/material';
@@ -232,7 +232,13 @@ const handleAddCategory = async (e) => {
         e.preventDefault();
         const searchCategory = e.target.searchCategory.value;
 
-        console.log(searchCategory);
+        const querySnapshot = await getDocs(query(collection(firestore, 'Product_Category'), where('categoryName', '==', searchCategory)));
+
+        const filteredCategoryArray = querySnapshot.docs.map((doc) => ({
+            ...doc.data(), id: doc.id
+        }));
+
+        setCategory(filteredCategoryArray);
   
     };
 
