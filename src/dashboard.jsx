@@ -4,6 +4,7 @@ import 'typeface-poppins';
 import SideBar from './common/sidebar';
 import Header from './common/header';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { useNavigate } from 'react-router-dom';
 
 import { firestore } from './firebaseConfig';
 import { where, limit, query, orderBy, addDoc, getDoc, getDocs, collection, doc, onSnapshot, updateDoc, deleteDoc } from '@firebase/firestore';
@@ -20,6 +21,7 @@ import {
     Stack,
     Card,
     CardContent,
+    CardActionArea,
 } from '@mui/material';
 
 import { 
@@ -73,6 +75,8 @@ const xLabels = [
   };
 
 export default function DashboardHome() {
+
+    const navigate = useNavigate();
 
    const [currentDateTime, setCurrentDateTime] = useState(new Date());
    const [productCount, setProductCount] = useState(0);
@@ -199,6 +203,15 @@ const [transactions, setTransactions] = useState([]);
     return () => getTransactionData();
   }, []);
 
+  const handleProducts = () => {
+    navigate('/product-home');
+  }
+
+  const handleTransactions = () => {
+    navigate('/transactions-home');
+  }
+
+
     return(
     
         <>
@@ -244,45 +257,49 @@ const [transactions, setTransactions] = useState([]);
                                 </Typography>
                                 <Grid container spacing={2} style={{ paddingTop: '5px', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
                                     <Grid item xs={4} >
-                                        <Card style={{ background: '#13131c', boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)' }}>
-                                            <CardContent style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-                                                <ShoppingBagRounded sx={{ fontSize: '3.5rem', color: '#515178' }} />
-                                                <Stack sx={{ paddingLeft: '15px', flex: 1 }}>
-                                                    <Typography  style={{ fontSize: '1rem', fontWeight: 'normal', color: colors.secondary, fontFamily: 'Poppins, sans-serif' }}>
-                                                    Products
-                                                    </Typography>
-                                                    {loading ? (
-                                                        <ClipLoader color={colors.accentCyan} size={45} />
-                                                    ) : (
-                                                    <Typography variant="h3" color={colors.accentCyan} style={{fontWeight: '600', fontFamily: 'Poppins, sans-serif'}}>
-                                                        {productCount}
-                                                    </Typography>
-                                                    )
-                                                    }
-                                                </Stack>
-                                            </CardContent>
-                                        </Card>
+                                        <CardActionArea onClick={handleProducts}>
+                                            <Card style={{ background: '#13131c', boxShadow: '0 12p 24px rgba(0, 0, 0, 0.3)' }}>
+                                                <CardContent style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                                                    <ShoppingBagRounded sx={{ fontSize: '3.5rem', color: '#515178' }} />
+                                                    <Stack sx={{ paddingLeft: '15px', flex: 1 }}>
+                                                        <Typography  style={{ fontSize: '1rem', fontWeight: 'normal', color: colors.secondary, fontFamily: 'Poppins, sans-serif' }}>
+                                                        Products
+                                                        </Typography>
+                                                        {loading ? (
+                                                            <ClipLoader color={colors.accentCyan} size={45} />
+                                                        ) : (
+                                                        <Typography variant="h3" color={colors.accentCyan} style={{fontWeight: '600', fontFamily: 'Poppins, sans-serif'}}>
+                                                            {productCount}
+                                                        </Typography>
+                                                        )
+                                                        }
+                                                    </Stack>
+                                                </CardContent>
+                                            </Card>
+                                        </CardActionArea>
                                     </Grid>
                                     <Grid item xs={4}>
-                                        <Card style={{ background: '#13131c', boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)' }}>
-                                            <CardContent style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-                                                <ReceiptRounded sx={{ fontSize: '3.5rem', color: '#515178' }} />
-                                                <Stack sx={{ paddingLeft: '15px', flex: 1 }}>
-                                                    <Typography style={{ fontSize: '1rem', fontWeight: 'normal', color: colors.secondary, fontFamily: 'Poppins, sans-serif' }}>
-                                                    Transactions
-                                                    </Typography>
-                                                    {loading ? (
-                                                        <ClipLoader color={colors.accentOlive} size={45} />
-                                                    ) : (
-                                                    <Typography variant="h3" color={colors.accentOlive} style={{fontWeight: '600', fontFamily: 'Poppins, sans-serif'}}>
-                                                        {transactionCount}
-                                                    </Typography>
-                                                    )
-                                                    }
-                                                    
-                                                </Stack>
-                                            </CardContent>
-                                        </Card>
+                                        <CardActionArea onClick={handleTransactions}>
+                                            <Card style={{ background: '#13131c', boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)' }}>
+                                                <CardContent style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                                                    <ReceiptRounded sx={{ fontSize: '3.5rem', color: '#515178' }} />
+                                                    <Stack sx={{ paddingLeft: '15px', flex: 1 }}>
+                                                        <Typography style={{ fontSize: '1rem', fontWeight: 'normal', color: colors.secondary, fontFamily: 'Poppins, sans-serif' }}>
+                                                        Transactions
+                                                        </Typography>
+                                                        {loading ? (
+                                                            <ClipLoader color={colors.accentOlive} size={45} />
+                                                        ) : (
+                                                        <Typography variant="h3" color={colors.accentOlive} style={{fontWeight: '600', fontFamily: 'Poppins, sans-serif'}}>
+                                                            {transactionCount}
+                                                        </Typography>
+                                                        )
+                                                        }
+                                                        
+                                                    </Stack>
+                                                </CardContent>
+                                            </Card>
+                                        </CardActionArea>
                                     </Grid>
                                     <Grid item xs={4}>
                                         <Card style={{ background: '#13131c', boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)' }}>
@@ -353,29 +370,8 @@ const [transactions, setTransactions] = useState([]);
                         </Card>
 
                         <Grid className='pt-5' container spacing={2}>
-                            <Grid item xs={7}>
-                                <ThemeProvider theme={customTheme}> 
-                                    <Card style={{backgroundColor: '#27273b', boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)', marginBottom: '30px'}}>
-                                        <CardContent style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', padding: '1.5rem' }}>
-                                            <Stack>
-                                                <Typography sx={{ paddingBottom: '10px', color: colors.secondary, fontSize: '1.5rem', fontWeight: '600', textAlign: 'left' }}>Sales Chart</Typography>
-                                                <LineChart
-                                                    xAxis={[{ scaleType: 'point', data: xLabels }]}
-                                                    series={[
-                                                        { data: pData, label: 'Year 1', color: '#E40C2B' },
-                                                        { data: uData, label: 'Year 2', color: '#3CBCC3' },
-                                                        { data: vData, label: 'Year 3', color: '#EBA63F' },
-                                                    ]}
-                                                    width={500}
-                                                    height={300}
-                                                />
-                                            </Stack>
-                                        </CardContent>
-                                    </Card>
-                                </ThemeProvider>
-                            </Grid>
                             
-                            <Grid item xs={5}>
+                            <Grid item xs={12}>
                                 <ThemeProvider theme={customTheme}>
                                     <Card style={{backgroundColor: '#27273b', boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)', marginBottom: '30px'}}>
                                             <Stack style={{ display: 'flex', flexDirection: 'column', alignItems: 'left', justifyContent: 'center', height: '100%', padding: '1.5rem' }}>
@@ -390,7 +386,7 @@ const [transactions, setTransactions] = useState([]);
                                                         cornerRadius: 5,
                                                         startAngle: -90,
                                                         endAngle: 180,
-                                                        cx: 120,
+                                                        cx: 500,
                                                         cy: 140,
                                                         },
                                                     ]}

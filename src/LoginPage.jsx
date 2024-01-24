@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import final from './svg pics/final.svg';
 import { database } from './firebaseConfig';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import ButtonWidget from './widgets/button';
 
 import "./styles.css"
 import 'typeface-poppins';
@@ -16,6 +17,7 @@ import {
   TextField,
   InputAdornment,
   IconButton, Container,
+  CircularProgress
 } from '@mui/material';
 
 import { 
@@ -58,6 +60,7 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [currentDateTime, setCurrentDateTime] = useState(new Date());
   const [showPrompt, setShowPrompt] = useState(false);
+  const [loading, setLoading] = useState(false);
     
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -93,6 +96,7 @@ export default function Login() {
     
     //Login Auth
     signInWithEmailAndPassword(database, username, password).then(data =>{
+      setLoading(true);
       console.log(data, "authData");
       navigate('/dashboard');
     }).catch(error =>{
@@ -211,8 +215,9 @@ export default function Login() {
                     boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)',
                     '&:hover': { backgroundColor: '#3b3b5a' }
                     }}>
-                      <Typography sx={{fontFamily: 'Poppins, sans-serif', fontWeight: '500', fontSize: '20px',}}>Log In</Typography>
+                      <Typography sx={{fontFamily: 'Poppins, sans-serif', fontWeight: '500', fontSize: '20px',}}> {loading ? <CircularProgress size={23} color="inherit" /> : "Log In"} </Typography>
                   </Button>
+                  
                   
                   {/*REALTIME DISPLAY OF DATE & TIME*/}
                   <div className='mt-3 text-center text-sm' style={{color: colors.fontColor}}>

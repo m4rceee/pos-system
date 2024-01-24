@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import shortLogo from '../svg pics/logo2.png';
 import logo3 from '../svg pics/3.svg';
 
-import "../styles.css"
+import "../styles.css";
 import 'typeface-poppins';
 
 import { Typography } from '@mui/material';
@@ -41,6 +41,7 @@ const colors = {
 };
 
 export default function SideBar() {
+    
     const navigate = useNavigate();
 
     const [collapsed, setCollapsed] = useState(true);

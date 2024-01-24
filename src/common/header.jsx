@@ -56,47 +56,10 @@ export default function Header() {
     return(
 
         <>
-                <Stack direction="row" spacing={2}>
-                    <TextField
-                    variant="outlined"
-                    fullWidth
-                    placeholder='Search here...'
-                    InputProps={{
-                        startAdornment: (
-                        <InputAdornment position="start">
-                            <SearchRounded sx={{fontSize: '2rem', color: colors.secondary}}/>
-                        </InputAdornment>
-                        ),
-                    }}
-                    sx={{
-                        
-                        '& .MuiOutlinedInput-root': {
-                            backgroundColor: '#27273b',
-                            boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)',
-                            '& fieldset': {
-                                border: 'none',
-                            },
-                            '&.Mui-focused fieldset': {
-                                border: 'none',
-                            },
-                            '&:hover': {
-                                cursor: 'text'
-                            },
-                        },
-                        '& input': {
-                            fontFamily: 'Poppins, sans-serif',
-                            fontWeight: '300',
-                            color: colors.secondary,
-                        },
-                        '& input::placeholder': {
-                            fontFamily: 'Poppins, sans-serif',
-                            fontWeight: '300',
-                        }
-                    }}
-                    />
+                <Stack direction="row" spacing={2} >
                     
                     <IconButton onClick={handleLogout}>
-                        <LogoutRounded  style={{ color: colors.secondary, fontSize: '2rem' }} />
+                        <LogoutRounded  style={{ color: colors.secondary, fontSize: '2rem', marginLeft: '730px' }} />
                     </IconButton>
                 </Stack>
                 <Dialog open={open} onClose={() => handleClose(false)}>

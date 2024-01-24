@@ -381,13 +381,6 @@ const handleAddCategory = async (e) => {
                                 </div>
                             </div>
 
-                            <div>
-                            <form onSubmit={(e)=> handleSearch(e)}>
-                            <TextFieldInputWidget title={"Search Category:"} name={"searchCategory"} />
-                            <ButtonWidget type={"submit"} label={addingCategory ? <CircularProgress size={23} color="inherit" /> : "Search"} />
-                            </form>
-                            </div>
-
 
 {/*
 ///////////////////////////////////////////////////////////////////////////////////////
