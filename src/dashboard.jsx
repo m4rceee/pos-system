@@ -202,7 +202,7 @@ useEffect(() => {
 
       // Calculate the sum of itemPrice for the current day
       const targetDate = new Date(); // You can replace this with the specific date you're interested in
-      targetDate.setDate(1); // Set the day to the first day of the month
+      //targetDate.setDate(1); // Set the day to the first day of the month
 
       const totalPriceSum = transactionArray
         .filter((transaction) => isSameDay(new Date(transaction.dateTransaction), targetDate))
