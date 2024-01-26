@@ -21,13 +21,16 @@ body {
     margin: 10px auto !important;
 }
 
-.receiptTable {
-    width: 100%;
-}
 
-.receiptTable td {
-    font-size: 12px;
-}
+.receiptTable {width: 100%;}
+.receiptTable td {font-size: 14px;}
+.tableQty {width: 10%;}
+.tableDesc {width: 65%;}
+.tableAmount {width: 25%; text-align: right;}
+.receiptDivider {display: block; border-bottom: 1px solid #000; margin: 5px 0; }
+.last {margin-bottom: 0;}
+.receiptDetails {font-size: 12px;}
+.receiptTable.transaction p {margin: 5px 0;}
 
 .receiptTable.transaction td:last-child {
     width: 25%;

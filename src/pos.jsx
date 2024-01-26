@@ -56,31 +56,19 @@ export default function PosPage() {
 
     const handleDeleteItem = async (index) => {
         const deletedItem = tableItems[index];
-    
-        // Create a copy of the current state
         const updatedTableItems = [...tableItems];
-    
-        // Remove the item at the specified index
         updatedTableItems.splice(index, 1);
-    
-        // Update the state with the new array
         setTableItems(updatedTableItems);
     
         try {
-            // Reference to the specific product document
             const productRef = doc(firestore, 'Products', deletedItem.id);
-    
-            // Get the current product data
-        const productSnapshot = await getDoc(productRef);
-        const initialQuantity = productSnapshot.data().itemPreQuantity;
+            const productSnapshot = await getDoc(productRef);
+            const initialQuantity = productSnapshot.data().itemPreQuantity;
+            const newQuantity = initialQuantity + deletedItem.itemQuantity;
 
-        // Calculate the new quantity by adding back the deleted item's quantity
-        const newQuantity = initialQuantity + deletedItem.itemQuantity;
-
-        // Update the product document with the new quantity
-        await updateDoc(productRef, { itemQuantity: newQuantity, itemPreQuantity: newQuantity });
-    
+            await updateDoc(productRef, { itemQuantity: newQuantity, itemPreQuantity: newQuantity });
             console.log(`Product ${deletedItem.itemName} quantity restored successfully.`);
+
         } catch (error) {
             console.error(`Error restoring product ${deletedItem.itemName} quantity:`, error.message);
         }
@@ -88,10 +76,9 @@ export default function PosPage() {
 
     useEffect(() => {
         const intervalId = setInterval(() => {
-        setCurrentDate(new Date());
-        }, 1000); // Update the date every second
+            setCurrentDate(new Date());
+        }, 1000);
 
-        // Clear the interval when the component unmounts
         return () => clearInterval(intervalId);
     }, []);
 
@@ -129,20 +116,15 @@ export default function PosPage() {
      
 
         try {
-            // Get the current product data
             const productSnapshot = await getDoc(productRef);
             const currentQuantity = productSnapshot.data().itemPreQuantity;
 
-            // Ensure that the quantity does not go below 0
             const newQuantity = Math.max(0, currentQuantity - 1);
 
-            // Add a condition to check if the new quantity is greater than 0 before updating the product document
             if (newQuantity > 0) {
-                // Update the product document with the new quantity
                 await updateDoc(productRef, { itemPreQuantity: newQuantity });
                 console.log('Product quantity decreased successfully.');
             } else {
-                // Display a notification when itemQuantity is equal to 0
                 setNotification('Your product quantity is 0');
                 console.log('Product quantity is already at the minimum.');
             }
@@ -202,60 +184,54 @@ export default function PosPage() {
         }
     };
 
-    const StyledTableCell = styled(TableCell)({
-        fontFamily: 'Poppins, sans-serif',
-        color: colors.secondary,
-      });
 
+    const StyledTableCell = styled(TableCell)({fontFamily: 'Poppins, sans-serif', color: colors.secondary, });
     const [value, setValue] = React.useState('All');
+    const handleChange = (event, newValue) => {setValue(newValue);};
 
-    const handleChange = (event, newValue) => {
-        setValue(newValue);
-    };
-
-const [getCategories, setCategories] = useState([]);
-
-useEffect(() => {
-    const getCategoryData = onSnapshot(collection(firestore, 'Product_Category'), (snapshot) => {
-      const categoryArray = snapshot.docs.map((doc) => ({
-        ...doc.data(),
-        id: doc.id
-      }));
-  
-      // Add a custom category "All" to the beginning of the array
-      const allCategory = { id: 'all', categoryName: 'All' };
-      categoryArray.unshift(allCategory);
-  
-      // Sort the categoryArray based on categoryName in ascending order
-      categoryArray.sort((a, b) => a.categoryName.localeCompare(b.categoryName));
-  
-      setCategories(categoryArray);
-  
-      // Extract only the category IDs into a separate array
-      const categoryIdsArray = categoryArray.map(category => category.id);
-  
-      // Now you have the array of all category IDs including "All"
-      //console.log('All Category IDs:', categoryIdsArray);
-      setLoading(false);
-    });
-  
-    return () => getCategoryData();
-  }, []);
-
-  
-const [getProduct, setProduct] = useState([]);
+    const [getCategories, setCategories] = useState([]);
 
     useEffect(() => {
-        const getProductData = onSnapshot(collection(firestore, 'Products'), (snapshot) => {
-            const productArray = snapshot.docs.map((doc) => ({
-                ...doc.data(), id: doc.id
-            }));
-            setProduct(productArray);
-            //console.log(productArray);
-            setLoading(false);
+        const getCategoryData = onSnapshot(collection(firestore, 'Product_Category'), (snapshot) => {
+        const categoryArray = snapshot.docs.map((doc) => ({
+            ...doc.data(),
+            id: doc.id
+        }));
+    
+        // Add a custom category "All" to the beginning of the array
+        const allCategory = { id: 'all', categoryName: 'All' };
+        categoryArray.unshift(allCategory);
+    
+        // Sort the categoryArray based on categoryName in ascending order
+        categoryArray.sort((a, b) => a.categoryName.localeCompare(b.categoryName));
+    
+        setCategories(categoryArray);
+    
+        // Extract only the category IDs into a separate array
+        const categoryIdsArray = categoryArray.map(category => category.id);
+    
+        // Now you have the array of all category IDs including "All"
+        //console.log('All Category IDs:', categoryIdsArray);
+        setLoading(false);
         });
-    return () => getProductData();
-  }, []); 
+    
+        return () => getCategoryData();
+    }, []);
+
+  
+    const [getProduct, setProduct] = useState([]);
+
+        useEffect(() => {
+            const getProductData = onSnapshot(collection(firestore, 'Products'), (snapshot) => {
+                const productArray = snapshot.docs.map((doc) => ({
+                    ...doc.data(), id: doc.id
+                }));
+                setProduct(productArray);
+                //console.log(productArray);
+                setLoading(false);
+            });
+        return () => getProductData();
+    }, []); 
 
   ///////////////////////////////// PAYMENT DIALOG ///////////////////////////////////
   const handleOpenDialog = (event) => {
@@ -324,110 +300,81 @@ const generateReceiptHTML = (transaction) => {
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="styles.css">
         <style>
-            body {
-                font-family: Arial, sans-serif;
-                margin: 0;
-                padding: 0;
-            }
-            .container {
-                width: auto;
-                margin: auto;
-                box-sizing: border-box;
-            }
-            .header {
-                text-align: center;
-                font-size: 14px;
-                font-weight: bold;
-                margin-bottom: 8px;
-            }
-            .offReceipt {
-                text-align: center;
-                font-size: 12px;
-                font-weight: bold;
-            }
-            .content {
-                font-size: 9px;
-            }
-            .receiptTable {
-                width: 100%;
-            }
-            .tableQty {
-                width: 10%;
-            }
-            .tableDesc {
-                width: 65%;
-            }
-            .tableAmount {
-                width: 25%;
-                text-align: right;
-            }
-            .receiptDivider {
-                display: block;
-                border-bottom: 1px solid #000;
-                margin: 5px 0;
-            }
-            .last {
-                margin-bottom: 0;
-            }
-            .receiptDetails {
-                font-size: 12px;
-            }
+            body {font-family: Arial, sans-serif; margin: 0; padding: 0;}
+            .container {width: auto; margin: auto; box-sizing: border-box;}
+            .header {text-align: center; font-size: 14px; font-weight: bold; margin-bottom: 8px;}
+            .offReceipt {text-align: center; font-size: 12px; font-weight: bold;}
+            .content {font-size: 9px;}
+            .receiptTable {width: 100%;}
+            .receiptTable td {font-size: 14px;}
+            .tableQty {width: 10%;}
+            .tableDesc {width: 65%;}
+            .tableAmount {width: 25%; text-align: right;}
+            .receiptDivider {display: block; border-bottom: 1px solid #000; margin: 5px 0; }
+            .last {margin-bottom: 0;}
+            .receiptDetails {font-size: 12px;}
+            .receiptTable.transaction p {margin: 5px 0;}
         </style>
     </head>
     <body>
-                    <div class="container">
-                        <div class="header">Melyson Enterprise</div>
-                        <p class="offReceipt">OFFICIAL RECEIPT</p>
-                        <span class="receiptDivider"></span>
+        <div class="container">
+            <div class="header">Melyson Enterprise</div>
+            <p class="offReceipt">OFFICIAL RECEIPT</p>
+            <span class="receiptDivider"></span>
 
-                        <table class="receiptTable">
-                            <tbody>
-                                <tr>
-                                    <td class="tableQty">Qty</td>
-                                    <td class="tableDesc">Description</td>
-                                    <td class="tableAmount">Amount PHP</td>
-                                </tr>
-                                <tr><td colspan="3"><span class="receiptDivider"></span></td></tr>
-                                <!-- Use map to create <table> based on the length of productBreakdown -->
-                                ${productBreakdown.map(item => `
-                                    <tr>
-                                        <td>${item.itemQuantity}</td>
-                                        <td>${item.itemName} @${item.itemPrice}</td>
-                                        <td class="tableAmount">₱${(item.itemQuantity * item.itemPrice).toFixed(2)}</td>
-                                    </tr>
-                                `).join('')}
-                            </tbody>
-                        </table>
+            <table class="receiptTable">
+                <tbody>
+                    <tr>
+                        <td class="tableQty">Qty</td>
+                        <td class="tableDesc">Description</td>
+                        <td class="tableAmount">Amount PHP</td>
+                    </tr>
+                    <tr><td colspan="3"><span class="receiptDivider"></span></td></tr>
+                    <!-- Use map to create <table> based on the length of productBreakdown -->
+                    ${productBreakdown.map(item => `
+                        <tr>
+                            <td>${item.itemQuantity}</td>
+                            <td>${item.itemName} @${item.itemPrice}</td>
+                            <td class="tableAmount">₱${(item.itemQuantity * item.itemPrice).toFixed(2)}</td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
 
-                        <span class="receiptDivider last"></span>
+            <span class="receiptDivider last"></span>
 
-                        <div class="receiptDetails">
-                            <table class="receiptTable transaction">
-                                <tr>
-                                    <td><p>Amount Due:</p></td>
-                                    <td><p>₱${totalAmount.toFixed(2)}</p></td>
-                                </tr>
-                                <tr>
-                                    <td><p>Cash:</p></td>
-                                    <td><p>₱${parseInt(totalCash, 10).toFixed(2)}</p></td>
-                                </tr>
-                                <tr>
-                                    <td><p>Change:</p></td>
-                                    <td><p>₱${totalChange.toFixed(2)}</p></td>
-                                </tr>
-                            </table>
-                            <span class="receiptDivider"></span>
-                            <p>Transaction Date: ${dateTransaction}</p>
-                            <p>Reference ID: ${referenceId}</p>
-                            <p>*********************************************************</p>
-                            <p>*********************************************************</p>
-                            <p>*********************************************************</p>
-                            <p>*********************************************************</p>
-                        </div>
-                    </div>
-                </body>
-                </html>
-    `;
+            <div class="receiptDetails">
+                <table class="receiptTable transaction">
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td><p>Amount Due:</p></td>
+                        <td><p>₱${totalAmount.toFixed(2)}</p></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td><p>Cash:</p></td>
+                        <td><p>₱${parseInt(totalCash, 10).toFixed(2)}</p></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td><p>Change:</p></td>
+                        <td><p>₱${totalChange.toFixed(2)}</p></td>
+                    </tr>
+                </table>
+                <span class="receiptDivider"></span>
+                <p>Transaction Date: ${dateTransaction}</p>
+                <p>Reference ID: ${referenceId}</p>
+                <p>*********************************************************</p>
+                <p>*********************************************************</p>
+                <p>*********************************************************</p>
+                <p>*********************************************************</p>
+            </div>
+        </div>
+    </body>
+    </html>`;
 };
 
 
@@ -467,6 +414,7 @@ const generateReceiptHTML = (transaction) => {
     const newTransactionRef = addDoc(transactionVal, {
         referenceId: generatePaymentReferenceId(),
         dateTransaction: currentDate.toLocaleString(),
+        transactionStatus: 'valid',
         productBreakdown: tableItems,
         totalAmount: totalAmount,
         totalCash: paymentAmount,

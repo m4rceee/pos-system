@@ -34,6 +34,7 @@ import {
 } from '@mui/icons-material';
 
 import { ClipLoader } from 'react-spinners';
+import HeaderTitleWidget from './widgets/header-title';
 
 const customTheme = createTheme({
     typography: {
@@ -79,6 +80,9 @@ const customTheme = createTheme({
   };
 
 export default function DashboardHome() {
+
+    const handleProducts = () => {navigate('/product-home');}
+    const handleTransactions = () => {navigate('/transactions-home');}
 
     const currentDate = new Date();
     const monthOptions = { month: 'long' };
@@ -194,20 +198,16 @@ useEffect(() => {
         id: doc.id,
       }));
 
-      // Assuming dateTransaction is a string
       transactionArray.sort((a, b) => new Date(b.dateTransaction) - new Date(a.dateTransaction));
 
       setTransactions(transactionArray);
-      setLoading(false); // Set loading to false when data is loaded
+      setLoading(false); 
 
-      // Calculate the sum of itemPrice for the current day
-      const targetDate = new Date(); // You can replace this with the specific date you're interested in
-      //targetDate.setDate(1); // Set the day to the first day of the month
+      const targetDate = new Date();
 
       const totalPriceSum = transactionArray
         .filter((transaction) => isSameDay(new Date(transaction.dateTransaction), targetDate))
         .reduce((sum, transaction) => {
-          // Assuming itemPrice is a number
           return sum + parseFloat(transaction.productBreakdown.reduce((itemSum, item) => itemSum + parseFloat(item.itemPrice * item.itemQuantity), 0));
         }, 0);
         
@@ -228,38 +228,26 @@ useEffect(() => {
         id: doc.id,
       }));
 
-      // Assuming dateTransaction is a string
       transactionArray.sort((a, b) => new Date(b.dateTransaction) - new Date(a.dateTransaction));
 
       setTransactions(transactionArray);
-      setLoading(false); // Set loading to false when data is loaded
+      setLoading(false);
 
-      // Calculate the sum of itemPrice for the current day
-      const targetDate = new Date(); // You can replace this with the specific date you're interested in
-      targetDate.setDate(1); // Set the day to the first day of the month
+      const targetDate = new Date();
+      targetDate.setDate(1);
       const isSameMonth = (date1, date2) => date1.getMonth() === date2.getMonth() && date1.getFullYear() === date2.getFullYear();
 
       const totalPriceSum = transactionArray
-    .filter((transaction) => isSameMonth(new Date(transaction.dateTransaction), targetDate))
-    .reduce((sum, transaction) => {
-        // Assuming itemPrice is a number
-        return sum + parseFloat(transaction.productBreakdown.reduce((itemSum, item) => itemSum + parseFloat(item.itemPrice * item.itemQuantity), 0));
-    }, 0);
+        .filter((transaction) => isSameMonth(new Date(transaction.dateTransaction), targetDate))
+        .reduce((sum, transaction) => {
+            return sum + parseFloat(transaction.productBreakdown.reduce((itemSum, item) => itemSum + parseFloat(item.itemPrice * item.itemQuantity), 0));
+        }, 0);
 
         setTotalMonthlySales(totalPriceSum);
     });
 
     return () => getTransactionData();
   }, []);
-
-
-  const handleProducts = () => {
-    navigate('/product-home');
-  }
-
-  const handleTransactions = () => {
-    navigate('/transactions-home');
-  }
 
 
     return(
@@ -269,36 +257,7 @@ useEffect(() => {
                 <SideBar/>
                 <div style={{ marginLeft: '10px', marginRight: '5px', width: '100%'}}>
                     <Container maxWidth="xl" style={{ paddingTop: '20px' }}>
-                        <Grid 
-                            container
-                            style={{
-                                display: 'flex',
-                                flexDirection: 'row',
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                            }}>
-                                <Grid item xs={4} sx={{ alignItems: 'center' }}>
-                                    <Typography sx={{ fontFamily: 'Poppins, sans-serif', fontWeight: '600', fontSize: '1.5rem', color: colors.secondary }}>
-                                        Dashboard
-                                    </Typography>
-                                    <Typography variant='body2' sx={{ fontFamily: 'Poppins, sans-serif', color: colors.secondary, fontWeight: 'light' }}>
-                                        <Stack direction="row">
-                                            <Typography component="span" variant='body2' sx={{fontFamily: 'Poppins, sans-serif'}}>
-                                                {formatDate(currentDateTime)}
-                                            </Typography>
-                                            <Typography component="span" variant='body2' sx={{fontFamily: 'Poppins, sans-serif', marginLeft: '8px', marginRight: '8px'}}>
-                                                ||
-                                            </Typography>
-                                            <Typography component="span" variant='body2' sx={{fontFamily: 'Poppins, sans-serif'}}>
-                                                {formatTime(currentDateTime)}
-                                            </Typography>
-                                        </Stack>
-                                    </Typography>
-                                </Grid>
-                                <Grid item xs={8} sx={{ alignItems: 'center' }}>
-                                    <Header />
-                                </Grid>
-                        </Grid>
+                        <HeaderTitleWidget label={"Dashboard"}/>
 
                         <Card className='mt-8' style={{backgroundColor: '#27273b', boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)'}}>
                             <CardContent style={{ padding: '20px'}}>
@@ -321,8 +280,7 @@ useEffect(() => {
                                                         <Typography variant="h3" color={colors.accentCyan} style={{fontWeight: '600', fontFamily: 'Poppins, sans-serif'}}>
                                                             {productCount}
                                                         </Typography>
-                                                        )
-                                                        }
+                                                        )}
                                                     </Stack>
                                                 </CardContent>
                                             </Card>
@@ -343,9 +301,7 @@ useEffect(() => {
                                                         <Typography variant="h3" color={colors.accentOlive} style={{fontWeight: '600', fontFamily: 'Poppins, sans-serif'}}>
                                                             {transactionCount}
                                                         </Typography>
-                                                        )
-                                                        }
-                                                        
+                                                        )}
                                                     </Stack>
                                                 </CardContent>
                                             </Card>
@@ -365,8 +321,7 @@ useEffect(() => {
                                                         <Typography variant="h3" color={colors.accentYellow} style={{fontWeight: '600', fontFamily: 'Poppins, sans-serif'}}>
                                                         {lowInStockCount}
                                                         </Typography>
-                                                    )
-                                                }
+                                                    )}
                                                 </Stack>
                                             </CardContent>
                                         </Card>
@@ -388,8 +343,7 @@ useEffect(() => {
                                                         <Typography variant="h3" color={colors.accentOlive} style={{fontWeight: '600', fontFamily: 'Poppins, sans-serif', color: colors.secondary}}>
                                                             ₱{totalPriceSum.toFixed(2)}
                                                         </Typography>
-                                                    )
-                                                }
+                                                    )}
                                                 </Stack>
                                             </CardContent>
                                         </Card>
@@ -408,9 +362,7 @@ useEffect(() => {
                                                         <Typography variant="h3" color={colors.accentOlive} style={{fontWeight: '600', fontFamily: 'Poppins, sans-serif', color: colors.secondary}}>
                                                             ₱{totalMonthlySales.toFixed(2)}
                                                         </Typography>
-                                                    )
-                                                }
-                                                    
+                                                    )}
                                                 </Stack>
                                             </CardContent>
                                         </Card>

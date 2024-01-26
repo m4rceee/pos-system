@@ -227,20 +227,32 @@ const handleAddCategory = async (e) => {
     };
 
 
-
+    const [inputSearchData, setInputSearchData] = useState('');
     const handleSearch = async (e) => {
         e.preventDefault();
         const searchCategory = e.target.searchCategory.value;
-
-        const querySnapshot = await getDocs(query(collection(firestore, 'Product_Category'), where('categoryName', '==', searchCategory)));
-
-        const filteredCategoryArray = querySnapshot.docs.map((doc) => ({
-            ...doc.data(), id: doc.id
-        }));
-
-        setCategory(filteredCategoryArray);
-  
+        setInputSearchData(searchCategory);
     };
+
+    useEffect(() => {
+        const fetchData = async () => {
+          try {
+            const q = query(collection(firestore, 'Product_Category'), where('categoryName', '==', inputSearchData));
+            const querySnapshot = await getDocs(q);
+    
+            const filteredCategoryArray = querySnapshot.docs.map((doc) => ({
+              ...doc.data(),
+              id: doc.id
+            }));
+    
+            setCategory(filteredCategoryArray);
+          } catch (error) {
+            console.error('Error fetching data:', error.message);
+          }
+        };
+    
+        fetchData();
+      }, []);
 
 
 
@@ -305,6 +317,7 @@ const handleAddCategory = async (e) => {
                                     </div>
                                     <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
                                     <TextField
+                                        onChange={handleSearch}
                                         variant="outlined"
                                         fullWidth
                                         placeholder='Search here...'

@@ -2,43 +2,14 @@ import React from 'react';
 import "./styles.css";
 
 const styles = {
-  container: {
-    width: '500px',
-    height: 'auto',
-    margin: 'auto',
-    fontFamily: 'Arial, sans-serif',
-    padding: '10px',
-  },
-  header: {
-    textAlign: 'center',
-    fontSize: '22px',
-    fontWeight: 'bold',
-    marginBottom: '8px',
-  },
-  offReceipt: {
-    textAlign: 'center',
-    fontSize: '18px',
-    fontWeight: 'bold',
-  },
-  content: {
-    fontSize: '13px',
-  },
-
-  table: {
-    width: '100%',
-  },
-
-  tableQty: {
-    width: '10%',
-  },
-  tableDesc: {
-    width: '65%',
-  },
-  tableAmount: {
-    width: '25%',
-    textAlign: 'right',
-  },
-
+  container: {width: '500px', height: 'auto', margin: 'auto', fontFamily: 'Arial, sans-serif', padding: '10px', },
+  header: {textAlign: 'center', fontSize: '22px', fontWeight: 'bold', marginBottom: '8px', },
+  offReceipt: {textAlign: 'center', fontSize: '18px', fontWeight: 'bold',},
+  content: {fontSize: '13px',},
+  table: {width: '100%',},
+  tableQty: {width: '10%',},
+  tableDesc: {width: '65%',},
+  tableAmount: {width: '25%', textAlign: 'right',},
 };
 
 const Receipt = React.forwardRef(({ transactionData }, ref) => {

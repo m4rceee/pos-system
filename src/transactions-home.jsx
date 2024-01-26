@@ -36,7 +36,8 @@ import {
     DialogActions,
     Button,
     InputAdornment,
-    TextField
+    TextField,
+    CircularProgress,
 } from '@mui/material';
 
 import {
@@ -45,9 +46,15 @@ import {
     PrintRounded,
     SearchRounded,
 } from '@mui/icons-material';
+import BlockIcon from '@mui/icons-material/Block';
+import CheckIcon from '@mui/icons-material/Check';
 
 import ButtonWidget from './widgets/button';
 import { BounceLoader } from 'react-spinners';
+import ContentTitleWidget from './widgets/content-title';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import "./toast.css";
 
 const colors = {
     primary: '#1D1D2C',
@@ -75,6 +82,9 @@ export default function TransactionsHome() {
 // GET PRODUCT CATEGORY FROM THE DATABSE   
     const [transaction, setTransactions] = useState([]);
 
+    const [isValidButtonDisabled, setValidButtonDisabled] = useState(true);
+    const [isVoidButtonDisabled, setVoidButtonDisabled] = useState(true);
+
     useEffect(() => {
         const getTransactionData = onSnapshot(collection(firestore, 'Transactions'), (snapshot) => {
             const transactionArray = snapshot.docs.map((doc) => ({
@@ -87,6 +97,15 @@ export default function TransactionsHome() {
     
             setTransactions(transactionArray);
             setLoading(false); // Set loading to false when data is loaded
+
+            const transactionStatusArray = transactionArray.map((transaction) => transaction.transactionStatus);
+                if(transactionStatusArray == "Valid"){
+                    setValidButtonDisabled(false);
+                    setVoidButtonDisabled(true);
+                }else{
+                    setValidButtonDisabled(true);
+                    setVoidButtonDisabled(false);
+                }
         });
     
         return () => getTransactionData();
@@ -139,10 +158,94 @@ export default function TransactionsHome() {
     setIsDialogOpen(true);
   };
 
-  const handleCloseDialog = () => {
-    setSelectedTransaction(null);
-    setIsDialogOpen(false);
-  };
+    const handleCloseDialog = () => {
+        setSelectedTransaction(null);
+        setIsDialogOpen(false);
+    };
+
+    const [editDialogOpen, setEditDialogOpen] = useState(false);
+    const [editingStatus, setEditingStatus] = useState(false);
+    const [selectedTransactionId, setSelectedTransactionId] = useState(null);
+
+    const [editValidDialogOpen, setEditValidDialogOpen] = useState(false);
+    const [editingValidStatus, setEditingValidStatus] = useState(false);
+    const [selectedValidTransactionId, setSelectedValidTransactionId] = useState(null);
+
+    const handleClose = () => {
+        setEditDialogOpen(false);
+        setEditValidDialogOpen(false);
+    };
+
+    
+    const handleVoidClick = (transactionId) => {
+        setSelectedTransactionId(transactionId);
+        setEditDialogOpen(true);
+    };
+    const handleEditDialogClose = () => {
+        setSelectedTransactionId(null);
+        setEditDialogOpen(false);
+        };
+    const handleUpdateTransaction = async () => {
+        setEditingStatus(true);
+    if (selectedTransactionId) {
+        try {
+        const categoryRef = doc(firestore, 'Transactions', selectedTransactionId);
+
+        await updateDoc(categoryRef, { transactionStatus: 'Void' });
+
+        toast.success('Transaction Status updated successfully!', {
+            position: 'top-right',
+            autoClose: 3000, // Auto close the notification after 3 seconds
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+          });
+
+        console.log('Transaction Status successfully updated!');
+        } catch (error) {
+        console.error('Error updating Transaction Status:', error);
+        } finally {
+            setEditingStatus(false);
+            handleEditDialogClose();
+        }
+    }};
+
+    // VALID TRANSACTION VALID
+
+    const handleValidClick = (transactionId) => {
+        setSelectedValidTransactionId(transactionId);
+        setEditValidDialogOpen(true);
+    };
+    const handleEditDialogCloseValid = () => {
+        setSelectedValidTransactionId(null);
+        setEditValidDialogOpen(false);
+    };
+    const handleUpdateValidTransaction = async () => {
+        setEditingValidStatus(true);
+    if (selectedValidTransactionId) {
+        try {
+        const categoryRef = doc(firestore, 'Transactions', selectedValidTransactionId);
+
+        await updateDoc(categoryRef, { transactionStatus: 'Valid' });
+
+        toast.success('Transaction Status updated successfully!', {
+            position: 'top-right',
+            autoClose: 3000, // Auto close the notification after 3 seconds
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+          });
+
+        console.log('Transaction Status successfully updated!');
+        } catch (error) {
+        console.error('Error updating Transaction Status:', error);
+        } finally {
+            setEditingValidStatus(false);
+            handleEditDialogCloseValid();
+        }
+    }};
 
   const handlePrint = () => {
     const transactionData = selectedTransaction;
@@ -160,55 +263,20 @@ export default function TransactionsHome() {
                     <meta name="viewport" content="width=device-width, initial-scale=1.0">
                     <link rel="stylesheet" href="styles.css">
                     <style>
-                        body {
-                            font-family: Arial, sans-serif;
-                            margin: 0;
-                            padding: 0;
-                        }
-                        .container {
-                            width: auto;
-                            margin: auto;
-                            box-sizing: border-box;
-                            text-align: center;
-                        }
-                        .header {
-                            text-align: center;
-                            font-size: 14px;
-                            font-weight: bold;
-                            margin-bottom: 8px;
-                        }
-                        .offReceipt {
-                            text-align: center;
-                            font-size: 12px;
-                            font-weight: bold;
-                        }
-                        .content {
-                            font-size: 9px;
-                        }
-                        .receiptTable {
-                            width: 100%;
-                        }
-                        .tableQty {
-                            width: 10%;
-                        }
-                        .tableDesc {
-                            width: 65%;
-                        }
-                        .tableAmount {
-                            width: 25%;
-                            text-align: right;
-                        }
-                        .receiptDivider {
-                            display: block;
-                            border-bottom: 1px solid #000;
-                            margin: 5px 0;
-                        }
-                        .last {
-                            margin-bottom: 0;
-                        }
-                        .receiptDetails {
-                            font-size: 12px;
-                        }
+                        body {font-family: Arial, sans-serif; margin: 0; padding: 0;}
+                        .container {width: auto; margin: auto; box-sizing: border-box;}
+                        .header {text-align: center; font-size: 14px; font-weight: bold; margin-bottom: 8px;}
+                        .offReceipt {text-align: center; font-size: 12px; font-weight: bold;}
+                        .content {font-size: 9px;}
+                        .receiptTable {width: 100%;}
+                        .receiptTable td {font-size: 14px;}
+                        .tableQty {width: 10%;}
+                        .tableDesc {width: 65%;}
+                        .tableAmount {width: 25%; text-align: right;}
+                        .receiptDivider {display: block; border-bottom: 1px solid #000; margin: 5px 0; }
+                        .last {margin-bottom: 0;}
+                        .receiptDetails {font-size: 12px;}
+                        .receiptTable.transaction p {margin: 5px 0;}
                     </style>
                 </head>
                 <body>
@@ -241,16 +309,22 @@ export default function TransactionsHome() {
                         <div class="receiptDetails">
                             <table class="receiptTable transaction">
                                 <tr>
+                                    <td></td>
+                                    <td></td>
                                     <td><p>Amount Due:</p></td>
-                                    <td><p>₱${transactionData.totalAmount.toFixed(2)}</p></td>
+                                    <td>₱${transactionData.totalAmount.toFixed(2)}</td>
                                 </tr>
                                 <tr>
+                                    <td></td>
+                                    <td></td>
                                     <td><p>Cash:</p></td>
-                                    <td><p>₱${parseInt(transactionData.totalCash, 10).toFixed(2)}</p></td>
+                                    <td>₱${parseInt(transactionData.totalCash, 10).toFixed(2)}</td>
                                 </tr>
                                 <tr>
+                                    <td></td>
+                                    <td></td>
                                     <td><p>Change:</p></td>
-                                    <td><p>₱${transactionData.totalChange.toFixed(2)}</p></td>
+                                    <td>₱${transactionData.totalChange.toFixed(2)}</td>
                                 </tr>
                             </table>
                             <span class="receiptDivider"></span>
@@ -272,8 +346,9 @@ export default function TransactionsHome() {
 
   const columns = [
     { field: 'dateTransaction', headerName: 'Date & Time', width: 250 },
-    { field: 'referenceId', headerName: 'Reference', width: 400 },
-    { field: 'totalAmount', headerName: 'Amount', width: 250 },
+    { field: 'referenceId', headerName: 'Reference', width: 350 },
+    { field: 'totalAmount', headerName: 'Amount', width: 200 },
+    { field: 'transactionStatus', headerName: 'Status', width: 250 },
     {
       field: 'transactionActions',
       headerName: 'Actions',
@@ -284,6 +359,12 @@ export default function TransactionsHome() {
       sortable: false,
       renderCell: (params) => (
         <>
+          <IconButton onClick={() => handleValidClick((params.row.id))} disabled={isValidButtonDisabled}>
+            <CheckIcon sx={{ color: colors.primary }} />
+          </IconButton>
+          <IconButton onClick={() => handleVoidClick((params.row.id))} disabled={isVoidButtonDisabled}>
+            <BlockIcon sx={{ color: colors.primary }} />
+          </IconButton>
           <IconButton onClick={() => handleSearchClick(params.row)}>
             <PrintRounded sx={{ color: colors.primary }} />
           </IconButton>
@@ -454,9 +535,30 @@ export default function TransactionsHome() {
                                         <ButtonWidget onClick={handlePrint} label={'Print this out!'} />
                                     </DialogActions>
                                 </Dialog>
+
+                                <Dialog open={editDialogOpen} onClose={handleClose}>
+                                    <DialogTitle sx={{fontFamily: 'Poppins, sans-serif'}}>Void this Transaction</DialogTitle>
+                                    <DialogContent sx={{width: '500px'}}>
+                                        <ContentTitleWidget label={"Are you sure you want to Void this Transaction?"} />
+                                        <DialogActions sx={{marginTop: '20px', marginRight: '-8px'}}>
+                                            <ButtonWidget onClick={handleClose} label={"Cancel"} />
+                                            <ButtonWidget onClick={handleUpdateTransaction} label={editingStatus ? <CircularProgress size={23} color="inherit" /> : "Void"} />
+                                        </DialogActions>
+                                        </DialogContent>
+                                </Dialog>
+
+                                <Dialog open={editValidDialogOpen} onClose={handleClose}>
+                                    <DialogTitle sx={{fontFamily: 'Poppins, sans-serif'}}>Valid this Transaction</DialogTitle>
+                                    <DialogContent sx={{width: '500px'}}>
+                                        <ContentTitleWidget label={"Are you sure you want to Valid this Transaction?"} />
+                                        <DialogActions sx={{marginTop: '20px', marginRight: '-8px'}}>
+                                            <ButtonWidget onClick={handleClose} label={"Cancel"} />
+                                            <ButtonWidget onClick={handleUpdateValidTransaction} label={editingValidStatus ? <CircularProgress size={23} color="inherit" /> : "Valid"} />
+                                        </DialogActions>
+                                        </DialogContent>
+                                </Dialog>
                             </>
-                            )
-                        }
+                            )}
                         </CardContent> 
                         </Card>
                     </Container>
