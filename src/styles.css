@@ -34,8 +34,9 @@ body {
 }
 
 .receiptTable p {text-align: right;}
+button.Mui-disabled{color:#8e8d8b !important;}
 
-
+.noborderbottom{border-bottom:0 !important;}
 
 .receiptDivider {
     width: 100%;

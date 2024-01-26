@@ -51,6 +51,7 @@ export default function PosPage() {
     const [currentDate, setCurrentDate] = useState(new Date());
     const [processingClick, setProcessingClick] = useState(false);
     const [isButtonDisabled, setButtonDisabled] = useState(false);
+    const [cancelButton, setcancelButtonDisabled] = useState(true);
     const [addingProduct, setAddingProduct] = useState(false);
 
     const handleDeleteItem = async (index) => {
@@ -118,6 +119,10 @@ export default function PosPage() {
                 const newItem = { ...item, itemQuantity: 1 };
                 setTableItems([...tableItems, newItem]);
             }
+
+            //enable cancel button
+            setcancelButtonDisabled(false);
+
         }else {
             console.log('Product quantity is already at the minimum!');
         }
@@ -191,8 +196,6 @@ export default function PosPage() {
                   console.error(`Error updating product ${item.itemName} quantity:`, error.message);
                 }
               }
-
-
 
             navigate('/pos');
             window.location.reload();
@@ -512,7 +515,7 @@ const generateReceiptHTML = (transaction) => {
                                             <BounceLoader color={colors.secondary} speedMultiplier={2}  />
                                         </div>
                                         <div>
-                                            <Typography variant="body1" sx={{fontFamily: 'Poppins, sans-serif'}}> Loading Contents... </Typography>
+                                            {/*<Typography variant="body1" sx={{fontFamily: 'Poppins, sans-serif'}}> Loading Contents... </Typography>*/}
                                         </div>
                                     </div>
                                 ) : (
@@ -609,6 +612,20 @@ const generateReceiptHTML = (transaction) => {
                                                             <StyledTableCell align="right"><DeleteRounded sx={{marginRight: '5px', fontSize: '1.3rem'}}/></StyledTableCell>
                                                         </TableRow>
                                                     </TableHead>
+                                                   
+                                                    {loading ? (
+                                                        <TableBody>
+                                                            <TableRow>
+                                                            <StyledTableCell align="center" colSpan={4} className="noborderbottom">
+                                                        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', margin: '30% auto', width: '100%', color: colors.secondary }}>
+                                                            <div style={{marginBottom: '15px'}}>
+                                                                <BounceLoader color={colors.secondary} speedMultiplier={2}  />
+                                                            </div>
+                                                        </div>
+                                                        </StyledTableCell>
+                                                        </TableRow>
+                                                        </TableBody>
+                                                    ) : (
                                                     <TableBody>
                                                         {tableItems.map((tableItem, index) => (
                                                             <TableRow key={index}>
@@ -623,6 +640,7 @@ const generateReceiptHTML = (transaction) => {
                                                             </TableRow>
                                                         ))}
                                                     </TableBody>
+                                                    )}
                                                 </Table>
                                             </TableContainer>
                                         </div>
@@ -640,6 +658,7 @@ const generateReceiptHTML = (transaction) => {
                                                     variant="contained"
                                                     fullWidth
                                                     onClick={() => handleCancelBill()}
+                                                    disabled={cancelButton}
                                                     sx={{
                                                     backgroundColor: colors.accentRed,
                                                     borderTopLeftRadius: '0px',

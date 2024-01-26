@@ -25,13 +25,13 @@ const colors = {
 const HeaderTitleWidget = ({ label }) => {
   return (
     <Grid container style={{display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-        <Grid item xs={4} sx={{ alignItems: 'center' }}>
+        <Grid item xs={8} sx={{ alignItems: 'center'}}>
             <Typography sx={{ fontFamily: 'Poppins, sans-serif', fontWeight: '600', fontSize: '1.5rem', color: colors.secondary }}>
                 {label}
             </Typography>
             <DateTimeWidget/>
         </Grid>
-        <Grid item xs={8} sx={{ alignItems: 'center' }}>
+        <Grid item xs={4} sx={{ alignItems: 'center' }}>
             <Header />
         </Grid>
     </Grid>

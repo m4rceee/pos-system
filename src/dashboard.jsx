@@ -51,11 +51,18 @@ const customTheme = createTheme({
   const pData = [3000, 25000, 2000, 1000, 10000];
   const vData = [6000, 5000, 0, 6000, 8000];
 const xLabels = [
-  'January',
-  'February',
-  'March',
-  'April',
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
   'May',
+  'Jun',
+  'Jul',
+  'Aug',
+  'Sept',
+  'Oct',
+  'Nov',
+  'Dec',
 ];
 
   const colors = {
@@ -75,6 +82,14 @@ const xLabels = [
   };
 
 export default function DashboardHome() {
+
+    const currentDate = new Date();
+    const monthOptions = { month: 'long' };
+
+    const currentMonthName = currentDate.toLocaleString('en-US', monthOptions);
+
+    // Get current year
+    const currentYear = currentDate.getFullYear();
 
     const navigate = useNavigate();
 
@@ -173,7 +188,7 @@ useEffect(() => {
 
 
 const [transactions, setTransactions] = useState([]);
-  const [totalPriceSum, setTotalPriceSum] = useState(0);
+const [totalPriceSum, setTotalPriceSum] = useState(0);
 
   useEffect(() => {
     const getTransactionData = onSnapshot(collection(firestore, 'Transactions'), (snapshot) => {
@@ -202,6 +217,45 @@ const [transactions, setTransactions] = useState([]);
 
     return () => getTransactionData();
   }, []);
+
+
+
+  const [totalMonthlySales, setTotalMonthlySales] = useState(0);
+
+  useEffect(() => {
+    const getTransactionData = onSnapshot(collection(firestore, 'Transactions'), (snapshot) => {
+      const transactionArray = snapshot.docs.map((doc) => ({
+        ...doc.data(),
+        id: doc.id,
+      }));
+
+      // Assuming dateTransaction is a string
+      transactionArray.sort((a, b) => new Date(b.dateTransaction) - new Date(a.dateTransaction));
+
+      setTransactions(transactionArray);
+      setLoading(false); // Set loading to false when data is loaded
+
+      // Calculate the sum of itemPrice for the current day
+      const targetDate = new Date(); // You can replace this with the specific date you're interested in
+      targetDate.setDate(1); // Set the day to the first day of the month
+      const isSameMonth = (date1, date2) => date1.getMonth() === date2.getMonth() && date1.getFullYear() === date2.getFullYear();
+
+      const totalPriceSum = transactionArray
+    .filter((transaction) => isSameMonth(new Date(transaction.dateTransaction), targetDate))
+    .reduce((sum, transaction) => {
+        // Assuming itemPrice is a number
+        return sum + parseFloat(transaction.productBreakdown.reduce((itemSum, item) => itemSum + parseFloat(item.itemPrice * item.itemQuantity), 0));
+    }, 0);
+
+        setTotalMonthlySales(totalPriceSum);
+    });
+
+    return () => getTransactionData();
+  }, []);
+
+
+
+
 
   const handleProducts = () => {
     navigate('/product-home');
@@ -350,13 +404,13 @@ const [transactions, setTransactions] = useState([]);
                                                 <DateRangeRounded sx={{ fontSize: '3.5rem', color: '#515178' }} />
                                                 <Stack sx={{ paddingLeft: '15px', flex: 1 }}>
                                                     <Typography style={{ fontSize: '1rem', fontWeight: 'normal', color: colors.secondary, fontFamily: 'Poppins, sans-serif' }}>
-                                                    Weekly Sales
+                                                    {currentMonthName + " " + currentYear} Monthly Sales
                                                     </Typography>
                                                     {loading ? (
                                                         <ClipLoader color={colors.accentYellow} size={45} />
                                                     ) : (
                                                         <Typography variant="h3" color={colors.accentOlive} style={{fontWeight: '600', fontFamily: 'Poppins, sans-serif', color: colors.secondary}}>
-                                                            ₱{totalPriceSum.toFixed(2)}
+                                                            ₱{totalMonthlySales.toFixed(2)}
                                                         </Typography>
                                                     )
                                                 }
@@ -369,9 +423,31 @@ const [transactions, setTransactions] = useState([]);
                             </CardContent>
                         </Card>
 
-                        <Grid className='pt-5' container spacing={2}>
-                            
-                            <Grid item xs={12}>
+                        <Grid container spacing={2} style={{ marginTop: 1, display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                        
+                            <Grid item xs={7}>
+                                <ThemeProvider theme={customTheme}> 
+                                    <Card style={{backgroundColor: '#27273b', boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)', marginBottom: '30px'}}>
+                                        <CardContent style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', padding: '1.5rem' }}>
+                                            <Stack>
+                                                <Typography sx={{ paddingBottom: '10px', color: colors.secondary, fontSize: '1.5rem', fontWeight: '600', textAlign: 'left' }}>Sales Chart</Typography>
+                                                <LineChart
+                                                    xAxis={[{ scaleType: 'point', data: xLabels }]}
+                                                    series={[
+                                                        { data: pData, label: 'Year 1', color: '#E40C2B' },
+                                                        { data: uData, label: 'Year 2', color: '#3CBCC3' },
+                                                        { data: vData, label: 'Year 3', color: '#EBA63F' },
+                                                    ]}
+                                                    width={800}
+                                                    height={300}
+                                                />
+                                            </Stack>
+                                        </CardContent>
+                                    </Card>
+                                </ThemeProvider>
+                            </Grid>
+
+                            <Grid item xs={5}>
                                 <ThemeProvider theme={customTheme}>
                                     <Card style={{backgroundColor: '#27273b', boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)', marginBottom: '30px'}}>
                                             <Stack style={{ display: 'flex', flexDirection: 'column', alignItems: 'left', justifyContent: 'center', height: '100%', padding: '1.5rem' }}>
@@ -386,7 +462,7 @@ const [transactions, setTransactions] = useState([]);
                                                         cornerRadius: 5,
                                                         startAngle: -90,
                                                         endAngle: 180,
-                                                        cx: 500,
+                                                        cx: 190,
                                                         cy: 140,
                                                         },
                                                     ]}
@@ -397,6 +473,8 @@ const [transactions, setTransactions] = useState([]);
                                 </ThemeProvider>
                             </Grid>
                         </Grid>
+
+                        
                 </Container>
                 </div>
                 

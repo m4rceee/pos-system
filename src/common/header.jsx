@@ -23,6 +23,7 @@ import {
     DialogTitle,
     DialogContentText,
 } from "@mui/material";
+import ButtonWidget from '../widgets/button';
 
 const colors = {
     primary: '#1D1D2C',
@@ -56,28 +57,23 @@ export default function Header() {
     return(
 
         <>
-                <Stack direction="row" spacing={2} >
-                    
-                    <IconButton onClick={handleLogout}>
-                        <LogoutRounded  style={{ color: colors.secondary, fontSize: '2rem', marginLeft: '730px' }} />
-                    </IconButton>
-                </Stack>
-                <Dialog open={open} onClose={() => handleClose(false)}>
-                    <DialogTitle sx={{fontFamily: 'Poppins, sans-serif'}}>Confirm Log Out</DialogTitle>
-                        <DialogContent>
-                            <DialogContentText sx={{fontFamily: 'Poppins, sans-serif'}}>
-                                Are you sure you want to logout?
-                            </DialogContentText>
-                        </DialogContent>
-                    <DialogActions>
-                        <Button onClick={() => handleClose(false)} color="primary" sx={{fontFamily: 'Poppins, sans-serif'}}>
-                            No
-                        </Button>
-                        <Button onClick={() => handleClose(true)} color="primary" sx={{fontFamily: 'Poppins, sans-serif'}}>
-                            Yes
-                        </Button>
-                    </DialogActions>
-                </Dialog>
+            <Stack direction="row" justifyContent={"right"} spacing={2} >
+                <IconButton onClick={handleLogout}>
+                    <LogoutRounded  style={{ color: colors.secondary, fontSize: '2rem'}} />
+                </IconButton>
+            </Stack>
+            <Dialog open={open} onClose={() => handleClose(false)}>
+                <DialogTitle sx={{fontFamily: 'Poppins, sans-serif'}}>Confirm Log Out</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText sx={{fontFamily: 'Poppins, sans-serif'}}>
+                            Are you sure you want to logout?
+                        </DialogContentText>
+                    </DialogContent>
+                <DialogActions>
+                    <ButtonWidget onClick={() => handleClose(false)} label={"No"}/>
+                    <ButtonWidget onClick={() => handleClose(true)} label={"Yes"}/>
+                </DialogActions>
+            </Dialog>
         </>
         
     );
