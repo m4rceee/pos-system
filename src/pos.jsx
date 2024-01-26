@@ -13,8 +13,8 @@ import { firestore } from './firebaseConfig';
 import { collection, onSnapshot, doc, getDoc, updateDoc, addDoc } from '@firebase/firestore';
 
 import { BounceLoader } from 'react-spinners';
-import { Container, Grid, Typography, Card, CardContent, Button, CardActionArea, CircularProgress, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Dialog, DialogActions, DialogContent, DialogTitle, DialogContentText, } from '@mui/material';
-import { DeleteRounded } from '@mui/icons-material';
+import { InputAdornment, TextField, Container, Grid, Typography, Card, CardContent, Button, CardActionArea, CircularProgress, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Dialog, DialogActions, DialogContent, DialogTitle, DialogContentText, } from '@mui/material';
+import { DeleteRounded, SearchRounded } from '@mui/icons-material';
 
 import HeaderTitleWidget from './widgets/header-title';
 import TextFieldInputNumberPaymentWidget from './widgets/textfield-input-number';
@@ -419,6 +419,10 @@ const generateReceiptHTML = (transaction) => {
                             <span class="receiptDivider"></span>
                             <p>Transaction Date: ${dateTransaction}</p>
                             <p>Reference ID: ${referenceId}</p>
+                            <p>*********************************************************</p>
+                            <p>*********************************************************</p>
+                            <p>*********************************************************</p>
+                            <p>*********************************************************</p>
                         </div>
                     </div>
                 </body>
@@ -546,6 +550,47 @@ const generateReceiptHTML = (transaction) => {
                                                         <Tab key={category.id} label={category.categoryName} value={category.categoryName} />
                                                     ))}
                                                 </TabList>
+                                                <TextField
+                                                    variant="outlined"
+                                                    fullWidth
+                                                    placeholder='Search here...'
+                                                    InputProps={{
+                                                        startAdornment: (
+                                                        <InputAdornment position="start">
+                                                            <SearchRounded sx={{fontSize: '2rem', color: colors.primary}}/>
+                                                        </InputAdornment>
+                                                        ),
+                                                    }}
+                                                    sx={{
+                                                        
+                                                        '& .MuiOutlinedInput-root': {
+                                                            height: '35px',
+                                                            margin: '15px',
+                                                            width: '745px',
+                                                            backgroundColor: colors.secondary,
+                                                            boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)',
+                                                            '& fieldset': {
+                                                                border: 'none',
+                                                            },
+                                                            '&.Mui-focused fieldset': {
+                                                                border: 'none',
+                                                            },
+                                                            '&:hover': {
+                                                                cursor: 'text'
+                                                            },
+                                                        },
+                                                        '& input': {
+                                                            fontFamily: 'Poppins, sans-serif',
+                                                            fontWeight: '300',
+                                                            color: colors.fontColor,
+                                                        },
+                                                        '& input::placeholder': {
+                                                            fontFamily: 'Poppins, sans-serif',
+                                                            fontWeight: '300',
+                                                            color: 'gray',
+                                                        }
+                                                    }}
+                                                    />
                                             </Box>
                                             {getCategories.map((category) => (
                                                 <TabPanel key={category.id} value={category.categoryName}>

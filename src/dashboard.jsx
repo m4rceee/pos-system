@@ -12,7 +12,6 @@ import { format, isSameDay, parseISO } from 'date-fns';
 
 import { BarChart } from '@mui/x-charts/BarChart';
 import { PieChart } from '@mui/x-charts/PieChart';
-import { LineChart } from '@mui/x-charts/LineChart';
 
 import { 
     Grid, 
@@ -47,23 +46,21 @@ const customTheme = createTheme({
     },
   });
 
-  const uData = [5000, 8000, 10000, 5000, 16000];
-  const pData = [3000, 25000, 2000, 1000, 10000];
-  const vData = [6000, 5000, 0, 6000, 8000];
-const xLabels = [
-  'Jan',
-  'Feb',
-  'Mar',
-  'Apr',
-  'May',
-  'Jun',
-  'Jul',
-  'Aug',
-  'Sept',
-  'Oct',
-  'Nov',
-  'Dec',
-];
+  const pData = [2400, 1398, 9800, 3908, 4800, 3800, 4300, 2400, 1398, 9800, 3908, 4800];
+  const xLabels = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec'
+  ];
 
   const colors = {
     primary: '#1D1D2C',
@@ -190,7 +187,7 @@ useEffect(() => {
 const [transactions, setTransactions] = useState([]);
 const [totalPriceSum, setTotalPriceSum] = useState(0);
 
-  useEffect(() => {
+useEffect(() => {
     const getTransactionData = onSnapshot(collection(firestore, 'Transactions'), (snapshot) => {
       const transactionArray = snapshot.docs.map((doc) => ({
         ...doc.data(),
@@ -205,13 +202,15 @@ const [totalPriceSum, setTotalPriceSum] = useState(0);
 
       // Calculate the sum of itemPrice for the current day
       const targetDate = new Date(); // You can replace this with the specific date you're interested in
+      targetDate.setDate(1); // Set the day to the first day of the month
+
       const totalPriceSum = transactionArray
         .filter((transaction) => isSameDay(new Date(transaction.dateTransaction), targetDate))
         .reduce((sum, transaction) => {
           // Assuming itemPrice is a number
           return sum + parseFloat(transaction.productBreakdown.reduce((itemSum, item) => itemSum + parseFloat(item.itemPrice * item.itemQuantity), 0));
         }, 0);
-
+        
       setTotalPriceSum(totalPriceSum);
     });
 
@@ -252,9 +251,6 @@ const [totalPriceSum, setTotalPriceSum] = useState(0);
 
     return () => getTransactionData();
   }, []);
-
-
-
 
 
   const handleProducts = () => {
@@ -384,7 +380,7 @@ const [totalPriceSum, setTotalPriceSum] = useState(0);
                                                 <TodayRounded sx={{ fontSize: '3.5rem', color: '#515178' }} />
                                                 <Stack sx={{ paddingLeft: '15px', flex: 1 }}>
                                                     <Typography  style={{ fontSize: '1rem', fontWeight: 'normal', color: colors.secondary, fontFamily: 'Poppins, sans-serif' }}>
-                                                    Daily Sales
+                                                    Today's Sales
                                                     </Typography>
                                                     {loading ? (
                                                         <ClipLoader color={colors.accentYellow} size={45} />
@@ -404,7 +400,7 @@ const [totalPriceSum, setTotalPriceSum] = useState(0);
                                                 <DateRangeRounded sx={{ fontSize: '3.5rem', color: '#515178' }} />
                                                 <Stack sx={{ paddingLeft: '15px', flex: 1 }}>
                                                     <Typography style={{ fontSize: '1rem', fontWeight: 'normal', color: colors.secondary, fontFamily: 'Poppins, sans-serif' }}>
-                                                    {currentMonthName + " " + currentYear} Monthly Sales
+                                                    {currentMonthName + " " + currentYear} Sales
                                                     </Typography>
                                                     {loading ? (
                                                         <ClipLoader color={colors.accentYellow} size={45} />
@@ -423,25 +419,23 @@ const [totalPriceSum, setTotalPriceSum] = useState(0);
                             </CardContent>
                         </Card>
 
-                        <Grid container spacing={2} style={{ marginTop: 1, display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                        <Grid container spacing={2} style={{ marginTop: 1, display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
                         
                             <Grid item xs={7}>
                                 <ThemeProvider theme={customTheme}> 
-                                    <Card style={{backgroundColor: '#27273b', boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)', marginBottom: '30px'}}>
-                                        <CardContent style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', padding: '1.5rem' }}>
-                                            <Stack>
-                                                <Typography sx={{ paddingBottom: '10px', color: colors.secondary, fontSize: '1.5rem', fontWeight: '600', textAlign: 'left' }}>Sales Chart</Typography>
-                                                <LineChart
-                                                    xAxis={[{ scaleType: 'point', data: xLabels }]}
-                                                    series={[
-                                                        { data: pData, label: 'Year 1', color: '#E40C2B' },
-                                                        { data: uData, label: 'Year 2', color: '#3CBCC3' },
-                                                        { data: vData, label: 'Year 3', color: '#EBA63F' },
-                                                    ]}
-                                                    width={800}
-                                                    height={300}
-                                                />
-                                            </Stack>
+                                    <Card style={{backgroundColor: '#27273b', boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)', marginBottom: '30px', height: 'auto'}}>
+                                        <CardContent style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+                                                <Stack>
+                                                    <Typography sx={{ marginTop: '15px', paddingBottom: '10px', color: colors.secondary, fontSize: '1.5rem', fontWeight: '600', textAlign: 'left' }}>Sales Chart</Typography>
+                                                            <BarChart
+                                                            width={600}
+                                                            height={300}
+                                                            series={[
+                                                                { data: [totalMonthlySales], label: 'Generated Sales', id: 'pvId', color: colors.accentOlive },
+                                                            ]}
+                                                            xAxis={[{ data: xLabels, scaleType: 'band' }]}
+                                                            />
+                                                </Stack>
                                         </CardContent>
                                     </Card>
                                 </ThemeProvider>
@@ -449,9 +443,9 @@ const [totalPriceSum, setTotalPriceSum] = useState(0);
 
                             <Grid item xs={5}>
                                 <ThemeProvider theme={customTheme}>
-                                    <Card style={{backgroundColor: '#27273b', boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)', marginBottom: '30px'}}>
-                                            <Stack style={{ display: 'flex', flexDirection: 'column', alignItems: 'left', justifyContent: 'center', height: '100%', padding: '1.5rem' }}>
-                                                <Typography style={{ paddingBottom: '10px', color: colors.secondary, fontSize: '1.5rem', fontWeight: '600', textAlign: 'left' }}>Top Products</Typography>
+                                    <Card style={{backgroundColor: '#27273b', boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)', marginBottom: '30px', height: 'auto'}}>
+                                        <CardContent style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', height: '100%' }}>
+                                                <Typography style={{ marginLeft: '15px', marginTop: '15px', paddingBottom: '10px', color: colors.secondary, fontSize: '1.5rem', fontWeight: '600', textAlign: 'left' }}>Top Products</Typography>
                                                 <PieChart
                                                     series={[
                                                         {
@@ -462,13 +456,13 @@ const [totalPriceSum, setTotalPriceSum] = useState(0);
                                                         cornerRadius: 5,
                                                         startAngle: -90,
                                                         endAngle: 180,
-                                                        cx: 190,
+                                                        cx: 120,
                                                         cy: 140,
                                                         },
                                                     ]}
                                                     height={300}
                                                 />
-                                            </Stack>
+                                        </CardContent>
                                     </Card>
                                 </ThemeProvider>
                             </Grid>

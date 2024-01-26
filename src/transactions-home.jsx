@@ -34,7 +34,9 @@ import {
     DialogTitle,
     DialogContent,
     DialogActions,
-    Button
+    Button,
+    InputAdornment,
+    TextField
 } from '@mui/material';
 
 import {
@@ -343,12 +345,12 @@ export default function TransactionsHome() {
                                         <Header />
                                     </Grid>
                         </Grid>
-                        <Card className='mt-8' style={{backgroundColor: '#27273b', height: '82vh', boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)'}}>
+                        <Card className='mt-8' style={{backgroundColor: '#27273b', boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)'}}>
                             <CardContent style={{ padding: '20px'}}>
                             {loading ? (
                                 // Render loading indicator while loading
                                 <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', margin: 'auto', width: '50%', color: colors.secondary }}>
-                                    <div style={{marginTop: '30px', marginBottom: '15px'}}>
+                                    <div style={{marginTop: '25px', marginBottom: '15px'}}>
                                         <BounceLoader color={colors.secondary} speedMultiplier={2}  />
                                     </div>
                                     <div>
@@ -358,9 +360,54 @@ export default function TransactionsHome() {
                             ) : (
                                 <>
                                 <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
-                                    <Typography variant='h5' sx={{ fontFamily: 'Poppins, sans-serif', fontWeight: '300', color: colors.secondary }}>
-                                        Please review the transactions report below.
-                                    </Typography>
+                                    <div>
+                                        <Typography variant='h5' sx={{ fontFamily: 'Poppins, sans-serif', fontWeight: '300', color: colors.secondary }}>
+                                            Please review the transactions report below.
+                                        </Typography>
+                                    </div>
+                                    <div>
+                                    <TextField
+                                        variant="outlined"
+                                        fullWidth
+                                        placeholder='Search here...'
+                                        InputProps={{
+                                            startAdornment: (
+                                            <InputAdornment position="start">
+                                                <SearchRounded sx={{fontSize: '2rem', color: colors.primary}}/>
+                                            </InputAdornment>
+                                            ),
+                                        }}
+                                        sx={{
+                                            
+                                            '& .MuiOutlinedInput-root': {
+                                                height: '45px',
+                                                width: '500px',
+                                                backgroundColor: colors.secondary,
+                                                boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)',
+                                                '& fieldset': {
+                                                    border: 'none',
+                                                },
+                                                '&.Mui-focused fieldset': {
+                                                    border: 'none',
+                                                },
+                                                '&:hover': {
+                                                    cursor: 'text'
+                                                },
+                                            },
+                                            '& input': {
+                                                fontFamily: 'Poppins, sans-serif',
+                                                fontWeight: '300',
+                                                color: colors.fontColor,
+                                            },
+                                            '& input::placeholder': {
+                                                fontFamily: 'Poppins, sans-serif',
+                                                fontWeight: '300',
+                                                color: 'gray',
+                                            }
+                                        }}
+                                        />
+                                    </div>
+                                    
                                 </div>
                                 <Grid container spacing={2} style={{ paddingTop: '15px', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
                                     <Grid item xs={12}>

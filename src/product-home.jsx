@@ -12,8 +12,8 @@ import ContentTitleWidget from './widgets/content-title'
 import { firestore } from './firebaseConfig';
 import { where, limit, query, orderBy, addDoc, getDoc, getDocs, collection, doc, onSnapshot, updateDoc, deleteDoc } from '@firebase/firestore';
 
-import {AddRounded, EditRounded, DeleteRounded, PrintRounded,} from "@mui/icons-material";
-import { Grid, Container, Typography, IconButton, TextField, Dialog, DialogActions, DialogContent, DialogTitle, DialogContentText, Card, CardContent, Select, MenuItem, CircularProgress} from '@mui/material';
+import {AddRounded, EditRounded, DeleteRounded, PrintRounded, SearchRounded} from "@mui/icons-material";
+import { InputAdornment, Grid, Container, Typography, IconButton, TextField, Dialog, DialogActions, DialogContent, DialogTitle, DialogContentText, Card, CardContent, Select, MenuItem, CircularProgress} from '@mui/material';
 import ButtonWidget from './widgets/button';
 import TextFieldInputWidget from './widgets/textfield-input';
 import TextFieldInputNumberWidget from './widgets/textfield-input-number';
@@ -393,10 +393,51 @@ const handleAddProduct = async (e) => {
                                     <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
                                     <div>
                                         <Typography variant='h5' sx={{ fontFamily: 'Poppins, sans-serif', fontWeight: '300', color: colors.secondary }}>
-                                            Please use the table below to navigate or filter the results.
+                                                Please use the table below to navigate or filter the results.
                                         </Typography>
                                     </div>
-                                    <div sx={{ textAlign: 'center', marginTop: '16px' }}>
+                                    <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
+                                    <TextField
+                                        variant="outlined"
+                                        fullWidth
+                                        placeholder='Search here...'
+                                        InputProps={{
+                                            startAdornment: (
+                                            <InputAdornment position="start">
+                                                <SearchRounded sx={{fontSize: '2rem', color: colors.primary}}/>
+                                            </InputAdornment>
+                                            ),
+                                        }}
+                                        sx={{
+                                            
+                                            '& .MuiOutlinedInput-root': {
+                                                height: '45px',
+                                                width: '300px',
+                                                marginRight: '15px',
+                                                backgroundColor: colors.secondary,
+                                                boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)',
+                                                '& fieldset': {
+                                                    border: 'none',
+                                                },
+                                                '&.Mui-focused fieldset': {
+                                                    border: 'none',
+                                                },
+                                                '&:hover': {
+                                                    cursor: 'text'
+                                                },
+                                            },
+                                            '& input': {
+                                                fontFamily: 'Poppins, sans-serif',
+                                                fontWeight: '300',
+                                                color: colors.fontColor,
+                                            },
+                                            '& input::placeholder': {
+                                                fontFamily: 'Poppins, sans-serif',
+                                                fontWeight: '300',
+                                                color: 'gray',
+                                            }
+                                        }}
+                                        />
                                         <IconButton 
                                             onClick={handleClickOpen}
                                             sx={{
@@ -418,6 +459,7 @@ const handleAddProduct = async (e) => {
                                             }} 
                                             />
                                         </IconButton>
+                                    </div>
                                         
 
 
@@ -548,7 +590,6 @@ const handleAddProduct = async (e) => {
                                         </DialogActions>
                                     </Dialog>
                                     </div>
-                                </div>
 
 
 {/*

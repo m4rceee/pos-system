@@ -9,8 +9,10 @@ import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import { firestore } from './firebaseConfig';
 import { getDocs, collection } from 'firebase/firestore';
 
-import { Grid, Container, Typography, Stack, Card, CardContent, Breadcrumbs, Link,} from '@mui/material';
+import { InputAdornment, TextField, Grid, Container, Typography, Stack, Card, CardContent, Breadcrumbs, Link,} from '@mui/material';
 import {NavigateNextRounded,} from '@mui/icons-material';
+
+import { SearchRounded } from '@mui/icons-material';
 
 const colors = {
     primary: '#1D1D2C',
@@ -166,9 +168,53 @@ export default function ProductReport() {
                         <Card className='mt-8' style={{backgroundColor: '#27273b', height: '82vh', boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)'}}>
                             <CardContent style={{ padding: '20px'}}>
                                 <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
-                                    <Typography variant='h5' sx={{ fontFamily: 'Poppins, sans-serif', fontWeight: '300', color: colors.secondary }}>
-                                        Please review the product report below.
-                                    </Typography>
+                                    <div>
+                                        <Typography variant='h5' sx={{ fontFamily: 'Poppins, sans-serif', fontWeight: '300', color: colors.secondary }}>
+                                            Please review the product report below.
+                                        </Typography>
+                                    </div>
+                                    <div>
+                                    <TextField
+                                        variant="outlined"
+                                        fullWidth
+                                        placeholder='Search here...'
+                                        InputProps={{
+                                            startAdornment: (
+                                            <InputAdornment position="start">
+                                                <SearchRounded sx={{fontSize: '2rem', color: colors.primary}}/>
+                                            </InputAdornment>
+                                            ),
+                                        }}
+                                        sx={{
+                                            
+                                            '& .MuiOutlinedInput-root': {
+                                                height: '45px',
+                                                width: '500px',
+                                                backgroundColor: colors.secondary,
+                                                boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)',
+                                                '& fieldset': {
+                                                    border: 'none',
+                                                },
+                                                '&.Mui-focused fieldset': {
+                                                    border: 'none',
+                                                },
+                                                '&:hover': {
+                                                    cursor: 'text'
+                                                },
+                                            },
+                                            '& input': {
+                                                fontFamily: 'Poppins, sans-serif',
+                                                fontWeight: '300',
+                                                color: colors.fontColor,
+                                            },
+                                            '& input::placeholder': {
+                                                fontFamily: 'Poppins, sans-serif',
+                                                fontWeight: '300',
+                                                color: 'gray',
+                                            }
+                                        }}
+                                        />
+                                    </div>
                                 </div>
                                 <Grid container spacing={2} style={{ paddingTop: '15px', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
                                     <Grid item xs={12}>

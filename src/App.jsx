@@ -9,6 +9,7 @@ import ReportHome from './reports-home';
 import Products from './products';
 import ProductReport from './products-report';
 import TransactionsHome from './transactions-home';
+import SalesReport from './sales-report';
 
 export default function App() {
   return (
@@ -23,6 +24,7 @@ export default function App() {
         <Route path="/reports-home" element={<ReportHome />} />
         <Route path="/products-report" element={<ProductReport />} />
         <Route path="/transactions-home" element={<TransactionsHome />} />
+        <Route path="/sales-report" element={<SalesReport />} />
       </Routes>
     </Router>
   );
