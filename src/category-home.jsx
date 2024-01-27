@@ -8,7 +8,7 @@ import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import HeaderTitleWidget from './widgets/header-title';
 
 import { firestore } from './firebaseConfig';
-import { limit, query, orderBy, addDoc, getDoc, getDocs, collection, doc, onSnapshot, updateDoc, deleteDoc, where } from '@firebase/firestore';
+import { limit, query, orderBy, addDoc, getDoc, getDocs, collection, doc, onSnapshot, updateDoc, deleteDoc, where, } from '@firebase/firestore';
 
 import {AddRounded, EditRounded, DeleteRounded, SearchRounded} from "@mui/icons-material";
 import { InputAdornment, Grid, Container, Typography, IconButton, TextField, Dialog, DialogActions, DialogContent, DialogTitle, DialogContentText, Card, CardContent, CircularProgress} from '@mui/material';
@@ -230,29 +230,26 @@ const handleAddCategory = async (e) => {
     const [inputSearchData, setInputSearchData] = useState('');
     const handleSearch = async (e) => {
         e.preventDefault();
-        const searchCategory = e.target.searchCategory.value;
+    
+        const searchCategory = e.target.value.toLowerCase();
         setInputSearchData(searchCategory);
-    };
-
-    useEffect(() => {
-        const fetchData = async () => {
-          try {
-            const q = query(collection(firestore, 'Product_Category'), where('categoryName', '==', inputSearchData));
-            const querySnapshot = await getDocs(q);
     
-            const filteredCategoryArray = querySnapshot.docs.map((doc) => ({
-              ...doc.data(),
-              id: doc.id
-            }));
+        console.log(inputSearchData); // This will log the previous state value, not the updated one due to asynchronous behavior
     
-            setCategory(filteredCategoryArray);
-          } catch (error) {
-            console.error('Error fetching data:', error.message);
-          }
-        };
+        try {
+          const q = query(collection(firestore, 'Product_Category'), where('categoryName', 'array-contains', searchCategory));
+          const querySnapshot = await getDocs(q);
     
-        fetchData();
-      }, []);
+          const filteredCategoryArray = querySnapshot.docs.map((doc) => ({
+            ...doc.data(),
+            id: doc.id
+          }));
+    
+          setCategory(filteredCategoryArray);
+        } catch (error) {
+          console.error('Error fetching data:', error.message);
+        }
+      };
 
 
 
