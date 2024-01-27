@@ -227,29 +227,29 @@ const handleAddCategory = async (e) => {
     };
 
 
-    const [inputSearchData, setInputSearchData] = useState('');
     const handleSearch = async (e) => {
         e.preventDefault();
-    
-        const searchCategory = e.target.value.toLowerCase();
-        setInputSearchData(searchCategory);
-    
-        console.log(inputSearchData); // This will log the previous state value, not the updated one due to asynchronous behavior
-    
-        try {
-          const q = query(collection(firestore, 'Product_Category'), where('categoryName', 'array-contains', searchCategory));
-          const querySnapshot = await getDocs(q);
-    
-          const filteredCategoryArray = querySnapshot.docs.map((doc) => ({
-            ...doc.data(),
-            id: doc.id
-          }));
-    
-          setCategory(filteredCategoryArray);
-        } catch (error) {
-          console.error('Error fetching data:', error.message);
+        const searchCategory = e.target.searchCategory.value;
+
+        console.log(searchCategory);
+        
+
+        if(searchCategory == ""){
+            const querySnapshot = await getDocs(query(collection(firestore, 'Product_Category')));
+            const CategoryArray = querySnapshot.docs.map((doc) => ({
+                ...doc.data(), id: doc.id
+            }));
+            setCategory(CategoryArray);
+        }else{
+            const querySnapshot = await getDocs(query(collection(firestore, 'Product_Category'), where('categoryName', '==', searchCategory)));
+            const filteredCategoryArray = querySnapshot.docs.map((doc) => ({
+                ...doc.data(), id: doc.id
+            }));
+            setCategory(filteredCategoryArray);
         }
-      };
+        
+  
+    };
 
 
 
@@ -313,18 +313,14 @@ const handleAddCategory = async (e) => {
                                     </Typography>
                                     </div>
                                     <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
-                                    <TextField
-                                        onChange={handleSearch}
+                                    <form onSubmit={(e)=> handleSearch(e)}>
+                                        <Grid container>
+                                        <Grid item xs={8} >
+                                        <TextField
+                                        name="searchCategory"
                                         variant="outlined"
                                         fullWidth
                                         placeholder='Search here...'
-                                        InputProps={{
-                                            startAdornment: (
-                                            <InputAdornment position="start">
-                                                <SearchRounded sx={{fontSize: '2rem', color: colors.primary}}/>
-                                            </InputAdornment>
-                                            ),
-                                        }}
                                         sx={{
                                             
                                             '& .MuiOutlinedInput-root': {
@@ -355,6 +351,17 @@ const handleAddCategory = async (e) => {
                                             }
                                         }}
                                         />
+                                        </Grid>
+                                        <Grid item xs={2} >
+                                        <IconButton type='submit'>
+                                            <SearchRounded sx={{ color: colors.primary }} />
+                                        </IconButton>
+                                        </Grid>
+                                        </Grid>
+                                    
+                                        
+                                        </form>
+                                        
                                         <IconButton 
                                             onClick={handleClickOpen}
                                             sx={{
