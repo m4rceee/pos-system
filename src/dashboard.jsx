@@ -21,6 +21,16 @@ import {
     Card,
     CardContent,
     CardActionArea,
+    Dialog,
+    DialogActions,
+    DialogTitle,
+    DialogContent,
+    Table,
+    TableHead,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableRow
 } from '@mui/material';
 
 import { 
@@ -62,6 +72,8 @@ const customTheme = createTheme({
     'Nov',
     'Dec'
   ];
+
+  
 
   const colors = {
     primary: '#1D1D2C',
@@ -124,6 +136,9 @@ export default function DashboardHome() {
     return date.toLocaleTimeString(undefined, options);
   };
 
+  const [openDialog, setOpenDialog] = useState(false);
+    const [lowStockItems, setLowStockItems] = useState([]);
+
   useEffect(() => {
     const fetchData = async () => {
         try {
@@ -138,7 +153,9 @@ export default function DashboardHome() {
             // Low In Stock Count
             const lowInStockQuerySnapshot = await getDocs(collection(firestore, 'Products'));
             const lowInStockItems = lowInStockQuerySnapshot.docs.filter(doc => doc.data().itemQuantity <= 10);
+
             setLowInStockCount(lowInStockItems.length);
+            setLowStockItems(lowInStockItems.map(doc => doc.data()));
 
             // All data fetched, set loading to false
             setLoading(false);
@@ -151,6 +168,10 @@ export default function DashboardHome() {
 
     fetchData();
 }, []);
+
+const handleCardClick = () => {
+    setOpenDialog(true);
+};
 
 useEffect(() => {
     const fetchData = async () => {
@@ -189,65 +210,79 @@ useEffect(() => {
 
 
 const [transactions, setTransactions] = useState([]);
-const [totalPriceSum, setTotalPriceSum] = useState(0);
+const [dailySales, setDailySales] = useState(0);
+const [monthlySales, setMonthlySales] = useState(Array.from({ length: 12 }, () => 0));
+    const [monthLabels, setMonthLabels] = useState([
+        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+    ]);
+    const [monthlySalesArray, setMonthlySalesArray] = useState(Array.from({ length: 12 }, () => 0));
+    const monthNames = [
+        'January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'
+      ];
+      
+      // Assuming currentMonthName is the name of the current month and currentYear is the current year
+      const currentMonthNumber = monthNames.indexOf(currentMonthName);
+      
+      const currentMonthSales = monthlySales.filter(sale => {
+        const saleDate = new Date(sale.date); // Assuming each sale object has a 'date' property
+        return saleDate.getMonth() === currentMonthNumber && saleDate.getFullYear() === currentYear;
+      });
+      
+      const formattedCurrentMonthSales = currentMonthSales.map(sale => sale.toFixed(2));
+      
 
 useEffect(() => {
-    const getTransactionData = onSnapshot(collection(firestore, 'Transactions'), (snapshot) => {
-      const transactionArray = snapshot.docs.map((doc) => ({
-        ...doc.data(),
-        id: doc.id,
-      }));
+    const transactionsCollection = collection(firestore, 'Transactions');
+    const queryWithStatus = query(transactionsCollection, where('transactionStatus', '==', 'Valid'));
 
-      transactionArray.sort((a, b) => new Date(b.dateTransaction) - new Date(a.dateTransaction));
+    const getTransactionData = onSnapshot(queryWithStatus, (snapshot) => {
+        const transactionArray = snapshot.docs.map((doc) => ({
+            ...doc.data(),
+            id: doc.id,
+        }));
 
-      setTransactions(transactionArray);
-      setLoading(false); 
+        transactionArray.sort((a, b) => new Date(b.dateTransaction) - new Date(a.dateTransaction));
 
-      const targetDate = new Date();
+        setTransactions(transactionArray);
+        setLoading(false);
 
-      const totalPriceSum = transactionArray
-        .filter((transaction) => isSameDay(new Date(transaction.dateTransaction), targetDate))
-        .reduce((sum, transaction) => {
-          return sum + parseFloat(transaction.productBreakdown.reduce((itemSum, item) => itemSum + parseFloat(item.itemPrice * item.itemQuantity), 0));
-        }, 0);
-        
-      setTotalPriceSum(totalPriceSum);
+        // Calculate daily sales for the current day
+        const targetDate = new Date();
+        const dailySales = transactionArray
+            .filter((transaction) => isSameDay(new Date(transaction.dateTransaction), targetDate))
+            .reduce((sum, transaction) => {
+                return sum + parseFloat(transaction.productBreakdown.reduce((itemSum, item) => itemSum + parseFloat(item.itemPrice * item.itemQuantity), 0));
+            }, 0);
+
+        setDailySales(dailySales);
+
+        // Calculate monthly sales for all months
+        const months = [
+            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+        ];
+
+        const monthlySales = Array.from({ length: 12 }, () => 0); // Initialize array with zeros
+
+        transactionArray.forEach((transaction) => {
+            const transactionMonth = new Date(transaction.dateTransaction).getMonth();
+            monthlySales[transactionMonth] += parseFloat(transaction.productBreakdown.reduce((itemSum, item) => itemSum + parseFloat(item.itemPrice * item.itemQuantity), 0));
+        });
+
+        const monthlySalesArray = monthlySales.slice(); // Create a copy of the array
+
+        console.log('Target Date:', targetDate);
+        console.log('Daily Sales:', dailySales);
+        console.log('Monthly Sales:', monthlySales);
+        console.log('Transaction Array:', transactionArray);
+
+        setMonthlySales(monthlySales);
+        setMonthLabels(months);
+        setMonthlySalesArray(monthlySalesArray); // Set the array for your chart
     });
 
     return () => getTransactionData();
-  }, []);
-
-
-
-  const [totalMonthlySales, setTotalMonthlySales] = useState(0);
-
-  useEffect(() => {
-    const getTransactionData = onSnapshot(collection(firestore, 'Transactions'), (snapshot) => {
-      const transactionArray = snapshot.docs.map((doc) => ({
-        ...doc.data(),
-        id: doc.id,
-      }));
-
-      transactionArray.sort((a, b) => new Date(b.dateTransaction) - new Date(a.dateTransaction));
-
-      setTransactions(transactionArray);
-      setLoading(false);
-
-      const targetDate = new Date();
-      targetDate.setDate(1);
-      const isSameMonth = (date1, date2) => date1.getMonth() === date2.getMonth() && date1.getFullYear() === date2.getFullYear();
-
-      const totalPriceSum = transactionArray
-        .filter((transaction) => isSameMonth(new Date(transaction.dateTransaction), targetDate))
-        .reduce((sum, transaction) => {
-            return sum + parseFloat(transaction.productBreakdown.reduce((itemSum, item) => itemSum + parseFloat(item.itemPrice * item.itemQuantity), 0));
-        }, 0);
-
-        setTotalMonthlySales(totalPriceSum);
-    });
-
-    return () => getTransactionData();
-  }, []);
+}, []);
 
 
     return(
@@ -308,25 +343,53 @@ useEffect(() => {
                                         </CardActionArea>
                                     </Grid>
                                     <Grid item xs={4}>
+                                    <CardActionArea onClick={handleCardClick}>
                                         <Card style={{ background: '#13131c', boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)' }}>
-                                            <CardContent style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-                                                <ProductionQuantityLimitsRounded sx={{ fontSize: '3.5rem', color: '#515178' }} />
-                                                <Stack sx={{ paddingLeft: '15px', flex: 1 }}>
-                                                    <Typography style={{ fontSize: '1rem', fontWeight: 'normal', color: colors.secondary, fontFamily: 'Poppins, sans-serif' }}>
-                                                    Low in Stock
-                                                    </Typography>
-                                                    {loading ? (
-                                                        <ClipLoader color={colors.accentYellow} size={45} />
-                                                    ) : (
-                                                        <Typography variant="h3" color={colors.accentYellow} style={{fontWeight: '600', fontFamily: 'Poppins, sans-serif'}}>
-                                                        {lowInStockCount}
+                                                <CardContent style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                                                    <ProductionQuantityLimitsRounded sx={{ fontSize: '3.5rem', color: '#515178' }} />
+                                                    <Stack sx={{ paddingLeft: '15px', flex: 1 }}>
+                                                        <Typography style={{ fontSize: '1rem', fontWeight: 'normal', color: colors.secondary, fontFamily: 'Poppins, sans-serif' }}>
+                                                        Low in Stock
                                                         </Typography>
-                                                    )}
-                                                </Stack>
-                                            </CardContent>
-                                        </Card>
+                                                        {loading ? (
+                                                            <ClipLoader color={colors.accentYellow} size={45} />
+                                                        ) : (
+                                                            <Typography variant="h3" color={colors.accentYellow} style={{fontWeight: '600', fontFamily: 'Poppins, sans-serif'}}>
+                                                            {lowInStockCount}
+                                                            </Typography>
+                                                        )}
+                                                    </Stack>
+                                                </CardContent>
+                                            </Card>
+                                    </CardActionArea>
                                     </Grid>
                                 </Grid>
+
+                                <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
+                                    <DialogTitle sx={{fontFamily: 'Poppins, sans-serif'}}>Items with Low Stock</DialogTitle>
+                                    <DialogContent>
+                                        <TableContainer sx={{width: '100%'}}>
+                                            <Table >
+                                                <TableHead >
+                                                    <TableRow >
+                                                        <TableCell sx={{fontFamily: 'Poppins, sans-serif', fontWeight: '700'}}>Item Name</TableCell>
+                                                        <TableCell sx={{fontFamily: 'Poppins, sans-serif', fontWeight: '700', textAlign: 'right'}}>Quantity</TableCell>
+                                                    </TableRow>
+                                                </TableHead>
+                                                <TableBody>
+                                                    {/* Display low stock items here */}
+                                                    {lowStockItems.map(item => (
+                                                        <TableRow key={item.id}>
+                                                            <TableCell sx={{fontFamily: 'Poppins, sans-serif', fontWeight: 'light'}}>{item.itemName}</TableCell>
+                                                            <TableCell sx={{fontFamily: 'Poppins, sans-serif', fontWeight: 'light', textAlign: 'right'}}>{item.itemQuantity}</TableCell>
+                                                        </TableRow>
+                                                    ))}
+                                                </TableBody>
+                                            </Table>
+                                        </TableContainer>
+                                    </DialogContent>
+                                </Dialog>
+
 
                                 <Grid container spacing={2} style={{ marginTop: 1, display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
                                     <Grid item xs={6} >
@@ -341,7 +404,7 @@ useEffect(() => {
                                                         <ClipLoader color={colors.accentYellow} size={45} />
                                                     ) : (
                                                         <Typography variant="h3" color={colors.accentOlive} style={{fontWeight: '600', fontFamily: 'Poppins, sans-serif', color: colors.secondary}}>
-                                                            ₱{totalPriceSum.toFixed(2)}
+                                                            ₱{dailySales.toFixed(2)}
                                                         </Typography>
                                                     )}
                                                 </Stack>
@@ -360,7 +423,7 @@ useEffect(() => {
                                                         <ClipLoader color={colors.accentYellow} size={45} />
                                                     ) : (
                                                         <Typography variant="h3" color={colors.accentOlive} style={{fontWeight: '600', fontFamily: 'Poppins, sans-serif', color: colors.secondary}}>
-                                                            ₱{totalMonthlySales.toFixed(2)}
+                                                            ₱{formattedCurrentMonthSales}
                                                         </Typography>
                                                     )}
                                                 </Stack>
@@ -379,14 +442,16 @@ useEffect(() => {
                                         <CardContent style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
                                                 <Stack>
                                                     <Typography sx={{ marginTop: '15px', paddingBottom: '10px', color: colors.secondary, fontSize: '1.5rem', fontWeight: '600', textAlign: 'left' }}>Sales Chart</Typography>
-                                                            <BarChart
-                                                            width={600}
-                                                            height={300}
-                                                            series={[
-                                                                { data: [totalMonthlySales], label: 'Generated Sales', id: 'pvId', color: colors.accentOlive },
-                                                            ]}
-                                                            xAxis={[{ data: xLabels, scaleType: 'band' }]}
-                                                            />
+                                                    
+
+                                                    <BarChart
+                                                        width={600}
+                                                        height={300}
+                                                        series={[
+                                                            { data: monthlySalesArray, label: 'Generated Sales', id: 'pvId', color: colors.accentOlive },
+                                                        ]}
+                                                        xAxis={[{ data: monthLabels, scaleType: 'band' }]}
+                                                    />
                                                 </Stack>
                                         </CardContent>
                                     </Card>

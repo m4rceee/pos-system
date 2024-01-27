@@ -107,7 +107,7 @@ export default function SideBar() {
             >
                 <div className='text-center'>
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                        <img src={logo3} alt="store logo" style={{iconSize}}/>
+                        <img src={logo3} alt="store logo" style={{ iconSize, cursor: 'pointer' }} onClick={() => handleDashboardHome()}/>
                     </div>
                 </div>
 
