@@ -285,6 +285,44 @@ useEffect(() => {
 }, []);
 
 
+const [totalMonthlySales, setTotalMonthlySales] = useState(0);
+
+useEffect(() => {
+    const getTransactionData = onSnapshot(collection(firestore, 'Transactions'), (snapshot) => {
+      const transactionArray = snapshot.docs.map((doc) => ({
+        ...doc.data(),
+        id: doc.id,
+      }));
+  
+      // Assuming dateTransaction is a string
+      transactionArray.sort((a, b) => new Date(b.dateTransaction) - new Date(a.dateTransaction));
+  
+      setTransactions(transactionArray);
+      setLoading(false);
+  
+      const isSameMonth = (date1, date2) => date1.getMonth() === date2.getMonth() && date1.getFullYear() === date2.getFullYear();
+  
+      // Filter transactions with valid transactionStatus ("Valid")
+      const validTransactions = transactionArray.filter((transaction) => transaction.transactionStatus === 'Valid');
+  
+      // Calculate the sum of itemPrice for the current month
+      const targetDate = new Date();
+      targetDate.setDate(1);
+  
+      const totalPriceSum = validTransactions
+        .filter((transaction) => isSameMonth(new Date(transaction.dateTransaction), targetDate))
+        .reduce((sum, transaction) => {
+          // Assuming itemPrice is a number
+          return sum + parseFloat(transaction.productBreakdown.reduce((itemSum, item) => itemSum + parseFloat(item.itemPrice * item.itemQuantity), 0));
+        }, 0);
+  
+      setTotalMonthlySales(totalPriceSum);
+    });
+  
+    return () => getTransactionData();
+  }, []);
+
+
     return(
     
         <>
@@ -423,7 +461,7 @@ useEffect(() => {
                                                         <ClipLoader color={colors.accentYellow} size={45} />
                                                     ) : (
                                                         <Typography variant="h3" color={colors.accentOlive} style={{fontWeight: '600', fontFamily: 'Poppins, sans-serif', color: colors.secondary}}>
-                                                            ₱{formattedCurrentMonthSales}
+                                                            ₱{totalMonthlySales.toFixed(2)}
                                                         </Typography>
                                                     )}
                                                 </Stack>
