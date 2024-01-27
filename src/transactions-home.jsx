@@ -82,34 +82,21 @@ export default function TransactionsHome() {
 // GET PRODUCT CATEGORY FROM THE DATABSE   
     const [transaction, setTransactions] = useState([]);
 
-    const [isValidButtonDisabled, setValidButtonDisabled] = useState(true);
-    const [isVoidButtonDisabled, setVoidButtonDisabled] = useState(true);
-
     useEffect(() => {
         const getTransactionData = onSnapshot(collection(firestore, 'Transactions'), (snapshot) => {
-            const transactionArray = snapshot.docs.map((doc) => ({
-                ...doc.data(),
-                id: doc.id,
-            }));
-    
-            // Assuming dateTransaction is a string
-            transactionArray.sort((a, b) => new Date(b.dateTransaction) - new Date(a.dateTransaction));
-    
-            setTransactions(transactionArray);
-            setLoading(false); // Set loading to false when data is loaded
-
-            const transactionStatusArray = transactionArray.map((transaction) => transaction.transactionStatus);
-                if(transactionStatusArray == "Valid"){
-                    setValidButtonDisabled(false);
-                    setVoidButtonDisabled(true);
-                }else{
-                    setValidButtonDisabled(true);
-                    setVoidButtonDisabled(false);
-                }
+          const transactionArray = snapshot.docs.map((doc) => ({
+            ...doc.data(),
+            id: doc.id,
+          }));
+      
+          transactionArray.sort((a, b) => new Date(b.dateTransaction) - new Date(a.dateTransaction));
+      
+          setTransactions(transactionArray);
+          setLoading(false);
         });
-    
+      
         return () => getTransactionData();
-    }, []);
+      }, []);
 
 
     const handleReportsHomePage = (event) => {
@@ -359,10 +346,10 @@ export default function TransactionsHome() {
       sortable: false,
       renderCell: (params) => (
         <>
-          <IconButton onClick={() => handleValidClick((params.row.id))} disabled={isValidButtonDisabled}>
+          <IconButton onClick={() => handleValidClick((params.row.id))} disabled={params.row.transactionStatus === "Valid" ? true : false}>
             <CheckIcon sx={{ color: colors.primary }} />
           </IconButton>
-          <IconButton onClick={() => handleVoidClick((params.row.id))} disabled={isVoidButtonDisabled}>
+          <IconButton onClick={() => handleVoidClick((params.row.id))} disabled={params.row.transactionStatus === "Void" ? true : false}>
             <BlockIcon sx={{ color: colors.primary }} />
           </IconButton>
           <IconButton onClick={() => handleSearchClick(params.row)}>
