@@ -111,32 +111,8 @@ export default function ReportHome() {
                                     Please choose a section to see its reports:
                                 </Typography>
                                 <Grid container spacing={2} style={{ paddingTop: '5px', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-                                    
-                                    
-                                <Grid item xs={4}>
-                                        <Card style={{ background: '#13131c', boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)', height: 'auto' }}>
-                                            <CardContent style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-                                                <div style={{width: '100%'}}>
-                                                    <Typography variant="h4" sx={{fontFamily: 'Poppins, sans-serif', fontWeight: '600', color: colors.secondary}}>
-                                                        Sales
-                                                    </Typography>
-                                                </div>
-                                                <div style={{marginTop: '35px', width: '100%', display: 'flex', justifyContent: 'flex-end'}}>
-                                                    <div>
-                                                        <IconButton
-                                                        onClick={handleSalesPage}
-                                                            sx={{
-                                                                background: 'transparent',
-                                                            }}
-                                                        >
-                                                            <LaunchRounded sx={{ fontSize: '2rem', color: '#515178' }} />
-                                                        </IconButton>
-                                                    </div>
-                                                </div>
-                                            </CardContent>
-                                        </Card>
-                                    </Grid>
-                                    <Grid item xs={4}>
+                                
+                                    <Grid item xs={6}>
                                         <Card style={{ background: '#13131c', boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)', height: 'auto' }}>
                                             <CardContent style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
                                                 <div style={{width: '100%'}}>
@@ -159,7 +135,7 @@ export default function ReportHome() {
                                             </CardContent>
                                         </Card>
                                     </Grid>
-                                    <Grid item xs={4}>
+                                    <Grid item xs={6}>
                                         <Card style={{ background: '#13131c', boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)', height: 'auto' }}>
                                             <CardContent style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
                                                 <div style={{width: '100%'}}>
