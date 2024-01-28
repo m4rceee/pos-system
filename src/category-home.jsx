@@ -75,6 +75,26 @@ const handleAddCategory = async (e) => {
     try {
         e.preventDefault();
 
+        const categoryName = e.target.categoryName.value;
+        
+        // Check if the entered category name already exists
+        const categoryExistsQuery = query(collection(firestore, 'Product_Category'), where('categoryName', '==', categoryName));
+        const categoryExistsSnapshot = await getDocs(categoryExistsQuery);
+
+        if (!categoryExistsSnapshot.empty) {
+            // Category already exists, show an error message
+            toast.error('Category already exists. Please choose a different name.', {
+                position: 'top-right',
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+            });
+            return; // Stop execution if category already exists
+        }
+
+
         // Query to get the latest category ID
         const latestCategoryQuery = query(collection(firestore, 'Product_Category'), orderBy('categoryId', 'desc'), limit(1));
         const latestCategorySnapshot = await getDocs(latestCategoryQuery);
@@ -83,8 +103,6 @@ const handleAddCategory = async (e) => {
         // Increment the latest category ID
         const newNumericPart = parseInt(latestCategoryId.slice(1), 10) + 1;
         const newCategoryId = `C${String(newNumericPart).padStart(4, '0')}`;
-
-        const categoryName = e.target.categoryName.value;
 
         const collectVal = collection(firestore, "Product_Category");
         const categoryDocRef = await addDoc(collectVal, {
@@ -229,7 +247,7 @@ const handleAddCategory = async (e) => {
 
     const handleSearch = async (e) => {
         e.preventDefault();
-        const searchCategory = e.target.searchCategory.value;
+        const searchCategory = e.target.searchCategory.value.toLowerCase();
 
         console.log(searchCategory);
         
@@ -241,14 +259,14 @@ const handleAddCategory = async (e) => {
             }));
             setCategory(CategoryArray);
         }else{
-            const querySnapshot = await getDocs(query(collection(firestore, 'Product_Category'), where('categoryName', '==', searchCategory)));
+            const querySnapshot = await getDocs(query(collection(firestore, 'Product_Category'), orderBy('categoryName'),
+            startAfter(searchCategory),
+            endBefore(searchCategory + '\uf8ff')));
             const filteredCategoryArray = querySnapshot.docs.map((doc) => ({
                 ...doc.data(), id: doc.id
             }));
             setCategory(filteredCategoryArray);
         }
-        
-  
     };
 
 
@@ -314,49 +332,49 @@ const handleAddCategory = async (e) => {
                                     </div>
                                     <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
                                     <form onSubmit={(e)=> handleSearch(e)}>
-                                        <Grid container>
-                                        <Grid item xs={8} >
-                                        <TextField
-                                        name="searchCategory"
-                                        variant="outlined"
-                                        fullWidth
-                                        placeholder='Search here...'
-                                        sx={{
-                                            
-                                            '& .MuiOutlinedInput-root': {
-                                                height: '45px',
-                                                width: '300px',
-                                                marginRight: '15px',
-                                                backgroundColor: colors.secondary,
-                                                boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)',
-                                                '& fieldset': {
-                                                    border: 'none',
-                                                },
-                                                '&.Mui-focused fieldset': {
-                                                    border: 'none',
-                                                },
-                                                '&:hover': {
-                                                    cursor: 'text'
-                                                },
-                                            },
-                                            '& input': {
-                                                fontFamily: 'Poppins, sans-serif',
-                                                fontWeight: '300',
-                                                color: colors.fontColor,
-                                            },
-                                            '& input::placeholder': {
-                                                fontFamily: 'Poppins, sans-serif',
-                                                fontWeight: '300',
-                                                color: 'gray',
-                                            }
-                                        }}
-                                        />
-                                        </Grid>
-                                        <Grid item xs={2} >
-                                        <IconButton type='submit'>
-                                            <SearchRounded sx={{ color: colors.primary }} />
-                                        </IconButton>
-                                        </Grid>
+                                        <Grid container style={{display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
+                                            <Grid item xs={8} >
+                                                <TextField
+                                                name="searchCategory"
+                                                variant="outlined"
+                                                fullWidth
+                                                placeholder='Search here...'
+                                                sx={{
+                                                    
+                                                    '& .MuiOutlinedInput-root': {
+                                                        height: '45px',
+                                                        width: '300px',
+                                                        marginRight: '15px',
+                                                        backgroundColor: colors.secondary,
+                                                        boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)',
+                                                        '& fieldset': {
+                                                            border: 'none',
+                                                        },
+                                                        '&.Mui-focused fieldset': {
+                                                            border: 'none',
+                                                        },
+                                                        '&:hover': {
+                                                            cursor: 'text'
+                                                        },
+                                                    },
+                                                    '& input': {
+                                                        fontFamily: 'Poppins, sans-serif',
+                                                        fontWeight: '300',
+                                                        color: colors.fontColor,
+                                                    },
+                                                    '& input::placeholder': {
+                                                        fontFamily: 'Poppins, sans-serif',
+                                                        fontWeight: '300',
+                                                        color: 'gray',
+                                                    }
+                                                }}
+                                                />
+                                                </Grid>
+                                            <Grid item xs={2} style={{display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
+                                                <IconButton type='submit'>
+                                                    <SearchRounded sx={{ color: colors.primary }} />
+                                                </IconButton>
+                                            </Grid>
                                         </Grid>
                                     
                                         

@@ -90,6 +90,24 @@ const handleAddProduct = async (e) => {
     setAddingProduct(true);
     try {
         e.preventDefault();
+
+        const itemName = e.target.itemName.value;
+
+        const itemExistsQuery = query(collection(firestore, 'Products'), where('itemName', '==', itemName));
+        const itemExistsSnapshot = await getDocs(itemExistsQuery);
+
+        if (!itemExistsSnapshot.empty) {
+            toast.error('Item already exists. Please choose a different name.', {
+                position: 'top-right',
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+            });
+            return;
+        }
+
         setCount(count + 1);
 
         // Query to get the latest item ID
@@ -101,7 +119,6 @@ const handleAddProduct = async (e) => {
         const newNumericPart = parseInt(latestItemId.slice(1), 10) + 1;
         const newItemId = `P${String(newNumericPart).padStart(4, '0')}`;
 
-        const itemName = e.target.itemName.value;
         const itemCode = e.target.itemCode.value;
         const itemCategory = e.target.itemCategory.value;
         const itemQuantity = e.target.itemQuantity.value;
