@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import final from './svg pics/final.svg';
 import { database } from './firebaseConfig';
+import {sendPasswordResetEmail} from 'firebase/auth';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 import ButtonWidget from './widgets/button';
 
@@ -17,7 +18,7 @@ import {
   TextField,
   InputAdornment,
   IconButton, Container,
-  CircularProgress
+  CircularProgress,  Dialog, DialogActions, DialogContent, DialogTitle,
 } from '@mui/material';
 
 import { 
@@ -26,6 +27,7 @@ import {
   VisibilityOff,
   BlockRounded,
 } from '@mui/icons-material';
+import TextFieldInputWidget from './widgets/textfield-input';
 
 const containerStyle = {
   position: 'absolute',
@@ -114,11 +116,27 @@ export default function Login() {
     }else{
         setShowPrompt(true);
     }*/
-    
   }
 
   const handleForgotPasswordClick = () => {
-    navigate('/dashboard');
+    setEditDialogOpen(true);
+  };
+
+  const [afterSendEmail, setAfterSendEmail] = useState(false);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [email, setEmail] = useState('');
+  const [successMessage, setSuccessMessage] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
+
+  const handleEditDialogClose = () => {setEditDialogOpen(false);};
+
+  const handleResetPassword = async () => {
+      sendPasswordResetEmail(database, email).then(data => {
+        setSuccessMessage('Password reset email sent. Check your inbox.');
+        setAfterSendEmail(true);
+      }).catch (error => {
+      setErrorMessage(error.message);
+    });
   };
 
   return(
@@ -217,6 +235,19 @@ export default function Login() {
                     }}>
                       <Typography sx={{fontFamily: 'Poppins, sans-serif', fontWeight: '500', fontSize: '20px',}}> {loading ? <CircularProgress size={23} color="inherit" /> : "Log In"} </Typography>
                   </Button>
+
+                  <Typography 
+                      variant='body1'
+                      onClick={handleForgotPasswordClick}
+                      sx={{
+                        marginTop: '15px', 
+                        fontFamily: 'Poppins, sans-serif', 
+                        cursor: 'pointer',
+                        '&:hover': {
+                          textDecoration: 'underline',
+                        },
+                      }}
+                      >Forgot Password?</Typography>
                   
                   
                   {/*REALTIME DISPLAY OF DATE & TIME*/}
@@ -232,6 +263,25 @@ export default function Login() {
               </CardContent>
             </Card>
           </Container>
+
+
+          <Dialog open={editDialogOpen} onClose={handleEditDialogClose}>
+              <DialogTitle sx={{fontFamily: 'Poppins, sans-serif'}}>Forgot Password</DialogTitle>
+              <DialogContent sx={{width: '500px'}}>
+                  <TextFieldInputWidget 
+                      title={"Email:"} 
+                      type={"email"}
+                      value={email} 
+                      onChange={(e) => setEmail(e.target.value)} 
+                  />
+                  {successMessage && <p>{successMessage}</p>}
+                  {errorMessage && <p>{errorMessage}</p>}
+                  <DialogActions sx={{marginTop: '20px', marginRight: '-8px'}}>
+                      <ButtonWidget onClick={handleEditDialogClose} label={"Close"} />
+                      <ButtonWidget onClick={handleResetPassword} label={"Reset Password"} disabled={afterSendEmail}/>
+                  </DialogActions>
+                  </DialogContent>
+          </Dialog>
         </>
       );
 

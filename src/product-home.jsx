@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import "./styles.css";
 import 'typeface-poppins';
 import SideBar from './common/sidebar';
-import { DataGrid } from '@mui/x-data-grid';
+import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import HeaderTitleWidget from './widgets/header-title';
 import SmallTitleWidget from './widgets/small-title';
 import ContentTitleWidget from './widgets/content-title'
@@ -414,47 +414,6 @@ const handleAddProduct = async (e) => {
                                         </Typography>
                                     </div>
                                     <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
-                                    <TextField
-                                        variant="outlined"
-                                        fullWidth
-                                        placeholder='Search here...'
-                                        InputProps={{
-                                            startAdornment: (
-                                            <InputAdornment position="start">
-                                                <SearchRounded sx={{fontSize: '2rem', color: colors.primary}}/>
-                                            </InputAdornment>
-                                            ),
-                                        }}
-                                        sx={{
-                                            
-                                            '& .MuiOutlinedInput-root': {
-                                                height: '45px',
-                                                width: '300px',
-                                                marginRight: '15px',
-                                                backgroundColor: colors.secondary,
-                                                boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)',
-                                                '& fieldset': {
-                                                    border: 'none',
-                                                },
-                                                '&.Mui-focused fieldset': {
-                                                    border: 'none',
-                                                },
-                                                '&:hover': {
-                                                    cursor: 'text'
-                                                },
-                                            },
-                                            '& input': {
-                                                fontFamily: 'Poppins, sans-serif',
-                                                fontWeight: '300',
-                                                color: colors.fontColor,
-                                            },
-                                            '& input::placeholder': {
-                                                fontFamily: 'Poppins, sans-serif',
-                                                fontWeight: '300',
-                                                color: 'gray',
-                                            }
-                                        }}
-                                        />
                                         <IconButton 
                                             onClick={handleClickOpen}
                                             sx={{
@@ -616,33 +575,59 @@ const handleAddProduct = async (e) => {
                                 <Grid className='mt-5' container>
                                     <Grid item xs={12}>
                                         <div style={{ height: 'auto', width: '100%' }}>
-                                            <DataGrid
+                                        <DataGrid
                                                 rows={products}
                                                 columns={columns}
-                                                initialState={{
-                                                    pagination: {
-                                                    paginationModel: { page: 0, pageSize: 10 },
-                                                    },
-                                                }}
+                                                initialState={{pagination: {paginationModel: { page: 0, pageSize: 10 },},}}
+                                                disableColumnFilter
+                                                disableColumnSelector
+                                                disableDensitySelector
+                                                slots={{ toolbar: GridToolbar }}
+                                                slotProps={{
+                                                    toolbar: {showQuickFilter: true,},
+                                                  }}
                                                 pageSizeOptions={[10, 50, 100]}
                                                 sx={{
                                                     fontFamily: 'Poppins, sans-serif',
                                                     color: colors.fontColor,
                                                     backgroundColor: colors.secondary,
+                                                    '& .MuiDataGrid-toolbarContainer': {
+                                                        padding: '10px 10px 0',
+                                                        borderRadius: '5px 5px  0 0',
+                                                        backgroundColor: colors.primary,
+                                                        color: colors.secondary,
+                                                        '& .css-ptiqhd-MuiSvgIcon-root, .css-c63i49-MuiInputBase-input-MuiInput-input': {
+                                                            color: colors.secondary,
+                                                        },
+                                                        '& .css-1eed5fa-MuiInputBase-root-MuiInput-root': {
+                                                            border: '1px solid white',
+                                                            padding: '5px 10px',
+                                                            borderRadius: '5px'
+                                                        },
+                                                        '& .css-1knaqv7-MuiButtonBase-root-MuiButton-root': {
+                                                            backgroundColor: 'white',
+                                                            padding: '10px',
+                                                            color: 'black'
+                                                        },
+                                                        '& .css-3be3ve-MuiFormControl-root-MuiTextField-root-MuiDataGrid-toolbarQuickFilter .MuiInput-underline:before, .css-1eed5fa-MuiInputBase-root-MuiInput-root::after': {
+                                                            content: 'none',
+                                                        }
+                                                    },
                                                     '& .MuiDataGrid-columnHeaders': {
-                                                    backgroundColor: colors.primary,
-                                                    color: colors.secondary,
-                                                    '& .css-i4bv87-MuiSvgIcon-root': {
+                                                        borderRadius: '0',
+                                                        backgroundColor: colors.primary,
                                                         color: colors.secondary,
-                                                    },
-                                                    '& .css-1pe4mpk-MuiButtonBase-root-MuiIconButton-root': {
-                                                        color: colors.secondary,
-                                                    },
+                                                        '& .css-i4bv87-MuiSvgIcon-root': {
+                                                            color: colors.secondary,
+                                                        },
+                                                        '& .css-1pe4mpk-MuiButtonBase-root-MuiIconButton-root': {
+                                                            color: colors.secondary,
+                                                        }
                                                     },
                                                     '& .MuiDataGrid-row': {
-                                                    '& .css-i4bv87-MuiSvgIcon-root': {
-                                                        color: colors.primary,
-                                                    },
+                                                        '& .css-i4bv87-MuiSvgIcon-root': {
+                                                            color: colors.primary,
+                                                        },
                                                     },
                                                 }}
                                             />

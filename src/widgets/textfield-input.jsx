@@ -1,11 +1,12 @@
 import React from 'react';
 import { Grid, DialogContentText, TextField } from '@mui/material';
 
-const TextFieldInputWidget = ({ title, name, id, value, onChange }) => {
+const TextFieldInputWidget = ({ title, type, name, id, value, onChange }) => {
   return (
     <Grid>
       <DialogContentText sx={{fontFamily: 'Poppins, sans-serif', marginTop: '15px'}}>{title}</DialogContentText>
       <TextField
+        type={type}
         name = { name }
         id = { id }
         value = { value }

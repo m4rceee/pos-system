@@ -405,7 +405,7 @@ useEffect(() => {
 
                                 <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
                                     <DialogTitle sx={{fontFamily: 'Poppins, sans-serif'}}>Items with Low Stock</DialogTitle>
-                                    <DialogContent>
+                                    <DialogContent sx={{width: '500px'}}>
                                         <TableContainer sx={{width: '100%'}}>
                                             <Table >
                                                 <TableHead >

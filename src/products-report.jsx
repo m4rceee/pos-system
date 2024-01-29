@@ -173,66 +173,50 @@ export default function ProductReport() {
                                             Please review the product report below.
                                         </Typography>
                                     </div>
-                                    <div>
-                                    <TextField
-                                        variant="outlined"
-                                        fullWidth
-                                        placeholder='Search here...'
-                                        InputProps={{
-                                            startAdornment: (
-                                            <InputAdornment position="start">
-                                                <SearchRounded sx={{fontSize: '2rem', color: colors.primary}}/>
-                                            </InputAdornment>
-                                            ),
-                                        }}
-                                        sx={{
-                                            
-                                            '& .MuiOutlinedInput-root': {
-                                                height: '45px',
-                                                width: '500px',
-                                                backgroundColor: colors.secondary,
-                                                boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)',
-                                                '& fieldset': {
-                                                    border: 'none',
-                                                },
-                                                '&.Mui-focused fieldset': {
-                                                    border: 'none',
-                                                },
-                                                '&:hover': {
-                                                    cursor: 'text'
-                                                },
-                                            },
-                                            '& input': {
-                                                fontFamily: 'Poppins, sans-serif',
-                                                fontWeight: '300',
-                                                color: colors.fontColor,
-                                            },
-                                            '& input::placeholder': {
-                                                fontFamily: 'Poppins, sans-serif',
-                                                fontWeight: '300',
-                                                color: 'gray',
-                                            }
-                                        }}
-                                        />
-                                    </div>
                                 </div>
                                 <Grid container spacing={2} style={{ paddingTop: '15px', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
                                     <Grid item xs={12}>
                                         <div style={{ height: 'auto', width: '100%' }}>
-                                            <DataGrid
+                                        <DataGrid
                                                 rows={productReportData}
                                                 columns={columns}
-                                                initialState={{
-                                                pagination: {
-                                                    paginationModel: { page: 0, pageSize: 10 },
-                                                },
-                                                }}
+                                                initialState={{pagination: {paginationModel: { page: 0, pageSize: 10 },},}}
+                                                disableColumnFilter
+                                                disableColumnSelector
+                                                disableDensitySelector
+                                                slots={{ toolbar: GridToolbar }}
+                                                slotProps={{
+                                                    toolbar: {showQuickFilter: true,},
+                                                  }}
                                                 pageSizeOptions={[10, 50, 100]}
                                                 sx={{
                                                     fontFamily: 'Poppins, sans-serif',
                                                     color: colors.fontColor,
                                                     backgroundColor: colors.secondary,
+                                                    '& .MuiDataGrid-toolbarContainer': {
+                                                        padding: '10px 10px 0',
+                                                        borderRadius: '5px 5px  0 0',
+                                                        backgroundColor: colors.primary,
+                                                        color: colors.secondary,
+                                                        '& .css-ptiqhd-MuiSvgIcon-root, .css-c63i49-MuiInputBase-input-MuiInput-input': {
+                                                            color: colors.secondary,
+                                                        },
+                                                        '& .css-1eed5fa-MuiInputBase-root-MuiInput-root': {
+                                                            border: '1px solid white',
+                                                            padding: '5px 10px',
+                                                            borderRadius: '5px'
+                                                        },
+                                                        '& .css-1knaqv7-MuiButtonBase-root-MuiButton-root': {
+                                                            backgroundColor: 'white',
+                                                            padding: '10px',
+                                                            color: 'black'
+                                                        },
+                                                        '& .css-3be3ve-MuiFormControl-root-MuiTextField-root-MuiDataGrid-toolbarQuickFilter .MuiInput-underline:before, .css-1eed5fa-MuiInputBase-root-MuiInput-root::after': {
+                                                            content: 'none',
+                                                        }
+                                                    },
                                                     '& .MuiDataGrid-columnHeaders': {
+                                                        borderRadius: '0',
                                                         backgroundColor: colors.primary,
                                                         color: colors.secondary,
                                                         '& .css-i4bv87-MuiSvgIcon-root': {

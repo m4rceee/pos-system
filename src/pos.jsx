@@ -121,11 +121,10 @@ export default function PosPage() {
 
             const newQuantity = Math.max(0, currentQuantity - 1);
 
-            if (newQuantity > 0) {
+            if (newQuantity >= 0) {
                 await updateDoc(productRef, { itemPreQuantity: newQuantity });
                 console.log('Product quantity decreased successfully.');
             } else {
-                setNotification('Your product quantity is 0');
                 console.log('Product quantity is already at the minimum.');
             }
         } catch (error) {
@@ -498,7 +497,7 @@ const generateReceiptHTML = (transaction) => {
                                                         <Tab key={category.id} label={category.categoryName} value={category.categoryName} />
                                                     ))}
                                                 </TabList>
-                                                <TextField
+                                                {/*<TextField
                                                     variant="outlined"
                                                     fullWidth
                                                     placeholder='Search here...'
@@ -514,7 +513,7 @@ const generateReceiptHTML = (transaction) => {
                                                         '& .MuiOutlinedInput-root': {
                                                             height: '35px',
                                                             margin: '15px',
-                                                            width: '745px',
+                                                            width: '100%',
                                                             backgroundColor: colors.secondary,
                                                             boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)',
                                                             '& fieldset': {
@@ -538,7 +537,7 @@ const generateReceiptHTML = (transaction) => {
                                                             color: 'gray',
                                                         }
                                                     }}
-                                                    />
+                                                />*/}
                                             </Box>
                                             {getCategories.map((category) => (
                                                 <TabPanel key={category.id} value={category.categoryName}>
@@ -600,7 +599,7 @@ const generateReceiptHTML = (transaction) => {
                                                     <TableHead>
                                                         <TableRow>
                                                             <StyledTableCell>Product Name</StyledTableCell>
-                                                            <StyledTableCell align="right">Quantity</StyledTableCell>
+                                                            <StyledTableCell align="center">Quantity</StyledTableCell>
                                                             <StyledTableCell align="right">Price</StyledTableCell>
                                                             <StyledTableCell align="right"><DeleteRounded sx={{marginRight: '5px', fontSize: '1.3rem'}}/></StyledTableCell>
                                                         </TableRow>
@@ -623,7 +622,7 @@ const generateReceiptHTML = (transaction) => {
                                                         {tableItems.map((tableItem, index) => (
                                                             <TableRow key={index}>
                                                                 <StyledTableCell>{tableItem.itemName}</StyledTableCell>
-                                                                <StyledTableCell align="right">{tableItem.itemQuantity}</StyledTableCell>
+                                                                <StyledTableCell align="center">{tableItem.itemQuantity}</StyledTableCell>
                                                                 <StyledTableCell align="right">₱{tableItem.itemPrice}</StyledTableCell>
                                                                 <StyledTableCell align="right">
                                                                     <IconButton onClick={() => handleDeleteItem(index)}>

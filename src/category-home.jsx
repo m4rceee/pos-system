@@ -10,7 +10,7 @@ import HeaderTitleWidget from './widgets/header-title';
 import { firestore } from './firebaseConfig';
 import { limit, query, orderBy, addDoc, getDoc, getDocs, collection, doc, onSnapshot, updateDoc, deleteDoc, where, } from '@firebase/firestore';
 
-import {AddRounded, EditRounded, DeleteRounded, SearchRounded} from "@mui/icons-material";
+import {AddRounded, EditRounded, DeleteRounded, SearchRounded, Close} from "@mui/icons-material";
 import { InputAdornment, Grid, Container, Typography, IconButton, TextField, Dialog, DialogActions, DialogContent, DialogTitle, DialogContentText, Card, CardContent, CircularProgress} from '@mui/material';
 import ButtonWidget from './widgets/button';
 import TextFieldInputWidget from './widgets/textfield-input';
@@ -75,7 +75,7 @@ const handleAddCategory = async (e) => {
     try {
         e.preventDefault();
 
-        const categoryName = e.target.categoryName.value;
+        const categoryName = e.target.categoryName.value.trim();
         
         // Check if the entered category name already exists
         const categoryExistsQuery = query(collection(firestore, 'Product_Category'), where('categoryName', '==', categoryName));
@@ -243,32 +243,7 @@ const handleAddCategory = async (e) => {
             }
         }
     };
-
-
-    const handleSearch = async (e) => {
-        e.preventDefault();
-        const searchCategory = e.target.searchCategory.value.toLowerCase();
-
-        console.log(searchCategory);
-        
-
-        if(searchCategory == ""){
-            const querySnapshot = await getDocs(query(collection(firestore, 'Product_Category')));
-            const CategoryArray = querySnapshot.docs.map((doc) => ({
-                ...doc.data(), id: doc.id
-            }));
-            setCategory(CategoryArray);
-        }else{
-            const querySnapshot = await getDocs(query(collection(firestore, 'Product_Category'), orderBy('categoryName'),
-            startAfter(searchCategory),
-            endBefore(searchCategory + '\uf8ff')));
-            const filteredCategoryArray = querySnapshot.docs.map((doc) => ({
-                ...doc.data(), id: doc.id
-            }));
-            setCategory(filteredCategoryArray);
-        }
-    };
-
+    
 
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -331,14 +306,20 @@ const handleAddCategory = async (e) => {
                                     </Typography>
                                     </div>
                                     <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
-                                    <form onSubmit={(e)=> handleSearch(e)}>
-                                        <Grid container style={{display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
-                                            <Grid item xs={8} >
+                                    {/*<form onSubmit={(e)=> handleSearch(e)}>
+                                            <Grid >
                                                 <TextField
                                                 name="searchCategory"
                                                 variant="outlined"
                                                 fullWidth
                                                 placeholder='Search here...'
+                                                InputProps={{
+                                                    startAdornment: (
+                                                        <InputAdornment position="start">
+                                                            <SearchRounded sx={{fontSize: '2rem', color: colors.primary}}/>
+                                                        </InputAdornment>
+                                                    ),
+                                                }}
                                                 sx={{
                                                     
                                                     '& .MuiOutlinedInput-root': {
@@ -369,16 +350,8 @@ const handleAddCategory = async (e) => {
                                                     }
                                                 }}
                                                 />
-                                                </Grid>
-                                            <Grid item xs={2} style={{display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
-                                                <IconButton type='submit'>
-                                                    <SearchRounded sx={{ color: colors.primary }} />
-                                                </IconButton>
-                                            </Grid>
-                                        </Grid>
-                                    
-                                        
-                                        </form>
+                                            </Grid>  
+                                        </form>*/}
                                         
                                         <IconButton 
                                             onClick={handleClickOpen}
@@ -471,17 +444,43 @@ const handleAddCategory = async (e) => {
                                             <DataGrid
                                                 rows={category}
                                                 columns={columns}
-                                                initialState={{
-                                                pagination: {
-                                                    paginationModel: { page: 0, pageSize: 10 },
-                                                },
-                                                }}
+                                                initialState={{pagination: {paginationModel: { page: 0, pageSize: 10 },},}}
+                                                disableColumnFilter
+                                                disableColumnSelector
+                                                disableDensitySelector
+                                                slots={{ toolbar: GridToolbar }}
+                                                slotProps={{
+                                                    toolbar: {showQuickFilter: true,},
+                                                  }}
                                                 pageSizeOptions={[10, 50, 100]}
                                                 sx={{
                                                     fontFamily: 'Poppins, sans-serif',
                                                     color: colors.fontColor,
                                                     backgroundColor: colors.secondary,
+                                                    '& .MuiDataGrid-toolbarContainer': {
+                                                        padding: '10px 10px 0',
+                                                        borderRadius: '5px 5px  0 0',
+                                                        backgroundColor: colors.primary,
+                                                        color: colors.secondary,
+                                                        '& .css-ptiqhd-MuiSvgIcon-root, .css-c63i49-MuiInputBase-input-MuiInput-input': {
+                                                            color: colors.secondary,
+                                                        },
+                                                        '& .css-1eed5fa-MuiInputBase-root-MuiInput-root': {
+                                                            border: '1px solid white',
+                                                            padding: '5px 10px',
+                                                            borderRadius: '5px'
+                                                        },
+                                                        '& .css-1knaqv7-MuiButtonBase-root-MuiButton-root': {
+                                                            backgroundColor: 'white',
+                                                            padding: '10px',
+                                                            color: 'black'
+                                                        },
+                                                        '& .css-3be3ve-MuiFormControl-root-MuiTextField-root-MuiDataGrid-toolbarQuickFilter .MuiInput-underline:before, .css-1eed5fa-MuiInputBase-root-MuiInput-root::after': {
+                                                            content: 'none',
+                                                        }
+                                                    },
                                                     '& .MuiDataGrid-columnHeaders': {
+                                                        borderRadius: '0',
                                                         backgroundColor: colors.primary,
                                                         color: colors.secondary,
                                                         '& .css-i4bv87-MuiSvgIcon-root': {
